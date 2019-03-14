@@ -65,7 +65,7 @@ function bashio::config.exists() {
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
 
-    if [[ $(bashio::config ".${key}") != "null" ]]; then
+    if [[ $(bashio::config "${key}") == "null" ]]; then
         return "${__BASHIO_EXIT_NOK}"
     fi
 
