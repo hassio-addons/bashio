@@ -71,69 +71,6 @@ function bashio::color.cyan() {
 }
 
 # ------------------------------------------------------------------------------
-# Set font output color to light grey.
-# ------------------------------------------------------------------------------
-function bashio::color.light_grey() {
-    echo -n -e "${__BASHIO_COLORS_LIGHT_GRAY}"
-}
-
-# ------------------------------------------------------------------------------
-# Set font output color to dark grey.
-# ------------------------------------------------------------------------------
-function bashio::color.dark_grey() {
-    echo -n -e "${__BASHIO_COLORS_DARK_GRAY}"
-}
-
-# ------------------------------------------------------------------------------
-# Set font output color to light red.
-# ------------------------------------------------------------------------------
-function bashio::color.light_red() {
-    echo -n -e "${__BASHIO_COLORS_LIGHT_RED}"
-}
-
-# ------------------------------------------------------------------------------
-# Set font output color to light green.
-# ------------------------------------------------------------------------------
-function bashio::color.light_green() {
-    echo -n -e "${__BASHIO_COLORS_LIGHT_GREEN}"
-}
-
-# ------------------------------------------------------------------------------
-# Set font output color to light yellow.
-# ------------------------------------------------------------------------------
-function bashio::color.light_yellow() {
-    echo -n -e "${__BASHIO_COLORS_LIGHT_YELLOW}"
-}
-
-# ------------------------------------------------------------------------------
-# Set font output color to light blue.
-# ------------------------------------------------------------------------------
-function bashio::color.light_blue() {
-    echo -n -e "${__BASHIO_COLORS_LIGHT_BLUE}"
-}
-
-# ------------------------------------------------------------------------------
-# Set font output color to light magenta.
-# ------------------------------------------------------------------------------
-function bashio::color.light_magenta() {
-    echo -n -e "${__BASHIO_COLORS_LIGHT_MAGENTA}"
-}
-
-# ------------------------------------------------------------------------------
-# Set font output color to light cyan.
-# ------------------------------------------------------------------------------
-function bashio::color.light_cyan() {
-    echo -n -e "${__BASHIO_COLORS_LIGHT_CYAN}"
-}
-
-# ------------------------------------------------------------------------------
-# Set font output color to white.
-# ------------------------------------------------------------------------------
-function bashio::color.white() {
-    echo -n -e "${__BASHIO_COLORS_WHITE}"
-}
-
-# ------------------------------------------------------------------------------
 # Set font output color background to default.
 # ------------------------------------------------------------------------------
 function bashio::color.bg.default() {
@@ -190,64 +127,8 @@ function bashio::color.bg.cyan() {
 }
 
 # ------------------------------------------------------------------------------
-# Set font output color background to light gray.
+# Set font output color background to white.
 # ------------------------------------------------------------------------------
-function bashio::color.bg.light_gray() {
-    echo -n -e "${__BASHIO_COLORS_BG_LIGHT_GRAY}"
-}
-
-# ------------------------------------------------------------------------------
-# Set font output color background to dark gray.
-# ------------------------------------------------------------------------------
-function bashio::color.bg.dark_gray() {
-    echo -n -e "${__BASHIO_COLORS_BG_DARK_GRAY}"
-}
-
-# ------------------------------------------------------------------------------
-# Set font output color background to light red.
-# ------------------------------------------------------------------------------
-function bashio::color.bg.light_red() {
-    echo -n -e "${__BASHIO_COLORS_BG_LIGHT_RED}"
-}
-
-# ------------------------------------------------------------------------------
-# Set font output color background to light green.
-# ------------------------------------------------------------------------------
-function bashio::color.bg.light_green() {
-    echo -n -e "${__BASHIO_COLORS_BG_LIGHT_GREEN}"
-}
-
-# ------------------------------------------------------------------------------
-# Set font output color background to light yellow.
-# ------------------------------------------------------------------------------
-function bashio::color.bg.light_yellow() {
-    echo -n -e "${__BASHIO_COLORS_BG_LIGHT_YELLOW}"
-}
-
-# ------------------------------------------------------------------------------
-# Set font output color background to light blue.
-# ------------------------------------------------------------------------------
-function bashio::color.bg.light_blue() {
-    echo -n -e "${__BASHIO_COLORS_BG_LIGHT_BLUE}"
-}
-
-# ------------------------------------------------------------------------------
-# Set font output color background to light magenta.
-# ------------------------------------------------------------------------------
-function bashio::color.bg.light_magenta() {
-    echo -n -e "${__BASHIO_COLORS_BG_LIGHT_MAGENTA}"
-}
-
-# ------------------------------------------------------------------------------
-# Set font output color background to light cyan.
-# ------------------------------------------------------------------------------
-function bashio::color.bg.light_cyan() {
-    echo -n -e "${__BASHIO_COLORS_BG_LIGHT_CYAN}"
-}
-
-# ------------------------------------------------------------------------------
-# Set font output color background to light white.
-# ------------------------------------------------------------------------------
-function bashio::color.bg.light_white() {
-    echo -n -e "${__BASHIO_COLORS_BG_LIGHT_WHITE}"
+function bashio::color.bg.white() {
+    echo -n -e "${__BASHIO_COLORS_BG_WHITE}"
 }

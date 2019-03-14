@@ -44,9 +44,7 @@ function bashio::log.log() {
 # ------------------------------------------------------------------------------
 function bashio::log.trace() {
     local message=$*
-    bashio::color.dark_grey >&2
     bashio::log.log "${__BASHIO_LOG_LEVEL_TRACE}" "${message}"
-    bashio::color.reset >&2
 }
 
 # ------------------------------------------------------------------------------
@@ -57,9 +55,7 @@ function bashio::log.trace() {
 # ------------------------------------------------------------------------------
 function bashio::log.debug() {
     local message=$*
-    bashio::color.dark_grey >&2
     bashio::log.log "${__BASHIO_LOG_LEVEL_DEBUG}" "${message}"
-    bashio::color.reset >&2
 }
 
 # ------------------------------------------------------------------------------
@@ -70,7 +66,7 @@ function bashio::log.debug() {
 # ------------------------------------------------------------------------------
 function bashio::log.info() {
     local message=$*
-    bashio::color.light_blue >&2
+    bashio::color.cyan >&2
     bashio::log.log "${__BASHIO_LOG_LEVEL_INFO}" "${message}"
     bashio::color.reset >&2
 }
@@ -83,7 +79,7 @@ function bashio::log.info() {
 # ------------------------------------------------------------------------------
 function bashio::log.notice() {
     local message=$*
-    bashio::color.cyan >&2
+    bashio::color.blue >&2
     bashio::log.log "${__BASHIO_LOG_LEVEL_NOTICE}" "${message}"
     bashio::color.reset >&2
 }
