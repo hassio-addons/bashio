@@ -76,6 +76,8 @@ source "${__BASHIO_LIB_DIR}/pwned.sh"
 source "${__BASHIO_LIB_DIR}/repositories.sh"
 # shellcheck source=secrets.sh
 source "${__BASHIO_LIB_DIR}/secrets.sh"
+# shellcheck source=string.sh
+source "${__BASHIO_LIB_DIR}/string.sh"
 # shellcheck source=supervisor.sh
 source "${__BASHIO_LIB_DIR}/supervisor.sh"
 # shellcheck source=var.sh
