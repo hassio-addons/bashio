@@ -54,6 +54,8 @@ source "${__BASHIO_LIB_DIR}/addons.sh"
 source "${__BASHIO_LIB_DIR}/api.sh"
 # shellcheck source=config.sh
 source "${__BASHIO_LIB_DIR}/config.sh"
+# shellcheck source=debug.sh
+source "${__BASHIO_LIB_DIR}/debug.sh"
 # shellcheck source=exit.sh
 source "${__BASHIO_LIB_DIR}/exit.sh"
 # shellcheck source=hardware.sh
