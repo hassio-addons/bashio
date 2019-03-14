@@ -50,7 +50,7 @@ function bashio::info() {
 # ------------------------------------------------------------------------------
 function bashio::info.supervisor() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::hassio::info 'hassio.info.supervisor' '.supervisor'
+    bashio::info 'hassio.info.supervisor' '.supervisor'
 }
 
 # ------------------------------------------------------------------------------
