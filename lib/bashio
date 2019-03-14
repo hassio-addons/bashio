@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Community Hass.io Add-ons: Bashio
+# Bashio is an bash function library for use with Hass.io add-ons.
+#
+# It contains a set of commonly used operations and can be used
+# to be included in add-on scripts to reduce code duplication across add-ons.
+# ==============================================================================
+set -o errexit  # Exit script when a command exits with non-zero status
+set -o errtrace # Exit on error inside any functions or sub-shells
+set -o nounset  # Exit script on use of an undefined variable
+set -o pipefail # Return exit status of the last command in the pipe that failed
+
+export __BASHIO_BIN
+export __BASHIO_LIB_DIR
+
+__BASHIO_BIN=$(readlink -f "${BASH_SOURCE[0]}")
+__BASHIO_LIB_DIR=$(dirname "${__BASHIO_BIN}")
+
+# Include Bashio library
+# shellcheck source=bashio.sh
+source "${__BASHIO_LIB_DIR}/bashio.sh"
+
+# Execute source
+# shellcheck source=/dev/null
+source "$@"
