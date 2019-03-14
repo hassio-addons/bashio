@@ -368,8 +368,8 @@ function bashio::addon.update_available() {
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
-    version=$(bashio::addons.version "${addon}")
-    last_version=$(bashio::addons.last_version "${addon}")
+    version=$(bashio::addon.version "${addon}")
+    last_version=$(bashio::addon.last_version "${addon}")
 
     if [[ "${version}" = "${last_version}" ]]; then
         return "${__BASHIO_EXIT_NOK}"
