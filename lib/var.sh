@@ -98,13 +98,15 @@ function bashio::var.is_empty() {
 #
 # Arguments:
 #   $1 Value
+#   $2 Equals value
 # ------------------------------------------------------------------------------
-function bashio::var.is_empty() {
+function bashio::var.equals() {
     local value=${1}
+    local equals=${2}
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
 
-    if [[ -z "${value}" ]]; then
+    if [[ "${value}" = "${equals}" ]]; then
         return "${__BASHIO_EXIT_OK}"
     fi
 

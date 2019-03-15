@@ -121,6 +121,29 @@ function bashio::config.is_empty() {
 }
 
 # ------------------------------------------------------------------------------
+# Checks if a configuration option equals a value.
+#
+# Arguments:
+#   $1 Key of the config option
+#   $2 Checks if the configuration option matches
+# ------------------------------------------------------------------------------
+function bashio::config.equals() {
+    local key=${1}
+    local equals=${2}
+    local value
+
+    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+
+    value=$(bashio::config "${key}")
+    echo ":P ${value}"
+    if ! bashio::var.equals "${value}" "${equals}"; then
+        return "${__BASHIO_EXIT_NOK}"
+    fi
+
+    return "${__BASHIO_EXIT_OK}"
+}
+
+# ------------------------------------------------------------------------------
 # Checks if a configuration option is true.
 #
 # Arguments:
@@ -386,7 +409,7 @@ function bashio::config.require.password() {
     bashio::log.fatal
     bashio::log.fatal "Setting a password is required!"
     bashio::log.fatal
-    bashio::log.fatal "Please password in the '${key}' option."
+    bashio::log.fatal "Please set a password in the '${key}' option."
     bashio::log.fatal
     bashio::log.fatal "If unsure, check the add-on manual for more information."
     bashio::log.fatal
