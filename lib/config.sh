@@ -135,7 +135,6 @@ function bashio::config.equals() {
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
 
     value=$(bashio::config "${key}")
-    echo ":P ${value}"
     if ! bashio::var.equals "${value}" "${equals}"; then
         return "${__BASHIO_EXIT_NOK}"
     fi
