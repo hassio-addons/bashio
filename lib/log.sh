@@ -8,7 +8,19 @@
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# Log a message
+# Log a message to output.
+#
+# Arguments:
+#   $1 Message to display
+# ------------------------------------------------------------------------------
+bashio::log() {
+    local message=${1}
+    echo "${message}" >&2
+    return "${__BASHIO_EXIT_OK}"
+}
+
+# ------------------------------------------------------------------------------
+# Log a message using a log level.
 #
 # Arguments:
 #   $1 Log level
@@ -37,7 +49,7 @@ function bashio::log.log() {
 }
 
 # ------------------------------------------------------------------------------
-# Log a message @ trace level
+# Log a message @ trace level.
 #
 # Arguments:
 #   $* Message to display
@@ -59,7 +71,7 @@ function bashio::log.debug() {
 }
 
 # ------------------------------------------------------------------------------
-# Log a message @ info level
+# Log a message @ info level.
 #
 # Arguments:
 #   $* Message to display
