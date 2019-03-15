@@ -15,7 +15,79 @@
 # ------------------------------------------------------------------------------
 bashio::log() {
     local message=${1}
-    echo "${message}" >&2
+    echo -e "${message}" >&2
+    return "${__BASHIO_EXIT_OK}"
+}
+
+# ------------------------------------------------------------------------------
+# Log a message to output (in red).
+#
+# Arguments:
+#   $1 Message to display
+# ------------------------------------------------------------------------------
+bashio::log.red() {
+    local message=${1}
+    echo -e "${__BASHIO_COLORS_RED}${message}${__BASHIO_COLORS_RESET}" >&2
+    return "${__BASHIO_EXIT_OK}"
+}
+
+# ------------------------------------------------------------------------------
+# Log a message to output (in green).
+#
+# Arguments:
+#   $1 Message to display
+# ------------------------------------------------------------------------------
+bashio::log.green() {
+    local message=${1}
+    echo -e "${__BASHIO_COLORS_GREEN}${message}${__BASHIO_COLORS_RESET}" >&2
+    return "${__BASHIO_EXIT_OK}"
+}
+
+# ------------------------------------------------------------------------------
+# Log a message to output (in yellow).
+#
+# Arguments:
+#   $1 Message to display
+# ------------------------------------------------------------------------------
+bashio::log.yellow() {
+    local message=${1}
+    echo -e "${__BASHIO_COLORS_YELLOW}${message}${__BASHIO_COLORS_RESET}" >&2
+    return "${__BASHIO_EXIT_OK}"
+}
+
+# ------------------------------------------------------------------------------
+# Log a message to output (in blue).
+#
+# Arguments:
+#   $1 Message to display
+# ------------------------------------------------------------------------------
+bashio::log.blue() {
+    local message=${1}
+    echo -e "${__BASHIO_COLORS_BLUE}${message}${__BASHIO_COLORS_RESET}" >&2
+    return "${__BASHIO_EXIT_OK}"
+}
+
+# ------------------------------------------------------------------------------
+# Log a message to output (in magenta).
+#
+# Arguments:
+#   $1 Message to display
+# ------------------------------------------------------------------------------
+bashio::log.magenta() {
+    local message=${1}
+    echo -e "${__BASHIO_COLORS_MAGENTA}${message}${__BASHIO_COLORS_RESET}" >&2
+    return "${__BASHIO_EXIT_OK}"
+}
+
+# ------------------------------------------------------------------------------
+# Log a message to output (in cyan).
+#
+# Arguments:
+#   $1 Message to display
+# ------------------------------------------------------------------------------
+bashio::log.cyan() {
+    local message=${1}
+    echo -e "${__BASHIO_COLORS_CYAN}${message}${__BASHIO_COLORS_RESET}" >&2
     return "${__BASHIO_EXIT_OK}"
 }
 
@@ -43,7 +115,7 @@ function bashio::log.log() {
     output="${output//\{MESSAGE\}/${message}}"
     output="${output//\{LEVEL\}/${__BASHIO_LOG_LEVELS[$level]}}"
 
-    echo "${output}" >&2
+    echo -e "${output}" >&2
 
     return "${__BASHIO_EXIT_OK}"
 }
@@ -78,9 +150,9 @@ function bashio::log.debug() {
 # ------------------------------------------------------------------------------
 function bashio::log.info() {
     local message=$*
-    bashio::color.cyan
-    bashio::log.log "${__BASHIO_LOG_LEVEL_INFO}" "${message}"
-    bashio::color.reset
+    bashio::log.log \
+        "${__BASHIO_LOG_LEVEL_INFO}" \
+        "${__BASHIO_COLORS_BLUE}${message}${__BASHIO_COLORS_RESET}"
 }
 
 # ------------------------------------------------------------------------------
@@ -91,9 +163,9 @@ function bashio::log.info() {
 # ------------------------------------------------------------------------------
 function bashio::log.notice() {
     local message=$*
-    bashio::color.blue
-    bashio::log.log "${__BASHIO_LOG_LEVEL_NOTICE}" "${message}"
-    bashio::color.reset
+    bashio::log.log \
+        "${__BASHIO_LOG_LEVEL_NOTICE}" \
+        "${__BASHIO_COLORS_CYAN}${message}${__BASHIO_COLORS_RESET}"
 }
 
 # ------------------------------------------------------------------------------
@@ -104,9 +176,9 @@ function bashio::log.notice() {
 # ------------------------------------------------------------------------------
 function bashio::log.warning() {
     local message=$*
-    bashio::color.yellow
-    bashio::log.log "${__BASHIO_LOG_LEVEL_WARNING}" "${message}"
-    bashio::color.reset
+    bashio::log.log \
+        "${__BASHIO_LOG_LEVEL_WARNING}" \
+        "${__BASHIO_COLORS_YELLOW}${message}${__BASHIO_COLORS_RESET}"
 }
 
 # ------------------------------------------------------------------------------
@@ -117,9 +189,9 @@ function bashio::log.warning() {
 # ------------------------------------------------------------------------------
 function bashio::log.error() {
     local message=$*
-    bashio::color.magenta
-    bashio::log.log "${__BASHIO_LOG_LEVEL_ERROR}" "${message}"
-    bashio::color.reset
+    bashio::log.log \
+        "${__BASHIO_LOG_LEVEL_ERROR}" \
+        "${__BASHIO_COLORS_MAGENTA}${message}${__BASHIO_COLORS_RESET}"
 }
 
 # ------------------------------------------------------------------------------
@@ -130,7 +202,7 @@ function bashio::log.error() {
 # ------------------------------------------------------------------------------
 function bashio::log.fatal() {
     local message=$*
-    bashio::color.red
-    bashio::log.log "${__BASHIO_LOG_LEVEL_FATAL}" "${message}"
-    bashio::color.reset
+    bashio::log.log \
+        "${__BASHIO_LOG_LEVEL_FATAL}" \
+        "${__BASHIO_COLORS_RED}${message}${__BASHIO_COLORS_RESET}"
 }
