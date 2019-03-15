@@ -11,124 +11,124 @@
 # Reset color output (background and foreground colors).
 # ------------------------------------------------------------------------------
 function bashio::color.reset() {
-    echo -n -e "${__BASHIO_COLORS_RESET}"
+    printf "${__BASHIO_COLORS_RESET}" >&2
 }
 
 # ------------------------------------------------------------------------------
 # Set default output color.
 # ------------------------------------------------------------------------------
 function bashio::color.default() {
-    echo -n -e "${__BASHIO_COLORS_DEFAULT}"
+    printf "${__BASHIO_COLORS_DEFAULT}" >&2
 }
 
 # ------------------------------------------------------------------------------
 # Set font output color to black.
 # ------------------------------------------------------------------------------
 function bashio::color.black() {
-    echo -n -e "${__BASHIO_COLORS_BLACK}"
+    printf "${__BASHIO_COLORS_BLACK}" >&2
 }
 
 # ------------------------------------------------------------------------------
 # Set font output color to red.
 # ------------------------------------------------------------------------------
 function bashio::color.red() {
-    echo -n -e "${__BASHIO_COLORS_RED}"
+    printf "${__BASHIO_COLORS_RED}" >&2
 }
 
 # ------------------------------------------------------------------------------
 # Set font output color to green.
 # ------------------------------------------------------------------------------
 function bashio::color.green() {
-    echo -n -e "${__BASHIO_COLORS_GREEN}"
+    printf "${__BASHIO_COLORS_GREEN}" >&2
 }
 
 # ------------------------------------------------------------------------------
 # Set font output color to yellow.
 # ------------------------------------------------------------------------------
 function bashio::color.yellow() {
-    echo -n -e "${__BASHIO_COLORS_YELLOW}"
+    printf "${__BASHIO_COLORS_YELLOW}" >&2
 }
 
 # ------------------------------------------------------------------------------
 # Set font output color to blue.
 # ------------------------------------------------------------------------------
 function bashio::color.blue() {
-    echo -n -e "${__BASHIO_COLORS_BLUE}"
+    printf "${__BASHIO_COLORS_BLUE}" >&2
 }
 
 # ------------------------------------------------------------------------------
 # Set font output color to magenta.
 # ------------------------------------------------------------------------------
 function bashio::color.magenta() {
-    echo -n -e "${__BASHIO_COLORS_MAGENTA}"
+    printf "${__BASHIO_COLORS_MAGENTA}" >&2
 }
 
 # ------------------------------------------------------------------------------
 # Set font output color to cyan.
 # ------------------------------------------------------------------------------
 function bashio::color.cyan() {
-    echo -n -e "${__BASHIO_COLORS_CYAN}"
+    printf "${__BASHIO_COLORS_CYAN}" >&2
 }
 
 # ------------------------------------------------------------------------------
 # Set font output color background to default.
 # ------------------------------------------------------------------------------
 function bashio::color.bg.default() {
-    echo -n -e "${__BASHIO_COLORS_BG_DEFAULT}"
+    printf "${__BASHIO_COLORS_BG_DEFAULT}" >&2
 }
 
 # ------------------------------------------------------------------------------
 # Set font output color background to black.
 # ------------------------------------------------------------------------------
 function bashio::color.bg.black() {
-    echo -n -e "${__BASHIO_COLORS_BG_BLACK}"
+    printf "${__BASHIO_COLORS_BG_BLACK}" >&2
 }
 
 # ------------------------------------------------------------------------------
 # Set font output color background to red.
 # ------------------------------------------------------------------------------
 function bashio::color.bg.red() {
-    echo -n -e "${__BASHIO_COLORS_BG_RED}"
+    printf "${__BASHIO_COLORS_BG_RED}" >&2
 }
 
 # ------------------------------------------------------------------------------
 # Set font output color background to green.
 # ------------------------------------------------------------------------------
 function bashio::color.bg.green() {
-    echo -n -e "${__BASHIO_COLORS_BG_GREEN}"
+    printf "${__BASHIO_COLORS_BG_GREEN}" >&2
 }
 
 # ------------------------------------------------------------------------------
 # Set font output color background to yellow.
 # ------------------------------------------------------------------------------
 function bashio::color.bg.yellow() {
-    echo -n -e "${__BASHIO_COLORS_BG_YELLOW}"
+    printf "${__BASHIO_COLORS_BG_YELLOW}" >&2
 }
 
 # ------------------------------------------------------------------------------
 # Set font output color background to blue.
 # ------------------------------------------------------------------------------
 function bashio::color.bg.blue() {
-    echo -n -e "${__BASHIO_COLORS_BG_BLUE}"
+    printf "${__BASHIO_COLORS_BG_BLUE}" >&2
 }
 
 # ------------------------------------------------------------------------------
 # Set font output color background to magenta.
 # ------------------------------------------------------------------------------
 function bashio::color.bg.magenta() {
-    echo -n -e "${__BASHIO_COLORS_BG_MAGENTA}"
+    printf "${__BASHIO_COLORS_BG_MAGENTA}" >&2
 }
 
 # ------------------------------------------------------------------------------
 # Set font output color background to cyan.
 # ------------------------------------------------------------------------------
 function bashio::color.bg.cyan() {
-    echo -n -e "${__BASHIO_COLORS_BG_CYAN}"
+    printf "${__BASHIO_COLORS_BG_CYAN}" >&2
 }
 
 # ------------------------------------------------------------------------------
 # Set font output color background to white.
 # ------------------------------------------------------------------------------
 function bashio::color.bg.white() {
-    echo -n -e "${__BASHIO_COLORS_BG_WHITE}"
+    printf "${__BASHIO_COLORS_BG_WHITE}" >&2
 }
