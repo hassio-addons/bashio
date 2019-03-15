@@ -31,7 +31,7 @@ function bashio::log.log() {
     output="${output//\{MESSAGE\}/${message}}"
     output="${output//\{LEVEL\}/${__BASHIO_LOG_LEVELS[$level]}}"
 
-    echo "${output}"
+    echo "${output}" >&2
 
     return "${__BASHIO_EXIT_OK}"
 }
@@ -66,9 +66,9 @@ function bashio::log.debug() {
 # ------------------------------------------------------------------------------
 function bashio::log.info() {
     local message=$*
-    bashio::color.blue
+    bashio::color.cyan >&2
     bashio::log.log "${__BASHIO_LOG_LEVEL_INFO}" "${message}"
-    bashio::color.reset
+    bashio::color.reset >&2
 }
 
 # ------------------------------------------------------------------------------
@@ -79,9 +79,9 @@ function bashio::log.info() {
 # ------------------------------------------------------------------------------
 function bashio::log.notice() {
     local message=$*
-    bashio::color.cyan
+    bashio::color.blue >&2
     bashio::log.log "${__BASHIO_LOG_LEVEL_NOTICE}" "${message}"
-    bashio::color.reset
+    bashio::color.reset >&2
 }
 
 # ------------------------------------------------------------------------------
@@ -92,9 +92,9 @@ function bashio::log.notice() {
 # ------------------------------------------------------------------------------
 function bashio::log.warning() {
     local message=$*
-    bashio::color.yellow
+    bashio::color.yellow >&2
     bashio::log.log "${__BASHIO_LOG_LEVEL_WARNING}" "${message}"
-    bashio::color.reset
+    bashio::color.reset >&2
 }
 
 # ------------------------------------------------------------------------------
@@ -105,9 +105,9 @@ function bashio::log.warning() {
 # ------------------------------------------------------------------------------
 function bashio::log.error() {
     local message=$*
-    bashio::color.magenta
+    bashio::color.magenta >&2
     bashio::log.log "${__BASHIO_LOG_LEVEL_ERROR}" "${message}"
-    bashio::color.reset
+    bashio::color.reset >&2
 }
 
 # ------------------------------------------------------------------------------
@@ -118,7 +118,7 @@ function bashio::log.error() {
 # ------------------------------------------------------------------------------
 function bashio::log.fatal() {
     local message=$*
-    bashio::color.red
+    bashio::color.red >&2
     bashio::log.log "${__BASHIO_LOG_LEVEL_FATAL}" "${message}"
-    bashio::color.reset
+    bashio::color.reset >&2
 }
