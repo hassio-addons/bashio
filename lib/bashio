@@ -18,7 +18,7 @@ __BASHIO_BIN=$(readlink -f "${BASH_SOURCE[0]}")
 __BASHIO_LIB_DIR=$(dirname "${__BASHIO_BIN}")
 
 # Include Bashio library
-# shellcheck source=bashio.sh
+# shellcheck source=lib/bashio.sh
 source "${__BASHIO_LIB_DIR}/bashio.sh"
 
 # Execute source
