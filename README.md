@@ -1,4 +1,4 @@
- # Community Hass.io Add-ons: Bashio
+# Community Hass.io Add-ons: Bashio
 
 [![GitHub Release][releases-shield]][releases]
 ![Project Stage][project-stage-shield]
@@ -34,19 +34,65 @@ instead of other things.
 
 ## Installation
 
-Lorem ipsum: Under construction.
+The library is installed in the Community Hass.io Add-ons base images.
+
+Currently available base images:
+
+- [Community Hassio Add-ons Alpine Base Image][base-alpine]
+- [Community Hassio Add-ons Ubuntu Base Image][base-ubuntu]
+
+Using those images as the base for your Hass.io add-on, will provide this
+function library out of the box. Our base images are updated frequently and
+provides the minimal needed base image for a great add-on.
+
+If you want to add Bashio to your own images, please take a look at the
+Dockerfile of the above base images to see how they are added at build time.
 
 ## Configuration
 
-Lorem ipsum: Under construction
+Configuring an Bash script to use the Bashio library is fairly easy. Simply
+replace the shebang of your script file, from `bash` to `bashio`.
+
+Before example:
+
+```bash
+#!/usr/bin/env bash
+set -e
+
+CONFIG_PATH=/data/options.json
+
+USERNAME=$(jq --raw-output '.username // empty' $CONFIG_PATH)
+
+echo "${USERNAME}"
+```
+
+After example with Bashio:
+
+```bash
+#!/usr/bin/env bashio
+
+USERNAME=$(bashio::config 'username')
+
+bashio::log.info "${USERNAME}"
+```
 
 ## Functions
 
-Lorem ipsum: Under construction
+Bashio has more then 250+ functions available: communicating with
+the Hass.io API, Have I Been Pwned, file system, logging, configuration handling
+and a lot more!
+
+The best way to get around, would be by looking at the different modules
+available in the [`lib`](lib) folder. Each module has its own file, and each
+function has been documented inside the code base.
+
+Further more, Bashio is used by the
+[Community Hass.io Add-ons project][repository], those add-ons will be a great
+resource of practical examples.
 
 ## Known issues and limitations
 
-Lorem ipsum: Under construction
+- Some parts of the Hass.io API are not implemented yet.
 
 ## Changelog & Releases
 
@@ -82,10 +128,6 @@ We have set up a separate document containing our
 
 Thank you for being involved! :heart_eyes:
 
-## Hassio add-ons using this library
-
-Bashio is still in development, no add-ons use this at this moment.
-
 ## Authors & contributors
 
 The original setup of this repository is by [Franck Nijhof][frenck].
@@ -117,6 +159,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+[base-alpine]: https://github.com/hassio-addons/addon-base
+[base-ubuntu]: https://github.com/hassio-addons/addon-ubuntu-base
 [buymeacoffee-shield]: https://www.buymeacoffee.com/assets/img/guidelines/download-assets-sm-2.svg
 [buymeacoffee]: https://www.buymeacoffee.com/frenck
 [commits-shield]: https://img.shields.io/github/commit-activity/y/hassio-addons/bashio.svg
