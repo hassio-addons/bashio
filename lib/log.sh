@@ -14,7 +14,7 @@
 #   $1 Message to display
 # ------------------------------------------------------------------------------
 bashio::log() {
-    local message=${1}
+    local message=$*
     echo -e "${message}" >&2
     return "${__BASHIO_EXIT_OK}"
 }
@@ -26,7 +26,7 @@ bashio::log() {
 #   $1 Message to display
 # ------------------------------------------------------------------------------
 bashio::log.red() {
-    local message=${1}
+    local message=$*
     echo -e "${__BASHIO_COLORS_RED}${message}${__BASHIO_COLORS_RESET}" >&2
     return "${__BASHIO_EXIT_OK}"
 }
@@ -38,7 +38,7 @@ bashio::log.red() {
 #   $1 Message to display
 # ------------------------------------------------------------------------------
 bashio::log.green() {
-    local message=${1}
+    local message=$*
     echo -e "${__BASHIO_COLORS_GREEN}${message}${__BASHIO_COLORS_RESET}" >&2
     return "${__BASHIO_EXIT_OK}"
 }
@@ -50,7 +50,7 @@ bashio::log.green() {
 #   $1 Message to display
 # ------------------------------------------------------------------------------
 bashio::log.yellow() {
-    local message=${1}
+    local message=$*
     echo -e "${__BASHIO_COLORS_YELLOW}${message}${__BASHIO_COLORS_RESET}" >&2
     return "${__BASHIO_EXIT_OK}"
 }
@@ -62,7 +62,7 @@ bashio::log.yellow() {
 #   $1 Message to display
 # ------------------------------------------------------------------------------
 bashio::log.blue() {
-    local message=${1}
+    local message=$*
     echo -e "${__BASHIO_COLORS_BLUE}${message}${__BASHIO_COLORS_RESET}" >&2
     return "${__BASHIO_EXIT_OK}"
 }
@@ -74,7 +74,7 @@ bashio::log.blue() {
 #   $1 Message to display
 # ------------------------------------------------------------------------------
 bashio::log.magenta() {
-    local message=${1}
+    local message=$*
     echo -e "${__BASHIO_COLORS_MAGENTA}${message}${__BASHIO_COLORS_RESET}" >&2
     return "${__BASHIO_EXIT_OK}"
 }
@@ -86,7 +86,7 @@ bashio::log.magenta() {
 #   $1 Message to display
 # ------------------------------------------------------------------------------
 bashio::log.cyan() {
-    local message=${1}
+    local message=$*
     echo -e "${__BASHIO_COLORS_CYAN}${message}${__BASHIO_COLORS_RESET}" >&2
     return "${__BASHIO_EXIT_OK}"
 }
