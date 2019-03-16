@@ -7,14 +7,6 @@ variables:
 stages:
   - preflight
 
-# Generic DIND template
-.dind: &dind
-  before_script:
-    - docker info
-  services:
-    - name: docker:dind
-      command: ["--experimental"]
-
 # Generic preflight template
 .preflight: &preflight
   stage: preflight
@@ -24,9 +16,7 @@ stages:
 # Preflight jobs
 shellcheck:
   <<: *preflight
-  image:
-    name: koalaman/shellcheck-alpine:stable
-    entrypoint: [""]
+  image: pipelinecomponents/shellcheck:latest
   before_script:
     - shellcheck --version
     - apk --no-cache add grep
@@ -35,8 +25,8 @@ shellcheck:
         xargs -0 sed -i 's:#!/usr/bin/with-contenv bash:#!/bin/bash:g'
   script:
     - |
-      for file in $(grep -IRl "#\!\(/usr/bin/env \|/bin/\)" --exclude-dir ".git" "${ADDON_TARGET}"); do
-        if ! shellcheck $file; then
+      for file in $(grep -IRl "#\!\(/usr/bin/env \|/bin/\)" --exclude-dir ".git" "lib"); do
+        if ! shellcheck --external-sources $file; then
           export FAILED=1
         else
           echo "$file OK"
@@ -48,7 +38,7 @@ shellcheck:
 
 yamllint:
   <<: *preflight
-  image: sdesbure/yamllint
+  image: pipelinecomponents/yamllint:latest
   before_script:
     - yamllint --version
   script:
@@ -56,7 +46,7 @@ yamllint:
 
 jsonlint:
   <<: *preflight
-  image: sahsu/docker-jsonlint
+  image: pipelinecomponents/jsonlint:latest
   before_script:
     - jsonlint --version || true
   script:
@@ -74,11 +64,8 @@ jsonlint:
 
 markdownlint:
   <<: *preflight
-  image:
-    name: ruby:alpine
-    entrypoint: [""]
+  image: pipelinecomponents/markdownlint:latest
   before_script:
-    - gem install mdl
     - mdl --version
   script:
     - mdl --style all --warnings .
