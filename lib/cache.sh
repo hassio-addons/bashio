@@ -40,7 +40,7 @@ function bashio::cache.get() {
         return "${__BASHIO_EXIT_NOK}"
     fi
 
-    printf "%s" "$(<${__BASHIO_CACHE_DIR}/"${key}".cache)"
+    printf "%s" "$(<"${__BASHIO_CACHE_DIR}/${key}.cache")"
     return "${__BASHIO_EXIT_OK}"
 }
 

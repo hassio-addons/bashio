@@ -219,7 +219,7 @@ function bashio::homeassistant.watchdog() {
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
 
-    if bashio::var.has_value "${wait}"; then
+    if bashio::var.has_value "${watchdog}"; then
         watchdog=$(bashio::var.json watchdog "^${watchdog}")
         bashio::api.hassio POST /homeassistant/options "${watchdog}"
         bashio::cache.flush_all

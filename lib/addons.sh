@@ -951,7 +951,7 @@ function bashio::addon.blk_write() {
 function bashio::require.protected() {
     local protected
 
-    protected=$(bashio::addon.protected)
+    protected=$(bashio::addon.protected 'self')
     if bashio::var.true "${protected}"; then
         return "${__BASHIO_EXIT_OK}"
     fi
@@ -978,7 +978,7 @@ function bashio::require.protected() {
 function bashio::require.unprotected() {
     local protected
 
-    protected=$(bashio::addon.protected)
+    protected=$(bashio::addon.protected 'self')
     if bashio::var.false "${protected}"; then
         return "${__BASHIO_EXIT_OK}"
     fi

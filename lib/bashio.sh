@@ -21,7 +21,7 @@ readonly BASHIO_VERSION="0.1.0"
 # Stores the location of this library
 readonly __BASHIO_LIB_DIR=$(dirname "${BASH_SOURCE[0]}")
 
-# shellcheck source=const.sh
+# shellcheck source=lib/const.sh
 source "${__BASHIO_LIB_DIR}/const.sh"
 
 # Defaults
@@ -38,47 +38,47 @@ declare __BASHIO_HA_SECRETS=${HA_SECRETS:-${__BASHIO_DEFAULT_SECRETS}}
 # ==============================================================================
 # MODULES
 # ==============================================================================
-# shellcheck source=color.sh
+# shellcheck source=lib/color.sh
 source "${__BASHIO_LIB_DIR}/color.sh"
-# shellcheck source=log.sh
+# shellcheck source=lib/log.sh
 source "${__BASHIO_LIB_DIR}/log.sh"
 
-# shellcheck source=fs.sh
+# shellcheck source=lib/fs.sh
 source "${__BASHIO_LIB_DIR}/fs.sh"
-# shellcheck source=cache.sh
+# shellcheck source=lib/cache.sh
 source "${__BASHIO_LIB_DIR}/cache.sh"
 
-# shellcheck source=addons.sh
+# shellcheck source=lib/addons.sh
 source "${__BASHIO_LIB_DIR}/addons.sh"
-# shellcheck source=api.sh
+# shellcheck source=lib/api.sh
 source "${__BASHIO_LIB_DIR}/api.sh"
-# shellcheck source=config.sh
+# shellcheck source=lib/config.sh
 source "${__BASHIO_LIB_DIR}/config.sh"
-# shellcheck source=debug.sh
+# shellcheck source=lib/debug.sh
 source "${__BASHIO_LIB_DIR}/debug.sh"
-# shellcheck source=exit.sh
+# shellcheck source=lib/exit.sh
 source "${__BASHIO_LIB_DIR}/exit.sh"
-# shellcheck source=hardware.sh
+# shellcheck source=lib/hardware.sh
 source "${__BASHIO_LIB_DIR}/hardware.sh"
-# shellcheck source=hassos.sh
+# shellcheck source=lib/hassos.sh
 source "${__BASHIO_LIB_DIR}/hassos.sh"
-# shellcheck source=homeassistant.sh
+# shellcheck source=lib/homeassistant.sh
 source "${__BASHIO_LIB_DIR}/homeassistant.sh"
-# shellcheck source=host.sh
+# shellcheck source=lib/host.sh
 source "${__BASHIO_LIB_DIR}/host.sh"
-# shellcheck source=info.sh
+# shellcheck source=lib/info.sh
 source "${__BASHIO_LIB_DIR}/info.sh"
-# shellcheck source=jq.sh
+# shellcheck source=lib/jq.sh
 source "${__BASHIO_LIB_DIR}/jq.sh"
-# shellcheck source=pwned.sh
+# shellcheck source=lib/pwned.sh
 source "${__BASHIO_LIB_DIR}/pwned.sh"
-# shellcheck source=repositories.sh
+# shellcheck source=lib/repositories.sh
 source "${__BASHIO_LIB_DIR}/repositories.sh"
-# shellcheck source=secrets.sh
+# shellcheck source=lib/secrets.sh
 source "${__BASHIO_LIB_DIR}/secrets.sh"
-# shellcheck source=string.sh
+# shellcheck source=lib/string.sh
 source "${__BASHIO_LIB_DIR}/string.sh"
-# shellcheck source=supervisor.sh
+# shellcheck source=lib/supervisor.sh
 source "${__BASHIO_LIB_DIR}/supervisor.sh"
-# shellcheck source=var.sh
+# shellcheck source=lib/var.sh
 source "${__BASHIO_LIB_DIR}/var.sh"
