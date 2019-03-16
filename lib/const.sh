@@ -10,7 +10,7 @@
 # Defaults
 readonly __BASHIO_DEFAULT_LOG_LEVEL=5 # Defaults to INFO
 readonly __BASHIO_DEFAULT_LOG_FORMAT="[{TIMESTAMP}] {LEVEL}: {MESSAGE}"
-readonly __BASHIO_DEFAULT_LOG_TIMESTAMP="%T%z"
+readonly __BASHIO_DEFAULT_LOG_TIMESTAMP="%T"
 readonly __BASHIO_DEFAULT_HASSIO_API="http://hassio"
 readonly __BASHIO_DEFAULT_HASSIO_TOKEN=""
 readonly __BASHIO_DEFAULT_ADDON_CONFIG="/data/options.json"
