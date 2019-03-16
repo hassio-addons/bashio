@@ -528,8 +528,8 @@ function bashio::config.suggest.safe_password() {
 # ------------------------------------------------------------------------------
 function bashio::config.require.ssl() {
     local key=${1:-"ssl"}
-    local certfile=${1:-"certfile"}
-    local keyfile=${2:-"keyfile"}
+    local certfile=${2:-"certfile"}
+    local keyfile=${3:-"keyfile"}
 
     if ! bashio::config.true "${key}"; then
         return "${__BASHIO_EXIT_OK}"
