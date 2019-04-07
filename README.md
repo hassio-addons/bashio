@@ -34,12 +34,18 @@ instead of other things.
 
 ## Installation
 
-The library is installed in the Community Hass.io Add-ons base images.
+The library is installed in the Community Hass.io Add-ons base images and
+the official Hassio base images by Home Assistant.
 
 Currently available base images:
 
 - [Community Hassio Add-ons Alpine Base Image][base-alpine]
+- [Community Hassio Add-ons Alpine Python Base Image][base-alpine-python]
 - [Community Hassio Add-ons Ubuntu Base Image][base-ubuntu]
+- [Official Hassio Alpine Base Image][hassio-base]
+- [Official Hassio Alpine Python Base Image][hassio-base]
+- [Official Hassio Ubuntu Base Image][hassio-base]
+- [Official Hassio Raspbian Base Image][hassio-base]
 
 Using those images as the base for your Hass.io add-on, will provide this
 function library out of the box. Our base images are updated frequently and
@@ -159,6 +165,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+[base-alpine-pyhton]: https://github.com/hassio-addons/addon-base-python
 [base-alpine]: https://github.com/hassio-addons/addon-base
 [base-ubuntu]: https://github.com/hassio-addons/addon-ubuntu-base
 [buymeacoffee-shield]: https://www.buymeacoffee.com/assets/img/guidelines/download-assets-sm-2.svg
@@ -171,6 +178,7 @@ SOFTWARE.
 [frenck]: https://github.com/frenck
 [gitlabci-shield]: https://gitlab.com/hassio-addons/bashio/badges/master/pipeline.svg
 [gitlabci]: https://gitlab.com/hassio-addons/bashio/pipelines
+[hassio-base]: https://github.com/home-assistant/hassio-base
 [issue]: https://github.com/hassio-addons/bashio/issues
 [keepchangelog]: http://keepachangelog.com/en/1.0.0/
 [license-shield]: https://img.shields.io/github/license/hassio-addons/bashio.svg
