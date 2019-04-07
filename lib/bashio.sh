@@ -70,6 +70,8 @@ source "${__BASHIO_LIB_DIR}/host.sh"
 source "${__BASHIO_LIB_DIR}/info.sh"
 # shellcheck source=lib/jq.sh
 source "${__BASHIO_LIB_DIR}/jq.sh"
+# shellcheck source=lib/net.sh
+source "${__BASHIO_LIB_DIR}/net.sh"
 # shellcheck source=lib/pwned.sh
 source "${__BASHIO_LIB_DIR}/pwned.sh"
 # shellcheck source=lib/repositories.sh
