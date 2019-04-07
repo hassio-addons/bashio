@@ -165,7 +165,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-[base-alpine-pyhton]: https://github.com/hassio-addons/addon-base-python
+[base-alpine-python]: https://github.com/hassio-addons/addon-base-python
 [base-alpine]: https://github.com/hassio-addons/addon-base
 [base-ubuntu]: https://github.com/hassio-addons/addon-ubuntu-base
 [buymeacoffee-shield]: https://www.buymeacoffee.com/assets/img/guidelines/download-assets-sm-2.svg
