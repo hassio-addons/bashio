@@ -804,6 +804,75 @@ function bashio::addon.audio_output() {
 }
 
 # ------------------------------------------------------------------------------
+# Returns IP address assigned on the hassio network for an add-on.
+#
+# Arguments:
+#   $1 Add-on slug
+# ------------------------------------------------------------------------------
+function bashio::addon.ip_address() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::addons "${slug}" "addons.${slug}.ip_address" '.ip_address // empty'
+}
+
+# ------------------------------------------------------------------------------
+# Returns if the add-on support ingress mode.
+#
+# Arguments:
+#   $1 Add-on slug
+# ------------------------------------------------------------------------------
+function bashio::addon.ingress() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::addons "${slug}" "addons.${slug}.ingress" '.ingress // false'
+}
+
+# ------------------------------------------------------------------------------
+# Returns the ingress entry point of the add-on.
+#
+# Arguments:
+#   $1 Add-on slug
+# ------------------------------------------------------------------------------
+function bashio::addon.ingress_entry() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::addons \
+        "${slug}" \
+        "addons.${slug}.ingress_entry" \
+        '.ingress_entry // empty'
+}
+
+# ------------------------------------------------------------------------------
+# Returns the ingress url of the add-on.
+#
+# Arguments:
+#   $1 Add-on slug
+# ------------------------------------------------------------------------------
+function bashio::addon.ingress_url() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::addons \
+        "${slug}" \
+        "addons.${slug}.ingress_url" \
+        '.ingress_url // empty'
+}
+
+# ------------------------------------------------------------------------------
+# Returns the ingress port of the add-on.
+#
+# Arguments:
+#   $1 Add-on slug
+# ------------------------------------------------------------------------------
+function bashio::addon.ingress_port() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::addons \
+        "${slug}" \
+        "addons.${slug}.ingress_port" \
+        '.ingress_port // empty'
+}
+
+# ------------------------------------------------------------------------------
 # List all available stats about an add-on.
 #
 # Arguments:
