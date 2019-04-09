@@ -449,6 +449,68 @@ function bashio::addon.network() {
 }
 
 # ------------------------------------------------------------------------------
+# Returns a list of ports and their descriptions for this add-on.
+#
+# Arguments:
+#   $1 Add-on slug (optional, default: self)
+# ------------------------------------------------------------------------------
+function bashio::addon.network_description() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::addons "${slug}" \
+        "addons.${slug}.network_description" \
+        '.network_description'
+}
+
+# ------------------------------------------------------------------------------
+# Returns a user configured port number for a original port number.
+#
+# Arguments:
+#   $1 Original port number
+#   $2 Add-on slug (optional, default: self)
+# ------------------------------------------------------------------------------
+function bashio::addon.port() {
+    local port=${1:-}
+    local slug=${2:-'self'}
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    # Default to TCP if not specified.
+    if [[ "${port}" != *"/"* ]]; then
+        port="${port}/tcp"
+    fi
+
+    bashio::addons \
+        "${slug}" \
+        "addons.${slug}.network.${port//\//-}" \
+        ".network[\"${port}\"]"
+}
+
+# ------------------------------------------------------------------------------
+# Returns a description for port number for this add-on.
+#
+# Arguments:
+#   $1 Original port number
+#   $2 Add-on slug (optional, default: self)
+# ------------------------------------------------------------------------------
+function bashio::addon.port_description() {
+    local port=${1:-}
+    local slug=${2:-'self'}
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    # Default to TCP if not specified.
+    if [[ "${port}" != *"/"* ]]; then
+        port="${port}/tcp"
+    fi
+
+    bashio::addons \
+        "${slug}" \
+        "addons.${slug}.network_description.${port//\//-}" \
+        ".network_description[\"${port}\"]"
+}
+
+# ------------------------------------------------------------------------------
 # Returns whether or not this add-on runs on the host network.
 #
 # Arguments:
