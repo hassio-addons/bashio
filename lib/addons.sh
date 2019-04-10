@@ -486,7 +486,7 @@ function bashio::addon.port() {
     bashio::addons \
         "${slug}" \
         "addons.${slug}.network.${port//\//-}" \
-        ".network[\"${port}\"]"
+        ".network[\"${port}\"] // empty"
 }
 
 # ------------------------------------------------------------------------------
@@ -510,7 +510,7 @@ function bashio::addon.port_description() {
     bashio::addons \
         "${slug}" \
         "addons.${slug}.network_description.${port//\//-}" \
-        ".network_description[\"${port}\"]"
+        ".network_description[\"${port}\"] // empty"
 }
 
 # ------------------------------------------------------------------------------
