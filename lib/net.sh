@@ -20,12 +20,10 @@ bashio::net.wait_for() {
     local host=${2:-'localhost'}
     local timeout=${3:-60}
     local timeout_argument=""
-    local timeout_path
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
-    timeout_path=$(command -v timeout)
-    if [[ "$(realpath "${timeout_path}")" =~ "busybox" ]]; then
+    if timeout -t 1337 true > /dev/null 2>&1; then
         timeout_argument="-t"
     fi
 
