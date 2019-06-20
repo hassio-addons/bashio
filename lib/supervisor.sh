@@ -164,7 +164,7 @@ function bashio::supervisor.timezone() {
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
 
-    if bashio::var.has_value "${channel}"; then
+    if bashio::var.has_value "${timezone}"; then
         channel=$(bashio::var.json timezone "${timezone}")
         bashio::api.hassio POST /supervisor/options "${timezone}"
         bashio::cache.flush_all
