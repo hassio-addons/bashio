@@ -108,3 +108,11 @@ function bashio::info.supported_arch() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::info 'hassio.info.supported_arch' '.supported_arch[]'
 }
+
+# ------------------------------------------------------------------------------
+# Returns logging level of Hass.io universum.
+# ------------------------------------------------------------------------------
+function bashio::info.logging() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::info 'hassio.info.logging' '.logging'
+}
