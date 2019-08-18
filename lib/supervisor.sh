@@ -272,6 +272,14 @@ function bashio::supervisor.memory_limit() {
 }
 
 # ------------------------------------------------------------------------------
+# Returns memory usage in percent from the Supervisor.
+# ------------------------------------------------------------------------------
+function bashio::supervisor.memory_percent() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::supervisor.stats 'supervisor.stats.memory_percent' '.memory_percent'
+}
+
+# ------------------------------------------------------------------------------
 # Returns outgoing network usage from the Supervisor.
 # ------------------------------------------------------------------------------
 function bashio::supervisor.network_tx() {

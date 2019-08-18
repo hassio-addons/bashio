@@ -1023,6 +1023,21 @@ function bashio::addon.memory_limit() {
 }
 
 # ------------------------------------------------------------------------------
+# Returns memory usage in percentage for the specified add-on.
+#
+# Arguments:
+#   $1 Add-on slug (optional, default: self)
+# ------------------------------------------------------------------------------
+function bashio::addon.memory_percent() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::addons.stats \
+        "${slug}" \
+        "addons.${slug}.stats.memory_percent" \
+        '.memory_percent'
+}
+
+# ------------------------------------------------------------------------------
 # Returns outgoing network usage from the specified add-on.
 #
 # Arguments:

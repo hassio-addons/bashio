@@ -279,7 +279,9 @@ function bashio::homeassistant.cpu_percent() {
 # ------------------------------------------------------------------------------
 function bashio::homeassistant.memory_usage() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::homeassistant.stats 'homeassistant.stats.memory_usage' '.memory_usage'
+    bashio::homeassistant.stats \
+        'homeassistant.stats.memory_usage' \
+        '.memory_usage'
 }
 
 # ------------------------------------------------------------------------------
@@ -287,7 +289,19 @@ function bashio::homeassistant.memory_usage() {
 # ------------------------------------------------------------------------------
 function bashio::homeassistant.memory_limit() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::homeassistant.stats 'homeassistant.stats.memory_limit' '.memory_limit'
+    bashio::homeassistant.stats \
+        'homeassistant.stats.memory_limit' \
+        '.memory_limit'
+}
+
+# ------------------------------------------------------------------------------
+# Returns memory usage in percent from Home Assistant.
+# ------------------------------------------------------------------------------
+function bashio::homeassistant.memory_percent() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::homeassistant.stats \
+        'homeassistant.stats.memory_percent' \
+        '.memory_percent'
 }
 
 # ------------------------------------------------------------------------------
