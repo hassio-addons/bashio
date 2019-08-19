@@ -206,3 +206,48 @@ function bashio::log.fatal() {
         "${__BASHIO_LOG_LEVEL_FATAL}" \
         "${__BASHIO_COLORS_RED}${message}${__BASHIO_COLORS_RESET}"
 }
+
+# ------------------------------------------------------------------------------
+# Changes the log level of Bashio on the fly.
+#
+# Arguments:
+#   $1 Log level
+# ------------------------------------------------------------------------------
+function bashio::log.level() {
+    local level=${1}
+
+    # Find the matching log level
+    case "$(bashio::string.lower "${level}")" in
+        all)
+            log_level="${__BASHIO_LOG_LEVEL_ALL}"
+            ;;
+        trace)
+            log_level="${__BASHIO_LOG_LEVEL_TRACE}"
+            ;;
+        debug)
+            log_level="${__BASHIO_LOG_LEVEL_DEBUG}"
+            ;;
+        info)
+            log_level="${__BASHIO_LOG_LEVEL_INFO}"
+            ;;
+        notice)
+            log_level="${__BASHIO_LOG_LEVEL_NOTICE}"
+            ;;
+        warning)
+            log_level="${__BASHIO_LOG_LEVEL_WARNING}"
+            ;;
+        error)
+            log_level="${__BASHIO_LOG_LEVEL_ERROR}"
+            ;;
+        fatal)
+            log_level="${__BASHIO_LOG_LEVEL_FATAL}"
+            ;;
+        off)
+            log_level="${__BASHIO_LOG_LEVEL_OFF}"
+            ;;
+        *)
+            bashio::exit.nok "Unknown log_level: ${log_level}"
+    esac
+
+    export __BASHIO_LOG_LEVEL="${log_level}"
+}
