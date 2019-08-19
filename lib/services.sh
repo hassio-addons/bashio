@@ -88,7 +88,7 @@ function bashio::services.publish() {
 # Arguments:
 #   $1 Service name
 # ------------------------------------------------------------------------------
-function bashio::discovery.delete() {
+function bashio::services.delete() {
     local service=${1}
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
