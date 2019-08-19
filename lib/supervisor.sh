@@ -174,6 +174,34 @@ function bashio::supervisor.timezone() {
 }
 
 # ------------------------------------------------------------------------------
+# Returns the current logging level of the Supervisor.
+#
+# Arguments:
+#   $1 Logging level to set (optional).
+# ------------------------------------------------------------------------------
+function bashio::supervisor.logging() {
+    local logging=${1:-}
+
+    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+
+    if bashio::var.has_value "${logging}"; then
+        logging=$(bashio::var.json logging "${logging}")
+        bashio::api.hassio POST /supervisor/options "${logging}"
+        bashio::cache.flush_all
+    else
+        bashio::supervisor 'supervisor.info.logging' '.logging'
+    fi
+}
+
+# ------------------------------------------------------------------------------
+# Returns the ip address of the supervisor.
+# ------------------------------------------------------------------------------
+function bashio::supervisor.ip_address() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::supervisor 'supervisor.info.ip_address' '.ip_address'
+}
+
+# ------------------------------------------------------------------------------
 # Returns the time to wait after boot in seconds.
 #
 # Arguments:
@@ -190,6 +218,54 @@ function bashio::supervisor.wait_boot() {
         bashio::cache.flush_all
     else
         bashio::supervisor 'supervisor.info.wait_boot' '.wait_boot'
+    fi
+}
+
+# ------------------------------------------------------------------------------
+# Returns if debug is enabled on the supervisor
+#
+# Arguments:
+#   $1 Set debug (optional).
+# ------------------------------------------------------------------------------
+function bashio::supervisor.debug() {
+    local debug=${1:-}
+
+    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+
+    if bashio::var.has_value "${debug}"; then
+        if bashio::var.true "${debug}"; then
+            debug=$(bashio::var.json debug "^true")
+        else
+            debug=$(bashio::var.json debug "^false")
+        fi
+        bashio::api.hassio POST /supervisor/options "${debug}"
+        bashio::cache.flush_all
+    else
+        bashio::supervisor 'supervisor.info.debug' '.debug'
+    fi
+}
+
+# ------------------------------------------------------------------------------
+# Returns if debug block is enabled on the supervisor
+#
+# Arguments:
+#   $1 Set debug block (optional).
+# ------------------------------------------------------------------------------
+function bashio::supervisor.debug_block() {
+    local debug=${1:-}
+
+    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+
+    if bashio::var.has_value "${debug}"; then
+        if bashio::var.true "${debug}"; then
+            debug=$(bashio::var.json debug_block "^true")
+        else
+            debug=$(bashio::var.json debug_block "^false")
+        fi
+        bashio::api.hassio POST /supervisor/options "${debug}"
+        bashio::cache.flush_all
+    else
+        bashio::supervisor 'supervisor.info.debug_block' '.debug_block'
     fi
 }
 
