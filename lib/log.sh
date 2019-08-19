@@ -239,7 +239,7 @@ function bashio::log.level() {
         error)
             log_level="${__BASHIO_LOG_LEVEL_ERROR}"
             ;;
-        fatal)
+        fatal|critical)
             log_level="${__BASHIO_LOG_LEVEL_FATAL}"
             ;;
         off)
