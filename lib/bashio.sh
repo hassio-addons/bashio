@@ -58,6 +58,8 @@ source "${__BASHIO_LIB_DIR}/config.sh"
 source "${__BASHIO_LIB_DIR}/debug.sh"
 # shellcheck source=lib/exit.sh
 source "${__BASHIO_LIB_DIR}/exit.sh"
+# shellcheck source=lib/discovery.sh
+source "${__BASHIO_LIB_DIR}/discovery.sh"
 # shellcheck source=lib/dns.sh
 source "${__BASHIO_LIB_DIR}/dns.sh"
 # shellcheck source=lib/hardware.sh
