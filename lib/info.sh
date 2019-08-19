@@ -116,3 +116,11 @@ function bashio::info.logging() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::info 'hassio.info.logging' '.logging'
 }
+
+# ------------------------------------------------------------------------------
+# Returns timezone of the system.
+# ------------------------------------------------------------------------------
+function bashio::info.timezone() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::info 'hassio.info.timezone' '.timezone'
+}
