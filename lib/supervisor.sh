@@ -241,7 +241,7 @@ function bashio::supervisor.debug() {
         bashio::api.hassio POST /supervisor/options "${debug}"
         bashio::cache.flush_all
     else
-        bashio::supervisor 'supervisor.info.debug' '.debug'
+        bashio::supervisor 'supervisor.info.debug' '.debug // false'
     fi
 }
 
@@ -265,7 +265,7 @@ function bashio::supervisor.debug_block() {
         bashio::api.hassio POST /supervisor/options "${debug}"
         bashio::cache.flush_all
     else
-        bashio::supervisor 'supervisor.info.debug_block' '.debug_block'
+        bashio::supervisor 'supervisor.info.debug_block' '.debug_block // false'
     fi
 }
 
