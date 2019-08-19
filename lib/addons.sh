@@ -210,6 +210,30 @@ function bashio::addon.name() {
 }
 
 # ------------------------------------------------------------------------------
+# Returns the hostname of an add-on.
+#
+# Arguments:
+#   $1 Add-on slug (optional, default: self)
+# ------------------------------------------------------------------------------
+function bashio::addon.hostname() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::addons "${slug}" "addons.${slug}.hostname" '.hostname'
+}
+
+# ------------------------------------------------------------------------------
+# Returns a list of DNS names for the add-on.
+#
+# Arguments:
+#   $1 Add-on slug (optional, default: self)
+# ------------------------------------------------------------------------------
+function bashio::addon.dns() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::addons "${slug}" "addons.${slug}.dns" '.dns // empty | .[]'
+}
+
+# ------------------------------------------------------------------------------
 # Returns the description of an add-on.
 #
 # Arguments:
@@ -607,6 +631,18 @@ function bashio::addon.devices() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::addons "${slug}" "addons.${slug}.devices" '.devices // empty | .[]'
+}
+
+# ------------------------------------------------------------------------------
+# Returns if add-on provide his own udev support.
+#
+# Arguments:
+#   $1 Add-on slug (optional, default: self)
+# ------------------------------------------------------------------------------
+function bashio::addon.udev() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::addons "${slug}" "addons.${slug}.udev" '.udev // false'
 }
 
 # ------------------------------------------------------------------------------
