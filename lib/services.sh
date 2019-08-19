@@ -19,6 +19,7 @@ function bashio::services() {
     local key=${2:-}
     local cache_key="service.info.${service}"
     local config
+    local query
     local response
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
@@ -32,7 +33,31 @@ function bashio::services() {
 
     response="${config}"
     if bashio::var.has_value "${key}"; then
-        response=$(bashio::jq "${config}" ".${key}")
+
+        read -r -d '' query << QUERY
+            if (.${key} == null) then
+                null
+            elif (.${key} | type == "string") then
+                .${key} // empty
+            elif (.${key} | type == "boolean") then
+                .${key} // false
+            elif (.${key} | type == "array") then
+                if (.${key} == []) then
+                    empty
+                else
+                    .${key}[]
+                end
+            elif (.${key} | type == "object") then
+                if (.${key} == {}) then
+                    empty
+                else
+                    .${key}
+                end
+            else
+                .${key}
+            end
+QUERY
+        response=$(bashio::jq "${config}" "${query}")
     fi
 
     printf "%s" "${response}"
