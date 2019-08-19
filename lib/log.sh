@@ -214,10 +214,10 @@ function bashio::log.fatal() {
 #   $1 Log level
 # ------------------------------------------------------------------------------
 function bashio::log.level() {
-    local level=${1}
+    local log_level=${1}
 
     # Find the matching log level
-    case "$(bashio::string.lower "${level}")" in
+    case "$(bashio::string.lower "${log_level}")" in
         all)
             log_level="${__BASHIO_LOG_LEVEL_ALL}"
             ;;
