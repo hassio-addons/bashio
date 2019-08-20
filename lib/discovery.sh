@@ -27,7 +27,7 @@ function bashio::discovery() {
             config "^${config}" \
     )
 
-    bashio::api.hassio "POST" "/discovery" "${payload}"
+    bashio::api.hassio "POST" "/discovery" "${payload}" ".uuid"
     bashio::cache.flush_all
 }
 
