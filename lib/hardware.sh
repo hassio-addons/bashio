@@ -76,3 +76,11 @@ function bashio::hardware.gpio() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::hardware 'hardware.info.gpio' '.gpio[]'
 }
+
+# ------------------------------------------------------------------------------
+# Trigger udev device notifications from the host system.
+# ------------------------------------------------------------------------------
+function bashio::hardware.trigger() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::api.hassio POST /hardware/trigger
+}
