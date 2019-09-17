@@ -16,7 +16,6 @@ readonly __BASHIO_DEFAULT_HASSIO_TOKEN=""
 readonly __BASHIO_DEFAULT_ADDON_CONFIG="/data/options.json"
 readonly __BASHIO_DEFAULT_HIBP_ENDPOINT="https://api.pwnedpasswords.com/range"
 readonly __BASHIO_DEFAULT_CACHE_DIR="/dev/shm/bashio"
-readonly __BASHIO_DEFAULT_SECRETS="/config/secrets.yaml"
 
 # Exit codes
 readonly __BASHIO_EXIT_OK=0    # Successful termination
