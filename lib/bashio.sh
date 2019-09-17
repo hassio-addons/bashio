@@ -33,7 +33,6 @@ declare __BASHIO_LOG_FORMAT=${LOG_FORMAT:-${__BASHIO_DEFAULT_LOG_FORMAT}}
 declare __BASHIO_LOG_TIMESTAMP=${LOG_TIMESTAMP:-${__BASHIO_DEFAULT_LOG_TIMESTAMP}}
 declare __BASHIO_HIBP_ENDPOINT=${HIBP_ENDPOINT:-${__BASHIO_DEFAULT_HIBP_ENDPOINT}}
 declare __BASHIO_CACHE_DIR=${CACHE_DIR:-${__BASHIO_DEFAULT_CACHE_DIR}}
-declare __BASHIO_HA_SECRETS=${HA_SECRETS:-${__BASHIO_DEFAULT_SECRETS}}
 
 # ==============================================================================
 # MODULES
@@ -80,8 +79,6 @@ source "${__BASHIO_LIB_DIR}/net.sh"
 source "${__BASHIO_LIB_DIR}/pwned.sh"
 # shellcheck source=lib/repositories.sh
 source "${__BASHIO_LIB_DIR}/repositories.sh"
-# shellcheck source=lib/secrets.sh
-source "${__BASHIO_LIB_DIR}/secrets.sh"
 # shellcheck source=lib/services.sh
 source "${__BASHIO_LIB_DIR}/services.sh"
 # shellcheck source=lib/string.sh

@@ -46,10 +46,6 @@ QUERY
 
     result=$(bashio::jq "${__BASHIO_ADDON_CONFIG}" "${query}")
 
-    if [[ "${result}" == '!secret '* ]]; then
-        result=$(bashio::secret "${result}")
-    fi
-
     printf "%s" "${result}"
     return "${__BASHIO_EXIT_OK}"
 }
