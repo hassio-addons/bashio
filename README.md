@@ -145,7 +145,7 @@ check [the contributor's page][contributors].
 
 MIT License
 
-Copyright (c) 2019 Franck Nijhof
+Copyright (c) 2019-2020 Franck Nijhof
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -182,8 +182,7 @@ SOFTWARE.
 [issue]: https://github.com/hassio-addons/bashio/issues
 [keepchangelog]: http://keepachangelog.com/en/1.0.0/
 [license-shield]: https://img.shields.io/github/license/hassio-addons/bashio.svg
-[maintenance-shield]: https://img.shields.io/maintenance/yes/2019.svg
-[patreon-shield]: https://www.frenck.nl/images/patreon.png
+[maintenance-shield]: https://img.shields.io/maintenance/yes/2020.svg
 [patreon]: https://www.patreon.com/frenck
 [project-stage-shield]: https://img.shields.io/badge/project%20stage-experimental-yellow.svg
 [releases-shield]: https://img.shields.io/github/release/hassio-addons/bashio.svg
