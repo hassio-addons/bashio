@@ -10,9 +10,9 @@
 
 [![Discord][discord-shield]][discord]
 
-[![Buy me a coffee][buymeacoffee-shield]][buymeacoffee]
+[![Sponsor Frenck via GitHub Sponsors][github-sponsors-shield]][github-sponsors]
 
-[![Support my work on Patreon][patreon-shield]][patreon]
+[![Support Frenck on Patreon][patreon-shield]][patreon]
 
 ## About
 
@@ -168,14 +168,14 @@ SOFTWARE.
 [base-alpine-python]: https://github.com/hassio-addons/addon-base-python
 [base-alpine]: https://github.com/hassio-addons/addon-base
 [base-ubuntu]: https://github.com/hassio-addons/addon-ubuntu-base
-[buymeacoffee-shield]: https://www.buymeacoffee.com/assets/img/guidelines/download-assets-sm-2.svg
-[buymeacoffee]: https://www.buymeacoffee.com/frenck
 [commits-shield]: https://img.shields.io/github/commit-activity/y/hassio-addons/bashio.svg
 [commits]: https://github.com/hassio-addons/bashio/commits/master
 [contributors]: https://github.com/hassio-addons/bashio/graphs/contributors
 [discord-shield]: https://img.shields.io/discord/478094546522079232.svg
 [discord]: https://discord.me/hassioaddons
 [frenck]: https://github.com/frenck
+[github-sponsors-shield]: https://frenck.dev/wp-content/uploads/2019/12/github_sponsor.png
+[github-sponsors]: https://github.com/sponsors/frenck
 [gitlabci-shield]: https://gitlab.com/hassio-addons/bashio/badges/master/pipeline.svg
 [gitlabci]: https://gitlab.com/hassio-addons/bashio/pipelines
 [hassio-base]: https://github.com/home-assistant/hassio-base
@@ -183,6 +183,7 @@ SOFTWARE.
 [keepchangelog]: http://keepachangelog.com/en/1.0.0/
 [license-shield]: https://img.shields.io/github/license/hassio-addons/bashio.svg
 [maintenance-shield]: https://img.shields.io/maintenance/yes/2020.svg
+[patreon-shield]: https://frenck.dev/wp-content/uploads/2019/12/patreon.png
 [patreon]: https://www.patreon.com/frenck
 [project-stage-shield]: https://img.shields.io/badge/project%20stage-experimental-yellow.svg
 [releases-shield]: https://img.shields.io/github/release/hassio-addons/bashio.svg
