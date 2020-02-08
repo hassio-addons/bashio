@@ -17,12 +17,12 @@
 #   $3 In case of a POST method, this parameter is the JSON to POST (optional)
 #   $4 jq filter command (optional)
 # ------------------------------------------------------------------------------
-function bashio::api.hassio() {
+function bashio::api.supervisor() {
     local method=${1}
     local resource=${2}
     local raw=${3:-}
     local filter=${4:-}
-    local auth_header='X-HASSIO-KEY;'
+    local auth_header='Authorization: Bearer'
     local response
     local status
     local data='{}'
@@ -30,8 +30,8 @@ function bashio::api.hassio() {
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
-    if [[ -n "${HASSIO_TOKEN:-}" ]]; then
-        auth_header="X-HASSIO-KEY: ${__BASHIO_HASSIO_TOKEN}"
+    if [[ -n "${__BASHIO_SUPERVISOR_TOKEN:-}" ]]; then
+        auth_header="Authorization: Bearer ${__BASHIO_SUPERVISOR_TOKEN}"
     fi
 
     if [[ "${method}" = "POST" ]] && bashio::var.has_value "${raw}"; then
@@ -43,7 +43,7 @@ function bashio::api.hassio() {
         -H "${auth_header}" \
         -H "Content-Type: application/json" \
         -d "${data}" \
-        "${__BASHIO_HASSIO_API}${resource}"
+        "${__BASHIO_SUPERVISOR_API}${resource}"
     ); then
         bashio::log.debug "${response}"
         bashio::log.error "Something went wrong contacting the API"
@@ -53,7 +53,7 @@ function bashio::api.hassio() {
     status=${response##*$'\n'}
     response=${response%$status}
 
-    bashio::log.debug "Requested API resource: ${__BASHIO_HASSIO_API}${resource}"
+    bashio::log.debug "Requested API resource: ${__BASHIO_SUPERVISOR_API}${resource}"
     bashio::log.debug "Request method: ${method}"
     bashio::log.debug "Request data: ${data}"
     bashio::log.debug "API HTTP Response code: ${status}"

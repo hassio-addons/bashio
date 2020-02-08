@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Community Hass.io Add-ons: Bashio
-# Bashio is an bash function library for use with Hass.io add-ons.
+# Community Home Assistant Add-ons: Bashio
+# Bashio is an bash function library for use with Home Assistant add-ons.
 #
 # It contains a set of commonly used operations and can be used
 # to be included in add-on scripts to reduce code duplication across add-ons.
@@ -13,16 +13,16 @@
 # Arguments:
 #   $1 Version to update to (optional)
 # ------------------------------------------------------------------------------
-function bashio::hassos.update() {
+function bashio::os.update() {
     local version=${1:-}
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
 
     if bashio::var.has_value "${version}"; then
         version=$(bashio::var.json version "${version}")
-        bashio::api.hassio POST /hassos/update "${version}"
+        bashio::api.supervisor POST /os/update "${version}"
     else
-        bashio::api.hassio POST /hassos/update
+        bashio::api.supervisor POST /os/update
     fi
     bashio::cache.flush_all
 }
@@ -33,16 +33,16 @@ function bashio::hassos.update() {
 # Arguments:
 #   $1 Version to update to (optional)
 # ------------------------------------------------------------------------------
-function bashio::hassos.update_cli() {
+function bashio::os.update_cli() {
     local version=${1:-}
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
 
     if bashio::var.has_value "${version}"; then
         version=$(bashio::var.json version "${version}")
-        bashio::api.hassio POST /hassos/update/cli "${version}"
+        bashio::api.supervisor POST /os/update/cli "${version}"
     else
-        bashio::api.hassio POST /hassos/update/cli
+        bashio::api.supervisor POST /os/update/cli
     fi
     bashio::cache.flush_all
 }
@@ -50,9 +50,9 @@ function bashio::hassos.update_cli() {
 # ------------------------------------------------------------------------------
 # Load HassOS host configuration from USB stick.
 # ------------------------------------------------------------------------------
-function bashio::hassos.config_sync() {
+function bashio::os.config_sync() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio POST /hassos/config/sync
+    bashio::api.supervisor POST /os/config/sync
 }
 
 # ------------------------------------------------------------------------------
@@ -62,8 +62,8 @@ function bashio::hassos.config_sync() {
 #   $1 Cache key to store results in (optional)
 #   $2 jq Filter to apply on the result (optional)
 # ------------------------------------------------------------------------------
-function bashio::hassos() {
-    local cache_key=${1:-'hassos.info'}
+function bashio::os() {
+    local cache_key=${1:-'os.info'}
     local filter=${2:-}
     local info
     local response
@@ -75,11 +75,11 @@ function bashio::hassos() {
         return "${__BASHIO_EXIT_OK}"
     fi
 
-    if bashio::cache.exists 'hassos.info'; then
-        info=$(bashio::cache.get 'hassio.hassos')
+    if bashio::cache.exists 'os.info'; then
+        info=$(bashio::cache.get 'supervisor.os')
     else
-        info=$(bashio::api.hassio GET /hassos/info false)
-        bashio::cache.set 'hassos.info' "${info}"
+        info=$(bashio::api.supervisor GET /os/info false)
+        bashio::cache.set 'os.info' "${info}"
     fi
 
     response="${info}"
@@ -96,30 +96,30 @@ function bashio::hassos() {
 # ------------------------------------------------------------------------------
 # Returns the version of HassOS.
 # ------------------------------------------------------------------------------
-function bashio::hassos.version() {
+function bashio::os.version() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::hassos 'hassos.info.version' '.version'
+    bashio::os 'os.info.version' '.version'
 }
 
 # ------------------------------------------------------------------------------
 # Returns the latest version of HassOS.
 # ------------------------------------------------------------------------------
-function bashio::hassos.version_latest() {
+function bashio::os.version_latest() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::hassos 'hassos.info.version_latest' '.version_latest'
+    bashio::os 'os.info.version_latest' '.version_latest'
 }
 
 # ------------------------------------------------------------------------------
 # Checks if there is an update available for the Supervisor.
 # ------------------------------------------------------------------------------
-function bashio::hassos.update_available() {
+function bashio::os.update_available() {
     local version
     local last_version
 
     bashio::log.trace "${FUNCNAME[0]}"
 
-    version=$(bashio::hassos.version)
-    last_version=$(bashio::hassos.last_version)
+    version=$(bashio::os.version)
+    last_version=$(bashio::os.last_version)
 
     if [[ "${version}" = "${last_version}" ]]; then
         return "${__BASHIO_EXIT_NOK}"
@@ -131,30 +131,30 @@ function bashio::hassos.update_available() {
 # ------------------------------------------------------------------------------
 # Returns the CLI version of HassOS.
 # ------------------------------------------------------------------------------
-function bashio::hassos.version_cli() {
+function bashio::os.version_cli() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::hassos 'hassos.info.version_cli' '.version_cli'
+    bashio::os 'os.info.version_cli' '.version_cli'
 }
 
 # ------------------------------------------------------------------------------
 # Returns the latest CLI version of HassOS.
 # ------------------------------------------------------------------------------
-function bashio::hassos.version_cli_latest() {
+function bashio::os.version_cli_latest() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::hassos 'hassos.info.version_cli_latest' '.version_cli_latest'
+    bashio::os 'os.info.version_cli_latest' '.version_cli_latest'
 }
 
 # ------------------------------------------------------------------------------
 # Checks if there is an update available for the Supervisor.
 # ------------------------------------------------------------------------------
-function bashio::hassos.update_available_cli() {
+function bashio::os.update_available_cli() {
     local version
     local last_version
 
     bashio::log.trace "${FUNCNAME[0]}"
 
-    version=$(bashio::hassos.version_cli)
-    last_version=$(bashio::hassos.version_cli_latest)
+    version=$(bashio::os.version_cli)
+    last_version=$(bashio::os.version_cli_latest)
 
     if [[ "${version}" = "${last_version}" ]]; then
         return "${__BASHIO_EXIT_NOK}"
@@ -166,7 +166,7 @@ function bashio::hassos.update_available_cli() {
 # ------------------------------------------------------------------------------
 # Returns the board running HassOS.
 # ------------------------------------------------------------------------------
-function bashio::hassos.board() {
+function bashio::os.board() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::hassos 'hassos.info.board' '.board'
+    bashio::os 'os.info.board' '.board'
 }

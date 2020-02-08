@@ -30,7 +30,7 @@ function bashio::hardware() {
     if bashio::cache.exists 'hardware.info'; then
         info=$(bashio::cache.get 'hardware.info')
     else
-        info=$(bashio::api.hassio GET /hardware/info false)
+        info=$(bashio::api.supervisor GET /hardware/info false)
         bashio::cache.set 'hardware.info' "${info}"
     fi
 
@@ -82,5 +82,5 @@ function bashio::hardware.gpio() {
 # ------------------------------------------------------------------------------
 function bashio::hardware.trigger() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio POST /hardware/trigger
+    bashio::api.supervisor POST /hardware/trigger
 }

@@ -12,7 +12,7 @@
 # ------------------------------------------------------------------------------
 function bashio::host.reload() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio POST /host/reload
+    bashio::api.supervisor POST /host/reload
 }
 
 # ------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ function bashio::host.reload() {
 # ------------------------------------------------------------------------------
 function bashio::host.shutdown() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio POST /host/shutdown
+    bashio::api.supervisor POST /host/shutdown
 }
 
 # ------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ function bashio::host.shutdown() {
 # ------------------------------------------------------------------------------
 function bashio::host.reboot() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio POST /host/reboot
+    bashio::api.supervisor POST /host/reboot
 }
 
 # ------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ function bashio::host() {
     if bashio::cache.exists 'host.info'; then
         info=$(bashio::cache.get 'host.info')
     else
-        info=$(bashio::api.hassio GET /host/info false)
+        info=$(bashio::api.supervisor GET /host/info false)
         bashio::cache.set 'host.info' "${info}"
     fi
 
@@ -79,7 +79,7 @@ function bashio::host.hostname() {
 
     if bashio::var.has_value "${hostname}"; then
         hostname=$(bashio::var.json hostname "${hostname}")
-        bashio::api.hassio POST /host/options "${hostname}"
+        bashio::api.supervisor POST /host/options "${hostname}"
         bashio::cache.flush_all
     else
         bashio::host 'host.info.hostname' '.hostname'

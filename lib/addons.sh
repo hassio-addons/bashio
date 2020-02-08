@@ -12,7 +12,7 @@
 # ------------------------------------------------------------------------------
 function bashio::addons.reload() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio POST /addons/reload
+    bashio::api.supervisor POST /addons/reload
     bashio::cache.flush_all
 }
 
@@ -25,7 +25,7 @@ function bashio::addons.reload() {
 function bashio::addon.start() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio POST "/addons/${slug}/start"
+    bashio::api.supervisor POST "/addons/${slug}/start"
 }
 
 # ------------------------------------------------------------------------------
@@ -37,7 +37,7 @@ function bashio::addon.start() {
 function bashio::addon.restart() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio POST "/addons/${slug}/restart"
+    bashio::api.supervisor POST "/addons/${slug}/restart"
 }
 
 # ------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ function bashio::addon.restart() {
 function bashio::addon.stop() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio POST "/addons/${slug}/stop"
+    bashio::api.supervisor POST "/addons/${slug}/stop"
 }
 
 # ------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ function bashio::addon.stop() {
 function bashio::addon.install() {
     local slug=${1}
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio POST "/addons/${slug}/install"
+    bashio::api.supervisor POST "/addons/${slug}/install"
 }
 
 # ------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ function bashio::addon.install() {
 function bashio::addon.rebuild() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio POST "/addons/${slug}/rebuild"
+    bashio::api.supervisor POST "/addons/${slug}/rebuild"
 }
 
 # ------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ function bashio::addon.rebuild() {
 function bashio::addon.uninstall() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio POST "/addons/${slug}/uninstall"
+    bashio::api.supervisor POST "/addons/${slug}/uninstall"
 }
 
 # ------------------------------------------------------------------------------
@@ -97,7 +97,7 @@ function bashio::addon.uninstall() {
 function bashio::addon.update() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio POST "/addons/${slug}/update"
+    bashio::api.supervisor POST "/addons/${slug}/update"
 }
 
 # ------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ function bashio::addon.update() {
 function bashio::addon.log() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio GET "/addons/${slug}/log" true
+    bashio::api.supervisor GET "/addons/${slug}/log" true
 }
 
 # ------------------------------------------------------------------------------
@@ -121,7 +121,7 @@ function bashio::addon.log() {
 function bashio::addon.changelog() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio GET "/addons/${slug}/changelog" true
+    bashio::api.supervisor GET "/addons/${slug}/changelog" true
 }
 
 # ------------------------------------------------------------------------------
@@ -150,14 +150,14 @@ function bashio::addons() {
         if bashio::cache.exists "addons.list"; then
             info=$(bashio::cache.get 'addons.list')
         else
-            info=$(bashio::api.hassio GET "/addons" false)
+            info=$(bashio::api.supervisor GET "/addons" false)
             bashio::cache.set "addons.list" "${info}"
         fi
     else
         if bashio::cache.exists "addons.${slug}.info"; then
             info=$(bashio::cache.get "addons.${slug}.info")
         else
-            info=$(bashio::api.hassio GET "/addons/${slug}/info" false)
+            info=$(bashio::api.supervisor GET "/addons/${slug}/info" false)
             bashio::cache.set "addons.${slug}.info" "${info}"
         fi
     fi
@@ -275,7 +275,7 @@ function bashio::addon.auto_update() {
 
     if bashio::var.has_value "${auto_update}"; then
         auto_update=$(bashio::var.json auto_update "^${auto_update}")
-        bashio::api.hassio POST "/addons/${slug}/options" "${auto_update}"
+        bashio::api.supervisor POST "/addons/${slug}/options" "${auto_update}"
         bashio::cache.flush_all
     else
         bashio::addons \
@@ -432,7 +432,7 @@ function bashio::addon.boot() {
 
     if bashio::var.has_value "${boot}"; then
         boot=$(bashio::var.json boot "${boot}")
-        bashio::api.hassio POST "/addons/${slug}/options" "${boot}"
+        bashio::api.supervisor POST "/addons/${slug}/options" "${boot}"
         bashio::cache.flush_all
     else
         bashio::addons "${slug}" "addons.${slug}.boot" '.boot'
@@ -869,7 +869,7 @@ function bashio::addon.audio_input() {
 
     if bashio::var.has_value "${audio_input}"; then
         audio_input=$(bashio::var.json audio_input "${audio_input}")
-        bashio::api.hassio POST "/addons/${slug}/options" "${audio_input}"
+        bashio::api.supervisor POST "/addons/${slug}/options" "${audio_input}"
         bashio::cache.flush_all
     else
         bashio::addons \
@@ -894,7 +894,7 @@ function bashio::addon.audio_output() {
 
     if bashio::var.has_value "${audio_output}"; then
         audio_output=$(bashio::var.json audio_output "${audio_output}")
-        bashio::api.hassio POST "/addons/${slug}/options" "${audio_output}"
+        bashio::api.supervisor POST "/addons/${slug}/options" "${audio_output}"
         bashio::cache.flush_all
     else
         bashio::addons \
@@ -905,7 +905,7 @@ function bashio::addon.audio_output() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns IP address assigned on the hassio network for an add-on.
+# Returns IP address assigned on the home assistant network for an add-on.
 #
 # Arguments:
 #   $1 Add-on slug (optional, default: self)
@@ -998,7 +998,7 @@ function bashio::addon.stats() {
     if bashio::cache.exists "addons.${slug}.stats"; then
         info=$(bashio::cache.get "addons.${slug}.stats")
     else
-        info=$(bashio::api.hassio GET "/addons/${slug}/stats" false)
+        info=$(bashio::api.supervisor GET "/addons/${slug}/stats" false)
         bashio::cache.set "addons.${slug}.stats" "${info}"
     fi
 

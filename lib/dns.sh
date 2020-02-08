@@ -20,9 +20,9 @@ function bashio::dns.update() {
 
     if bashio::var.has_value "${version}"; then
         version=$(bashio::var.json version "${version}")
-        bashio::api.hassio POST /dns/update "${version}"
+        bashio::api.supervisor POST /dns/update "${version}"
     else
-        bashio::api.hassio POST /dns/update
+        bashio::api.supervisor POST /dns/update
     fi
     bashio::cache.flush_all
 }
@@ -32,7 +32,7 @@ function bashio::dns.update() {
 # ------------------------------------------------------------------------------
 function bashio::dns.reset() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio POST /dns/reset
+    bashio::api.supervisor POST /dns/reset
     bashio::cache.flush_all
 }
 
@@ -41,7 +41,7 @@ function bashio::dns.reset() {
 # ------------------------------------------------------------------------------
 function bashio::dns.restart() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio POST /dns/restart
+    bashio::api.supervisor POST /dns/restart
     bashio::cache.flush_all
 }
 
@@ -50,7 +50,7 @@ function bashio::dns.restart() {
 # ------------------------------------------------------------------------------
 function bashio::dns.logs() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio GET /dns/logs true
+    bashio::api.supervisor GET /dns/logs true
 }
 
 # ------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ function bashio::dns() {
     if bashio::cache.exists 'dns.info'; then
         info=$(bashio::cache.get 'dns.info')
     else
-        info=$(bashio::api.hassio GET /dns/info false)
+        info=$(bashio::api.supervisor GET /dns/info false)
         bashio::cache.set 'dns.info' "${info}"
     fi
 
@@ -139,7 +139,7 @@ function bashio::dns.update_available() {
 # ------------------------------------------------------------------------------
 function bashio::dns.servers() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::supervisor 'dns.info.servers' '.servers[]'
+    bashio::dns 'dns.info.servers' '.servers[]'
 }
 
 # ------------------------------------------------------------------------------
@@ -165,7 +165,7 @@ function bashio::dns.stats() {
     if bashio::cache.exists 'dns.stats'; then
         info=$(bashio::cache.get 'dns.stats')
     else
-        info=$(bashio::api.hassio GET /dns/stats false)
+        info=$(bashio::api.supervisor GET /dns/stats false)
         bashio::cache.set 'dns.stats' "${info}"
     fi
 
