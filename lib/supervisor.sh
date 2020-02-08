@@ -12,7 +12,7 @@
 # ------------------------------------------------------------------------------
 function bashio::supervisor.ping() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio GET /supervisor/ping
+    bashio::api.supervisor GET /supervisor/ping
 }
 
 # ------------------------------------------------------------------------------
@@ -28,9 +28,9 @@ function bashio::supervisor.update() {
 
     if bashio::var.has_value "${version}"; then
         version=$(bashio::var.json version "${version}")
-        bashio::api.hassio POST /supervisor/update "${version}"
+        bashio::api.supervisor POST /supervisor/update "${version}"
     else
-        bashio::api.hassio POST /supervisor/update
+        bashio::api.supervisor POST /supervisor/update
     fi
     bashio::cache.flush_all
 }
@@ -40,7 +40,7 @@ function bashio::supervisor.update() {
 # ------------------------------------------------------------------------------
 function bashio::supervisor.reload() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio POST /supervisor/reload
+    bashio::api.supervisor POST /supervisor/reload
     bashio::cache.flush_all
 }
 
@@ -49,7 +49,7 @@ function bashio::supervisor.reload() {
 # ------------------------------------------------------------------------------
 function bashio::supervisor.logs() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio GET /supervisor/logs true
+    bashio::api.supervisor GET /supervisor/logs true
 }
 
 # ------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ function bashio::supervisor() {
     if bashio::cache.exists 'supervisor.info'; then
         info=$(bashio::cache.get 'supervisor.info')
     else
-        info=$(bashio::api.hassio GET /supervisor/info false)
+        info=$(bashio::api.supervisor GET /supervisor/info false)
         bashio::cache.set 'supervisor.info' "${info}"
     fi
 
@@ -146,7 +146,7 @@ function bashio::supervisor.channel() {
 
     if bashio::var.has_value "${channel}"; then
         channel=$(bashio::var.json channel "${channel}")
-        bashio::api.hassio POST /supervisor/options "${channel}"
+        bashio::api.supervisor POST /supervisor/options "${channel}"
         bashio::cache.flush_all
     else
         bashio::supervisor 'supervisor.info.channel' '.channel // false'
@@ -166,7 +166,7 @@ function bashio::supervisor.timezone() {
 
     if bashio::var.has_value "${timezone}"; then
         channel=$(bashio::var.json timezone "${timezone}")
-        bashio::api.hassio POST /supervisor/options "${timezone}"
+        bashio::api.supervisor POST /supervisor/options "${timezone}"
         bashio::cache.flush_all
     else
         bashio::supervisor 'supervisor.info.timezone' '.timezone'
@@ -186,7 +186,7 @@ function bashio::supervisor.logging() {
 
     if bashio::var.has_value "${logging}"; then
         logging=$(bashio::var.json logging "${logging}")
-        bashio::api.hassio POST /supervisor/options "${logging}"
+        bashio::api.supervisor POST /supervisor/options "${logging}"
         bashio::cache.flush_all
     else
         bashio::supervisor 'supervisor.info.logging' '.logging'
@@ -214,7 +214,7 @@ function bashio::supervisor.wait_boot() {
 
     if bashio::var.has_value "${wait}"; then
         wait=$(bashio::var.json wait_boot "${wait}")
-        bashio::api.hassio POST /supervisor/options "${wait}"
+        bashio::api.supervisor POST /supervisor/options "${wait}"
         bashio::cache.flush_all
     else
         bashio::supervisor 'supervisor.info.wait_boot' '.wait_boot'
@@ -238,7 +238,7 @@ function bashio::supervisor.debug() {
         else
             debug=$(bashio::var.json debug "^false")
         fi
-        bashio::api.hassio POST /supervisor/options "${debug}"
+        bashio::api.supervisor POST /supervisor/options "${debug}"
         bashio::cache.flush_all
     else
         bashio::supervisor 'supervisor.info.debug' '.debug // false'
@@ -262,7 +262,7 @@ function bashio::supervisor.debug_block() {
         else
             debug=$(bashio::var.json debug_block "^false")
         fi
-        bashio::api.hassio POST /supervisor/options "${debug}"
+        bashio::api.supervisor POST /supervisor/options "${debug}"
         bashio::cache.flush_all
     else
         bashio::supervisor 'supervisor.info.debug_block' '.debug_block // false'
@@ -308,7 +308,7 @@ function bashio::supervisor.stats() {
     if bashio::cache.exists 'supervisor.stats'; then
         info=$(bashio::cache.get 'supervisor.stats')
     else
-        info=$(bashio::api.hassio GET /supervisor/stats false)
+        info=$(bashio::api.supervisor GET /supervisor/stats false)
         bashio::cache.set 'supervisor.stats' "${info}"
     fi
 

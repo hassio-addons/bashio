@@ -25,9 +25,9 @@ readonly __BASHIO_LIB_DIR=$(dirname "${BASH_SOURCE[0]}")
 source "${__BASHIO_LIB_DIR}/const.sh"
 
 # Defaults
-declare __BASHIO_HASSIO_API=${HASSIO_API:-${__BASHIO_DEFAULT_HASSIO_API}}
-declare __BASHIO_HASSIO_TOKEN=${HASSIO_TOKEN:-${__BASHIO_DEFAULT_HASSIO_TOKEN}}
-declare __BASHIO_ADDON_CONFIG=${HASSIO_ADDON_CONFIG:-${__BASHIO_DEFAULT_ADDON_CONFIG}}
+declare __BASHIO_SUPERVISOR_API=${SUPERVISOR_API:-${__BASHIO_DEFAULT_SUPERVISOR_API}}
+declare __BASHIO_SUPERVISOR_TOKEN=${SUPERVISIOR_TOKEN:-${__BASHIO_DEFAULT_SUPERVISOR_TOKEN}}
+declare __BASHIO_ADDON_CONFIG=${ADDON_CONFIG:-${__BASHIO_DEFAULT_ADDON_CONFIG}}
 declare __BASHIO_LOG_LEVEL=${LOG_LEVEL:-${__BASHIO_DEFAULT_LOG_LEVEL}}
 declare __BASHIO_LOG_FORMAT=${LOG_FORMAT:-${__BASHIO_DEFAULT_LOG_FORMAT}}
 declare __BASHIO_LOG_TIMESTAMP=${LOG_TIMESTAMP:-${__BASHIO_DEFAULT_LOG_TIMESTAMP}}
@@ -53,6 +53,8 @@ source "${__BASHIO_LIB_DIR}/addons.sh"
 source "${__BASHIO_LIB_DIR}/api.sh"
 # shellcheck source=lib/config.sh
 source "${__BASHIO_LIB_DIR}/config.sh"
+# shellcheck source=lib/core.sh
+source "${__BASHIO_LIB_DIR}/core.sh"
 # shellcheck source=lib/debug.sh
 source "${__BASHIO_LIB_DIR}/debug.sh"
 # shellcheck source=lib/exit.sh
@@ -63,10 +65,6 @@ source "${__BASHIO_LIB_DIR}/discovery.sh"
 source "${__BASHIO_LIB_DIR}/dns.sh"
 # shellcheck source=lib/hardware.sh
 source "${__BASHIO_LIB_DIR}/hardware.sh"
-# shellcheck source=lib/hassos.sh
-source "${__BASHIO_LIB_DIR}/hassos.sh"
-# shellcheck source=lib/homeassistant.sh
-source "${__BASHIO_LIB_DIR}/homeassistant.sh"
 # shellcheck source=lib/host.sh
 source "${__BASHIO_LIB_DIR}/host.sh"
 # shellcheck source=lib/info.sh
@@ -75,6 +73,8 @@ source "${__BASHIO_LIB_DIR}/info.sh"
 source "${__BASHIO_LIB_DIR}/jq.sh"
 # shellcheck source=lib/net.sh
 source "${__BASHIO_LIB_DIR}/net.sh"
+# shellcheck source=lib/os.sh
+source "${__BASHIO_LIB_DIR}/os.sh"
 # shellcheck source=lib/pwned.sh
 source "${__BASHIO_LIB_DIR}/pwned.sh"
 # shellcheck source=lib/repositories.sh

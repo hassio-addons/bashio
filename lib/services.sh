@@ -27,7 +27,7 @@ function bashio::services() {
     if bashio::cache.exists "${cache_key}"; then
         config=$(bashio::cache.get "${cache_key}")
     else
-        config=$(bashio::api.hassio GET "/services/${service}" false)
+        config=$(bashio::api.supervisor GET "/services/${service}" false)
         bashio::cache.set "${cache_key}" "${config}"
     fi
 
@@ -78,7 +78,7 @@ function bashio::services.publish() {
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
 
-    bashio::api.hassio "POST" "/services/${service}" "${config}"
+    bashio::api.supervisor "POST" "/services/${service}" "${config}"
     bashio::cache.flush_all
 }
 
@@ -92,6 +92,6 @@ function bashio::services.delete() {
     local service=${1}
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
-    bashio::api.hassio "DELETE" "/services/${service}"
+    bashio::api.supervisor "DELETE" "/services/${service}"
     bashio::cache.flush_all
 }

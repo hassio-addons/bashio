@@ -33,14 +33,14 @@ function bashio::repositories() {
         if bashio::cache.exists "repositories.list"; then
             info=$(bashio::cache.get 'repositories.list')
         else
-            info=$(bashio::api.hassio GET "/addons" false)
+            info=$(bashio::api.supervisor GET "/addons" false)
             bashio::cache.set "repositories.list" "${info}"
         fi
     else
         if bashio::cache.exists "repositories.${slug}.info"; then
             info=$(bashio::cache.get "repositories.${slug}.info")
         else
-            info=$(bashio::api.hassio GET "/addons" \
+            info=$(bashio::api.supervisor GET "/addons" \
                     false ".repositories[] | select(.slug==\"${slug}\")")
             bashio::cache.set "repositories.${slug}.info" "${info}"
         fi

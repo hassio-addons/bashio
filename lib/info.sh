@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Community Hass.io Add-ons: Bashio
-# Bashio is an bash function library for use with Hass.io add-ons.
+# Community Home Assistant Add-ons: Bashio
+# Bashio is an bash function library for use with Home Assistant add-ons.
 #
 # It contains a set of commonly used operations and can be used
 # to be included in add-on scripts to reduce code duplication across add-ons.
@@ -15,7 +15,7 @@
 #   $2 jq Filter to apply on the result (optional)
 # ------------------------------------------------------------------------------
 function bashio::info() {
-    local cache_key=${1:-'hassio.info'}
+    local cache_key=${1:-'supervisor.info'}
     local filter=${2:-}
     local info
     local response
@@ -27,11 +27,11 @@ function bashio::info() {
         return "${__BASHIO_EXIT_OK}"
     fi
 
-    if bashio::cache.exists 'hassio.info'; then
-        info=$(bashio::cache.get 'hassio.info')
+    if bashio::cache.exists 'supervisor.info'; then
+        info=$(bashio::cache.get 'supervisor.info')
     else
-        info=$(bashio::api.hassio GET /info false)
-        bashio::cache.set 'hassio.info' "${info}"
+        info=$(bashio::api.supervisor GET /info false)
+        bashio::cache.set 'supervisor.info' "${info}"
     fi
 
     response="${info}"
@@ -46,11 +46,11 @@ function bashio::info() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns the Hass.io supervisor version used.
+# Returns the Home Assistant Supervisor version used.
 # ------------------------------------------------------------------------------
 function bashio::info.supervisor() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::info 'hassio.info.supervisor' '.supervisor'
+    bashio::info 'supervisor.info.supervisor' '.supervisor'
 }
 
 # ------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ function bashio::info.supervisor() {
 # ------------------------------------------------------------------------------
 function bashio::info.homeassistant() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::info 'hassio.info.homeassistant' '.homeassistant'
+    bashio::info 'supervisor.info.homeassistant' '.homeassistant'
 }
 
 # ------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ function bashio::info.homeassistant() {
 # ------------------------------------------------------------------------------
 function bashio::info.hassos() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::info 'hassio.info.hassos' '.hassos'
+    bashio::info 'supervisor.info.hassos' '.hassos'
 }
 
 # ------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ function bashio::info.hassos() {
 # ------------------------------------------------------------------------------
 function bashio::info.hostname() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::info 'hassio.info.hostname' '.hostname'
+    bashio::info 'supervisor.info.hostname' '.hostname'
 }
 
 # ------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ function bashio::info.hostname() {
 # ------------------------------------------------------------------------------
 function bashio::info.machine() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::info 'hassio.info.machine' '.machine'
+    bashio::info 'supervisor.info.machine' '.machine'
 }
 
 # ------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ function bashio::info.machine() {
 # ------------------------------------------------------------------------------
 function bashio::info.arch() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::info 'hassio.info.arch' '.arch'
+    bashio::info 'supervisor.info.arch' '.arch'
 }
 
 # ------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ function bashio::info.arch() {
 # ------------------------------------------------------------------------------
 function bashio::info.channel() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::info 'hassio.info.channel' '.channel'
+    bashio::info 'supervisor.info.channel' '.channel'
 }
 
 # ------------------------------------------------------------------------------
@@ -106,15 +106,15 @@ function bashio::info.channel() {
 # ------------------------------------------------------------------------------
 function bashio::info.supported_arch() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::info 'hassio.info.supported_arch' '.supported_arch[]'
+    bashio::info 'supervisor.info.supported_arch' '.supported_arch[]'
 }
 
 # ------------------------------------------------------------------------------
-# Returns logging level of Hass.io universum.
+# Returns logging level of Supervisor universum.
 # ------------------------------------------------------------------------------
 function bashio::info.logging() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::info 'hassio.info.logging' '.logging'
+    bashio::info 'supervisor.info.logging' '.logging'
 }
 
 # ------------------------------------------------------------------------------
@@ -122,5 +122,5 @@ function bashio::info.logging() {
 # ------------------------------------------------------------------------------
 function bashio::info.timezone() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::info 'hassio.info.timezone' '.timezone'
+    bashio::info 'supervisor.info.timezone' '.timezone'
 }

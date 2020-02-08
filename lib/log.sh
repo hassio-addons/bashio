@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Community Hass.io Add-ons: Bashio
-# Bashio is an bash function library for use with Hass.io add-ons.
+# Community Home Assistant Add-ons: Bashio
+# Bashio is an bash function library for use with Home Assistant add-ons.
 #
 # It contains a set of commonly used operations and can be used
 # to be included in add-on scripts to reduce code duplication across add-ons.
@@ -152,7 +152,7 @@ function bashio::log.info() {
     local message=$*
     bashio::log.log \
         "${__BASHIO_LOG_LEVEL_INFO}" \
-        "${__BASHIO_COLORS_BLUE}${message}${__BASHIO_COLORS_RESET}"
+        "${__BASHIO_COLORS_GREEN}${message}${__BASHIO_COLORS_RESET}"
 }
 
 # ------------------------------------------------------------------------------

@@ -8,14 +8,14 @@
 # ==============================================================================
 
 # Defaults
-readonly __BASHIO_DEFAULT_LOG_LEVEL=5 # Defaults to INFO
-readonly __BASHIO_DEFAULT_LOG_FORMAT="[{TIMESTAMP}] {LEVEL}: {MESSAGE}"
-readonly __BASHIO_DEFAULT_LOG_TIMESTAMP="%T"
-readonly __BASHIO_DEFAULT_HASSIO_API="http://hassio"
-readonly __BASHIO_DEFAULT_HASSIO_TOKEN=""
 readonly __BASHIO_DEFAULT_ADDON_CONFIG="/data/options.json"
-readonly __BASHIO_DEFAULT_HIBP_ENDPOINT="https://api.pwnedpasswords.com/range"
 readonly __BASHIO_DEFAULT_CACHE_DIR="/dev/shm/bashio"
+readonly __BASHIO_DEFAULT_HIBP_ENDPOINT="https://api.pwnedpasswords.com/range"
+readonly __BASHIO_DEFAULT_LOG_FORMAT="[{TIMESTAMP}] {LEVEL}: {MESSAGE}"
+readonly __BASHIO_DEFAULT_LOG_LEVEL=5 # Defaults to INFO
+readonly __BASHIO_DEFAULT_LOG_TIMESTAMP="%T"
+readonly __BASHIO_DEFAULT_SUPERVISOR_API="http://supervisor"
+readonly __BASHIO_DEFAULT_SUPERVISOR_TOKEN=""
 
 # Exit codes
 readonly __BASHIO_EXIT_OK=0    # Successful termination

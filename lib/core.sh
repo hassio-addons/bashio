@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Community Hass.io Add-ons: Bashio
-# Bashio is an bash function library for use with Hass.io add-ons.
+# Community Home Assistant Add-ons: Bashio
+# Bashio is an bash function library for use with Home Assistant add-ons.
 #
 # It contains a set of commonly used operations and can be used
 # to be included in add-on scripts to reduce code duplication across add-ons.
@@ -10,25 +10,25 @@
 # ------------------------------------------------------------------------------
 # Starts Home Assistant.
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.start() {
+function bashio::core.start() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio POST /homeassistant/start
+    bashio::api.supervisor POST /core/start
 }
 
 # ------------------------------------------------------------------------------
 # Stops Home Assistant.
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.stop() {
+function bashio::core.stop() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio POST /homeassistant/stop
+    bashio::api.supervisor POST /core/stop
 }
 
 # ------------------------------------------------------------------------------
 # Restarts Home Assistant.
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.restart() {
+function bashio::core.restart() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio POST /homeassistant/restart
+    bashio::api.supervisor POST /core/restart
 }
 
 # ------------------------------------------------------------------------------
@@ -37,16 +37,16 @@ function bashio::homeassistant.restart() {
 # Arguments:
 #   $1 Version to update to (optional)
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.update() {
+function bashio::core.update() {
     local version=${1:-}
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
 
     if bashio::var.has_value "${version}"; then
         version=$(bashio::var.json version "${version}")
-        bashio::api.hassio POST /homeassistant/update "${version}"
+        bashio::api.supervisor POST /core/update "${version}"
     else
-        bashio::api.hassio POST /homeassistant/update
+        bashio::api.supervisor POST /core/update
     fi
     bashio::cache.flush_all
 }
@@ -54,17 +54,17 @@ function bashio::homeassistant.update() {
 # ------------------------------------------------------------------------------
 # Checks/validates your Home Assistant configuration.
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.check() {
+function bashio::core.check() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio POST /homeassistant/check
+    bashio::api.supervisor POST /core/check
 }
 
 # ------------------------------------------------------------------------------
 # Returns the logs created by Home Assistant.
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.logs() {
+function bashio::core.logs() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.hassio GET /homeassistant/logs true
+    bashio::api.supervisor GET /core/logs true
 }
 
 # ------------------------------------------------------------------------------
@@ -74,8 +74,8 @@ function bashio::homeassistant.logs() {
 #   $1 Cache key to store results in (optional)
 #   $2 jq Filter to apply on the result (optional)
 # ------------------------------------------------------------------------------
-function bashio::homeassistant() {
-    local cache_key=${1:-'homeassistant.info'}
+function bashio::core() {
+    local cache_key=${1:-'core.info'}
     local filter=${2:-}
     local info
     local response
@@ -87,11 +87,11 @@ function bashio::homeassistant() {
         return "${__BASHIO_EXIT_OK}"
     fi
 
-    if bashio::cache.exists 'homeassistant.info'; then
-        info=$(bashio::cache.get 'hassio.homeassistant')
+    if bashio::cache.exists 'core.info'; then
+        info=$(bashio::cache.get 'supervisor.core')
     else
-        info=$(bashio::api.hassio GET /homeassistant/info false)
-        bashio::cache.set 'homeassistant.info' "${info}"
+        info=$(bashio::api.supervisor GET /core/info false)
+        bashio::cache.set 'core.info' "${info}"
     fi
 
     response="${info}"
@@ -108,17 +108,17 @@ function bashio::homeassistant() {
 # ------------------------------------------------------------------------------
 # Returns the version of Home Assistant.
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.version() {
+function bashio::core.version() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::homeassistant 'homeassistant.info.version' '.version'
+    bashio::core 'core.info.version' '.version'
 }
 
 # ------------------------------------------------------------------------------
 # Returns the latest version of Home Assistant.
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.last_version() {
+function bashio::core.last_version() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::homeassistant 'homeassistant.info.last_version' '.last_version'
+    bashio::core 'core.info.last_version' '.last_version'
 }
 
 # ------------------------------------------------------------------------------
@@ -130,8 +130,8 @@ function bashio::supervisor.update_available() {
 
     bashio::log.trace "${FUNCNAME[0]}"
 
-    version=$(bashio::homeassistant.version)
-    last_version=$(bashio::homeassistant.last_version)
+    version=$(bashio::core.version)
+    last_version=$(bashio::core.last_version)
 
     if [[ "${version}" = "${last_version}" ]]; then
         return "${__BASHIO_EXIT_NOK}"
@@ -143,17 +143,17 @@ function bashio::supervisor.update_available() {
 # ------------------------------------------------------------------------------
 # Returns the arch of Home Assistant.
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.arch() {
+function bashio::core.arch() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::homeassistant 'homeassistant.info.arch' '.arch'
+    bashio::core 'core.info.arch' '.arch'
 }
 
 # ------------------------------------------------------------------------------
 # Returns the machine info running Home Assistant.
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.machine() {
+function bashio::core.machine() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::homeassistant 'homeassistant.info.machine' '.machine'
+    bashio::core 'core.info.machine' '.machine'
 }
 
 # ------------------------------------------------------------------------------
@@ -162,50 +162,50 @@ function bashio::homeassistant.machine() {
 # Arguments:
 #   $1 Image to set (optional).
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.image() {
+function bashio::core.image() {
     local image=${1:-}
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
 
     if bashio::var.has_value "${image}"; then
         image=$(bashio::var.json image "${image}")
-        bashio::api.hassio POST /homeassistant/options "${image}"
+        bashio::api.supervisor POST /core/options "${image}"
         bashio::cache.flush_all
     else
-        bashio::homeassistant 'homeassistant.info.image' '.image'
+        bashio::core 'core.info.image' '.image'
     fi
 }
 
 # ------------------------------------------------------------------------------
 # Returns whether or not a custom version of Home Assistant is installed.
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.custom() {
+function bashio::core.custom() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::homeassistant 'homeassistant.info.custom' '.custom // false'
+    bashio::core 'core.info.custom' '.custom // false'
 }
 
 # ------------------------------------------------------------------------------
 # Returns whether or not Home Assistant starts at device boot.
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.boot() {
+function bashio::core.boot() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::homeassistant 'homeassistant.info.boot' '.boot // false'
+    bashio::core 'core.info.boot' '.boot // false'
 
 # ------------------------------------------------------------------------------
 }
 # Returns the port number on which Home Assistant is running.
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.port() {
+function bashio::core.port() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::homeassistant 'homeassistant.port' '.port'
+    bashio::core 'core.port' '.port'
 }
 
 # ------------------------------------------------------------------------------
 # Returns whether or not Home Assistant is running on SSL.
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.ssl() {
+function bashio::core.ssl() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::homeassistant 'homeassistant.info.ssl' '.ssl // false'
+    bashio::core 'core.info.ssl' '.ssl // false'
 }
 
 # ------------------------------------------------------------------------------
@@ -214,17 +214,17 @@ function bashio::homeassistant.ssl() {
 # Arguments:
 #   $1 True to enable watchdog, false otherwise (optional).
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.watchdog() {
+function bashio::core.watchdog() {
     local watchdog=${1:-}
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
 
     if bashio::var.has_value "${watchdog}"; then
         watchdog=$(bashio::var.json watchdog "^${watchdog}")
-        bashio::api.hassio POST /homeassistant/options "${watchdog}"
+        bashio::api.supervisor POST /core/options "${watchdog}"
         bashio::cache.flush_all
     else
-        bashio::homeassistant 'homeassistant.info.watchdog' '.watchdog // false'
+        bashio::core 'core.info.watchdog' '.watchdog // false'
     fi
 }
 
@@ -235,8 +235,8 @@ function bashio::homeassistant.watchdog() {
 #   $1 Cache key to store results in (optional)
 #   $2 jq Filter to apply on the result (optional)
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.stats() {
-    local cache_key=${1:-'homeassistant.stats'}
+function bashio::core.stats() {
+    local cache_key=${1:-'core.stats'}
     local filter=${2:-}
     local info
     local response
@@ -248,11 +248,11 @@ function bashio::homeassistant.stats() {
         return "${__BASHIO_EXIT_OK}"
     fi
 
-    if bashio::cache.exists 'homeassistant.stats'; then
-        info=$(bashio::cache.get 'homeassistant.stats')
+    if bashio::cache.exists 'core.stats'; then
+        info=$(bashio::cache.get 'core.stats')
     else
-        info=$(bashio::api.hassio GET /homeassistant/stats false)
-        bashio::cache.set 'homeassistant.stats' "${info}"
+        info=$(bashio::api.supervisor GET /core/stats false)
+        bashio::cache.set 'core.stats' "${info}"
     fi
 
     response="${info}"
@@ -269,69 +269,69 @@ function bashio::homeassistant.stats() {
 # ------------------------------------------------------------------------------
 # Returns CPU usage from Home Assistant.
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.cpu_percent() {
+function bashio::core.cpu_percent() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::homeassistant.stats 'homeassistant.stats.cpu_percent' '.cpu_percent'
+    bashio::core.stats 'core.stats.cpu_percent' '.cpu_percent'
 }
 
 # ------------------------------------------------------------------------------
 # Returns memory usage from Home Assistant.
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.memory_usage() {
+function bashio::core.memory_usage() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::homeassistant.stats \
-        'homeassistant.stats.memory_usage' \
+    bashio::core.stats \
+        'core.stats.memory_usage' \
         '.memory_usage'
 }
 
 # ------------------------------------------------------------------------------
 # Returns memory limit from Home Assistant.
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.memory_limit() {
+function bashio::core.memory_limit() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::homeassistant.stats \
-        'homeassistant.stats.memory_limit' \
+    bashio::core.stats \
+        'core.stats.memory_limit' \
         '.memory_limit'
 }
 
 # ------------------------------------------------------------------------------
 # Returns memory usage in percent from Home Assistant.
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.memory_percent() {
+function bashio::core.memory_percent() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::homeassistant.stats \
-        'homeassistant.stats.memory_percent' \
+    bashio::core.stats \
+        'core.stats.memory_percent' \
         '.memory_percent'
 }
 
 # ------------------------------------------------------------------------------
 # Returns outgoing network usage from Home Assistant.
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.network_tx() {
+function bashio::core.network_tx() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::homeassistant.stats 'homeassistant.stats.network_tx' '.network_tx'
+    bashio::core.stats 'core.stats.network_tx' '.network_tx'
 }
 
 # ------------------------------------------------------------------------------
 # Returns incoming network usage from Home Assistant.
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.network_rx() {
+function bashio::core.network_rx() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::homeassistant.stats 'homeassistant.stats.network_rx' '.network_rx'
+    bashio::core.stats 'core.stats.network_rx' '.network_rx'
 }
 
 # ------------------------------------------------------------------------------
 # Returns disk read usage from Home Assistant.
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.blk_read() {
+function bashio::core.blk_read() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::homeassistant.stats 'homeassistant.stats.blk_read' '.blk_read'
+    bashio::core.stats 'core.stats.blk_read' '.blk_read'
 }
 
 # ------------------------------------------------------------------------------
 # Returns disk write usage from Home Assistant.
 # ------------------------------------------------------------------------------
-function bashio::homeassistant.blk_write() {
+function bashio::core.blk_write() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::homeassistant.stats 'homeassistant.stats.blk_write' '.blk_write'
+    bashio::core.stats 'core.stats.blk_write' '.blk_write'
 }
