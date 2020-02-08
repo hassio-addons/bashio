@@ -1,4 +1,4 @@
-# Community Hass.io Add-ons: Bashio
+# Community Home Assistant Add-ons: Bashio
 
 [![GitHub Release][releases-shield]][releases]
 ![Project Stage][project-stage-shield]
@@ -16,7 +16,7 @@
 
 ## About
 
-Bashio is an bash function library for use with Hass.io add-ons.
+Bashio is an bash function library for use with Home Assistant add-ons.
 
 It contains a set of commonly used operations and can be used
 to be included in add-ons to reduce code duplication across add-ons and
@@ -34,20 +34,22 @@ instead of other things.
 
 ## Installation
 
-The library is installed in the Community Hass.io Add-ons base images and
-the official Hassio base images by Home Assistant.
+The library is installed in the Community Home Assistant Add-ons base images and
+the official Home Assistant base images.
 
 Currently available base images:
 
-- [Community Hassio Add-ons Alpine Base Image][base-alpine]
-- [Community Hassio Add-ons Alpine Python Base Image][base-alpine-python]
-- [Community Hassio Add-ons Ubuntu Base Image][base-ubuntu]
-- [Official Hassio Alpine Base Image][hassio-base]
-- [Official Hassio Alpine Python Base Image][hassio-base]
-- [Official Hassio Ubuntu Base Image][hassio-base]
-- [Official Hassio Raspbian Base Image][hassio-base]
+- [Community Home Assistant Add-ons Alpine Base Image][base-alpine]
+- [Community Home Assistant Add-ons Alpine Python Base Image][base-alpine-python]
+- [Community Home Assistant Add-ons Debian Base Image][base-debian]
+- [Community Home Assistant Add-ons Ubuntu Base Image][base-ubuntu]
+- [Official Home Assistant Alpine Docker Base Image][home-assistant-base]
+- [Official Home Assistant Alpine Python Docker Base Image][home-assistant-base]
+- [Official Home Assistant Debian Docker Base Image][home-assistant-base]
+- [Official Home Assistant Raspbian Docker Base Image][home-assistant-base]
+- [Official Home Assistant Ubuntu Docker Base Image][home-assistant-base]
 
-Using those images as the base for your Hass.io add-on, will provide this
+Using those images as the base for your Home Assistant add-on, will provide this
 function library out of the box. Our base images are updated frequently and
 provides the minimal needed base image for a great add-on.
 
@@ -85,7 +87,7 @@ bashio::log.info "${USERNAME}"
 ## Functions
 
 Bashio has more then 250+ functions available: communicating with
-the Hass.io API, Have I Been Pwned, file system, logging, configuration handling
+the Supervisor API, Have I Been Pwned, file system, logging, configuration handling
 and a lot more!
 
 The best way to get around, would be by looking at the different modules
@@ -93,12 +95,12 @@ available in the [`lib`](lib) folder. Each module has its own file, and each
 function has been documented inside the code base.
 
 Further more, Bashio is used by the
-[Community Hass.io Add-ons project][repository], those add-ons will be a great
-resource of practical examples.
+[Community Home Assistant Add-ons project][repository], those add-ons will be
+a great resource of practical examples.
 
 ## Known issues and limitations
 
-- Some parts of the Hass.io API are not implemented yet.
+- Some parts of the Supervisor API are not implemented yet.
 
 ## Changelog & Releases
 
@@ -120,7 +122,7 @@ Got questions?
 
 You have several options to get them answered:
 
-- The [Community Hass.io Add-ons Discord chat server][discord] for add-on
+- The [Community Home Assistant Add-ons Discord chat server][discord] for add-on
   support and feature requests.
 - You could also [open an issue here][issue] GitHub.
 
@@ -167,6 +169,7 @@ SOFTWARE.
 
 [base-alpine-python]: https://github.com/hassio-addons/addon-base-python
 [base-alpine]: https://github.com/hassio-addons/addon-base
+[base-debian]: https://github.com/hassio-addons/addon-debian-base
 [base-ubuntu]: https://github.com/hassio-addons/addon-ubuntu-base
 [commits-shield]: https://img.shields.io/github/commit-activity/y/hassio-addons/bashio.svg
 [commits]: https://github.com/hassio-addons/bashio/commits/master
@@ -178,7 +181,7 @@ SOFTWARE.
 [github-sponsors]: https://github.com/sponsors/frenck
 [gitlabci-shield]: https://gitlab.com/hassio-addons/bashio/badges/master/pipeline.svg
 [gitlabci]: https://gitlab.com/hassio-addons/bashio/pipelines
-[hassio-base]: https://github.com/home-assistant/hassio-base
+[home-assistant-base]: https://github.com/home-assistant/docker-base
 [issue]: https://github.com/hassio-addons/bashio/issues
 [keepchangelog]: http://keepachangelog.com/en/1.0.0/
 [license-shield]: https://img.shields.io/github/license/hassio-addons/bashio.svg

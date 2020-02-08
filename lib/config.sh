@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Community Hass.io Add-ons: Bashio
-# Bashio is an bash function library for use with Hass.io add-ons.
+# Community Home Assistant Add-ons: Bashio
+# Bashio is an bash function library for use with Home Assistant add-ons.
 #
 # It contains a set of commonly used operations and can be used
 # to be included in add-on scripts to reduce code duplication across add-ons.
@@ -580,7 +580,7 @@ function bashio::config.require.ssl() {
         bashio::log.fatal "'${certfile}' option does not exists."
         bashio::log.fatal
         bashio::log.fatal "Please ensure the certificate file exists and"
-        bashio::log.fatal "is placed in the Hass.io '/ssl/' directory."
+        bashio::log.fatal "is placed in the '/ssl/' directory."
         bashio::log.fatal
         bashio::log.fatal "In case you don't have SSL yet, consider getting"
         bashio::log.fatal "a SSL certificate or setting the '${key}' option"
@@ -604,7 +604,7 @@ function bashio::config.require.ssl() {
         bashio::log.fatal "'${keyfile}' option does not exists."
         bashio::log.fatal
         bashio::log.fatal "Please ensure the certificate key file exists and"
-        bashio::log.fatal "is placed in the Hass.io '/ssl/' directory."
+        bashio::log.fatal "is placed in the '/ssl/' directory."
         bashio::log.fatal
         bashio::log.fatal "In case you don't have SSL yet, consider getting"
         bashio::log.fatal "a SSL certificate or setting the '${key}' option"

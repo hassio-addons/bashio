@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Community Hass.io Add-ons: Bashio
-# Bashio is an bash function library for use with Hass.io add-ons.
+# Community Home Assistant Add-ons: Bashio
+# Bashio is an bash function library for use with Home Assistant add-ons.
 #
 # It contains a set of commonly used operations and can be used
 # to be included in add-on scripts to reduce code duplication across add-ons.
@@ -694,7 +694,7 @@ function bashio::addon.changelog() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns whether or not this add-on can access the Hass.io API.
+# Returns whether or not this add-on can access the Supervisor API.
 #
 # Arguments:
 #   $1 Add-on slug (optional, default: self)
@@ -706,7 +706,7 @@ function bashio::addon.hassio_api() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns the Hass.io API role of this add-on.
+# Returns the Supervisor API role of this add-on.
 #
 # Arguments:
 #   $1 Add-on slug (optional, default: self)
@@ -733,7 +733,7 @@ function bashio::addon.homeassistant_api() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns whether or not this add-on can access the Hass.io Authentication API.
+# Returns whether or not this add-on can access the Supervisor Auth API.
 #
 # Arguments:
 #   $1 Add-on slug (optional, default: self)
@@ -769,7 +769,7 @@ function bashio::addon.rating() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns whether or not this add-on can use the STDIN on the Hass.io API.
+# Returns whether or not this add-on can use the STDIN on the Supervisor API.
 #
 # Arguments:
 #   $1 Add-on slug (optional, default: self)
@@ -1154,7 +1154,7 @@ function bashio::require.protected() {
     bashio::log.fatal "Pleas enable it again!"
     bashio::log.fatal ""
     bashio::log.fatal "Steps:"
-    bashio::log.fatal " - Go to the Hass.io Panel."
+    bashio::log.fatal " - Go to the Supervisor Panel."
     bashio::log.fatal " - Click on this add-on."
     bashio::log.fatal " - Set the 'Protection mode' switch to on."
     bashio::log.fatal " - Restart the add-on."
@@ -1181,7 +1181,7 @@ function bashio::require.unprotected() {
     bashio::log.fatal "is unable to access Docker."
     bashio::log.fatal
     bashio::log.fatal "Steps:"
-    bashio::log.fatal " - Go to the Hass.io Panel."
+    bashio::log.fatal " - Go to the Supervisor Panel."
     bashio::log.fatal " - Click on this add-on."
     bashio::log.fatal " - Set the 'Protection mode' switch to off."
     bashio::log.fatal " - Restart the add-on."

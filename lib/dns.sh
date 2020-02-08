@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Community Hass.io Add-ons: Bashio
-# Bashio is an bash function library for use with Hass.io add-ons.
+# Community Home Assistant Add-ons: Bashio
+# Bashio is an bash function library for use with Home Assistant add-ons.
 #
 # It contains a set of commonly used operations and can be used
 # to be included in add-on scripts to reduce code duplication across add-ons.
@@ -92,7 +92,7 @@ function bashio::dns() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns the Hass.io DNS host.
+# Returns the Home Assistant DNS host.
 # ------------------------------------------------------------------------------
 function bashio::dns.host() {
     bashio::log.trace "${FUNCNAME[0]}"

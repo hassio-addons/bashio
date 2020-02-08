@@ -1,8 +1,8 @@
 ---
 repository:
-  description: "Bashio - Community Hass.io Add-on for Home Assistant"
+  description: "Bashio - Community Home Assistant Add-ons"
   homepage: https://addons.community
-  topics: bash, bash-library, hassio, hassio-addons, home-assistant, homeassistant
+  topics: bash, bash-library, addons, home-assistant, homeassistant
   private: false
   has_issues: true
   has_projects: false
