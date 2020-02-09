@@ -15,9 +15,6 @@ set -o pipefail # Return exit status of the last command in the pipe that failed
 # GLOBALS
 # ==============================================================================
 
-# Bashio version number
-readonly BASHIO_VERSION="0.1.0"
-
 # Stores the location of this library
 readonly __BASHIO_LIB_DIR=$(dirname "${BASH_SOURCE[0]}")
 
