@@ -322,6 +322,30 @@ function bashio::addon.available() {
 }
 
 # ------------------------------------------------------------------------------
+# Returns is this is an advanced add-on.
+#
+# Arguments:
+#   $1 Add-on slug (optional, default: self)
+# ------------------------------------------------------------------------------
+function bashio::addon.advanced() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::addons "${slug}" "addons.${slug}.advanced" '.advanced // false'
+}
+
+# ------------------------------------------------------------------------------
+# Returns th stage the add-on is currently in.
+#
+# Arguments:
+#   $1 Add-on slug (optional, default: self)
+# ------------------------------------------------------------------------------
+function bashio::addon.stage() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::addons "${slug}" "addons.${slug}.stage" '.stage'
+}
+
+# ------------------------------------------------------------------------------
 # Returns list of supported architectures by the add-on.
 #
 # Arguments:
@@ -841,6 +865,18 @@ function bashio::addon.docker_api() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::addons "${slug}" "addons.${slug}.docker_api" '.docker_api // false'
+}
+
+# ------------------------------------------------------------------------------
+# Returns whether or not this add-on can access video devices.
+#
+# Arguments:
+#   $1 Add-on slug (optional, default: self)
+# ------------------------------------------------------------------------------
+function bashio::addon.video() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::addons "${slug}" "addons.${slug}.video" '.video // false'
 }
 
 # ------------------------------------------------------------------------------
