@@ -118,7 +118,7 @@ based on the following:
 
 ## Support
 
-Have you got any questions?
+Got questions?
 
 You have several options to get them answered:
 
