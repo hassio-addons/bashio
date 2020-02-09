@@ -56,6 +56,15 @@ provides the minimal needed base image for a great add-on.
 If you want to add Bashio to your own images, please take a look at the
 Dockerfile of the above base images to see how they are added at build time.
 
+### Standalone docker
+
+If you want to use _Bashio_ in a standalone version, use the existing [Dockerfile](./Dockerfile):
+
+```sh
+docker build -t bashio .
+docker run --rm -it bashio /bin/bash
+```
+
 ## Configuration
 
 Configuring an Bash script to use the Bashio library is fairly easy. Simply
@@ -97,6 +106,32 @@ function has been documented inside the code base.
 Further more, Bashio is used by the
 [Community Home Assistant Add-ons project][repository], those add-ons will be
 a great resource of practical examples.
+
+## Development
+
+We offer a Docker container for development purposes of _Bashio_:
+
+```
+git clone https://github.com/hassio-addons/bashio.git
+cd bashio
+docker build -f Dockerfile.dev -t bashio .
+docker run --rm -it -v ${PWD}/lib:/usr/lib/bashio -v ${PWD}:/usr/src/bashio bashio /bin/bash
+```
+
+Now, go ahead and create a `test.sh` with content like
+
+```
+#!/usr/bin/env bashio
+
+bashio::string.lower "FOO"
+```
+
+Inside the container, you can run:
+
+```
+cd /usr/src/bashio/
+./test.sh
+```
 
 ## Known issues and limitations
 
