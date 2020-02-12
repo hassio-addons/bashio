@@ -1,4 +1,4 @@
-# Community Home Assistant Add-ons: Bashio
+# Home Assistant Community Add-ons: Bashio
 
 [![GitHub Release][releases-shield]][releases]
 ![Project Stage][project-stage-shield]
@@ -34,15 +34,15 @@ instead of other things.
 
 ## Installation
 
-The library is installed in the Community Home Assistant Add-ons base images and
+The library is installed in the Home Assistant Community Add-ons base images and
 the official Home Assistant base images.
 
 Currently available base images:
 
-- [Community Home Assistant Add-ons Alpine Base Image][base-alpine]
-- [Community Home Assistant Add-ons Alpine Python Base Image][base-alpine-python]
-- [Community Home Assistant Add-ons Debian Base Image][base-debian]
-- [Community Home Assistant Add-ons Ubuntu Base Image][base-ubuntu]
+- [Home Assistant Community Add-ons Alpine Base Image][base-alpine]
+- [Home Assistant Community Add-ons Alpine Python Base Image][base-alpine-python]
+- [Home Assistant Community Add-ons Debian Base Image][base-debian]
+- [Home Assistant Community Add-ons Ubuntu Base Image][base-ubuntu]
 - [Official Home Assistant Alpine Docker Base Image][home-assistant-base]
 - [Official Home Assistant Alpine Python Docker Base Image][home-assistant-base]
 - [Official Home Assistant Debian Docker Base Image][home-assistant-base]
@@ -95,7 +95,7 @@ available in the [`lib`](lib) folder. Each module has its own file, and each
 function has been documented inside the code base.
 
 Further more, Bashio is used by the
-[Community Home Assistant Add-ons project][repository], those add-ons will be
+[Home Assistant Community Add-ons project][repository], those add-ons will be
 a great resource of practical examples.
 
 ## Known issues and limitations
@@ -122,7 +122,7 @@ Got questions?
 
 You have several options to get them answered:
 
-- The [Community Home Assistant Add-ons Discord chat server][discord] for add-on
+- The [Home Assistant Community Add-ons Discord chat server][discord] for add-on
   support and feature requests.
 - You could also [open an issue here][issue] GitHub.
 
