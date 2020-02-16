@@ -16,7 +16,7 @@
 
 ## About
 
-Bashio is an bash function library for use with Home Assistant add-ons.
+Bashio is a bash function library for use with Home Assistant add-ons.
 
 It contains a set of commonly used operations and can be used
 to be included in add-ons to reduce code duplication across add-ons and
@@ -27,7 +27,7 @@ Main goals:
 - Reduce the number of operations needed in add-ons.
 - Reduce the amount of code needed in add-ons.
 - Make add-on code more readable.
-- Providing an trusted and tested code base.
+- Providing a trusted and tested code base.
 
 Quicker add-on development, by allowing you to focus on the add-on logic
 instead of other things.
@@ -49,16 +49,16 @@ Currently available base images:
 - [Official Home Assistant Raspbian Docker Base Image][home-assistant-base]
 - [Official Home Assistant Ubuntu Docker Base Image][home-assistant-base]
 
-Using those images as the base for your Home Assistant add-on, will provide this
+Using those images as the base for your Home Assistant add-on will provide this
 function library out of the box. Our base images are updated frequently and
-provides the minimal needed base image for a great add-on.
+provide the minimal needed base image for a great add-on.
 
 If you want to add Bashio to your own images, please take a look at the
 Dockerfile of the above base images to see how they are added at build time.
 
 ## Configuration
 
-Configuring an Bash script to use the Bashio library is fairly easy. Simply
+Configuring a Bash script to use the Bashio library is fairly easy. Simply
 replace the shebang of your script file, from `bash` to `bashio`.
 
 Before example:
@@ -86,15 +86,15 @@ bashio::log.info "${USERNAME}"
 
 ## Functions
 
-Bashio has more then 250+ functions available: communicating with
+Bashio has more than 250+ functions available: communicating with
 the Supervisor API, Have I Been Pwned, file system, logging, configuration handling
 and a lot more!
 
-The best way to get around, would be by looking at the different modules
+The best way to get around would be by looking at the different modules
 available in the [`lib`](lib) folder. Each module has its own file, and each
-function has been documented inside the code base.
+function has been documented inside the codebase.
 
-Further more, Bashio is used by the
+Furthermore, Bashio is used by the
 [Home Assistant Community Add-ons project][repository], those add-ons will be
 a great resource of practical examples.
 
