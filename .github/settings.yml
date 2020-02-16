@@ -1,6 +1,6 @@
 ---
 repository:
-  description: "Bashio - Community Home Assistant Add-ons"
+  description: "Bashio - Home Assistant Community Add-ons"
   homepage: https://addons.community
   topics: bash, bash-library, addons, home-assistant, homeassistant
   private: false
