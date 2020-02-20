@@ -30,7 +30,7 @@ bashio::net.wait_for() {
     timeout ${timeout_argument} "${timeout}" \
         bash -c \
             "until echo > /dev/tcp/${host}/${port} ; do sleep 0.5; done" \
-                > /dev/null 2>&1;
+                > /dev/null 2>&1 || true;
 
     return "${__BASHIO_EXIT_OK}"
 }
