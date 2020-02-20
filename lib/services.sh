@@ -66,6 +66,24 @@ QUERY
 }
 
 # ------------------------------------------------------------------------------
+# Check if this service is available.
+#
+# Arguments:
+#   $1 Service name
+# ------------------------------------------------------------------------------
+function bashio::services.available() {
+    local service=${1}
+
+    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+
+    if ! bashio::services "${service}" > /dev/null 2>&1; then
+        return "${__BASHIO_EXIT_NOK}"
+    fi
+
+    return "${__BASHIO_EXIT_OK}"
+}
+
+# ------------------------------------------------------------------------------
 # Publish a new configuration object for this service.
 #
 # Arguments:
