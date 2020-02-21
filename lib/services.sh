@@ -76,7 +76,8 @@ function bashio::services.available() {
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
 
-    if ! bashio::services "${service}" > /dev/null 2>&1; then
+    if ! bashio::api.supervisor GET "/services/${service}" > /dev/null 2>&1;
+    then
         return "${__BASHIO_EXIT_NOK}"
     fi
 
