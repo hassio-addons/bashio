@@ -110,9 +110,9 @@ function bashio::dns.version() {
 # ------------------------------------------------------------------------------
 # Returns the latest version of the DNS.
 # ------------------------------------------------------------------------------
-function bashio::dns.last_version() {
+function bashio::dns.version_latest() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::dns 'dns.info.last_version' '.last_version'
+    bashio::dns 'dns.info.version_latest' '.version_latest'
 }
 
 # ------------------------------------------------------------------------------
@@ -120,14 +120,14 @@ function bashio::dns.last_version() {
 # ------------------------------------------------------------------------------
 function bashio::dns.update_available() {
     local version
-    local last_version
+    local version_latest
 
     bashio::log.trace "${FUNCNAME[0]}"
 
     version=$(bashio::dns.version)
-    last_version=$(bashio::dns.last_version)
+    version_latest=$(bashio::dns.version_latest)
 
-    if [[ "${version}" = "${last_version}" ]]; then
+    if [[ "${version}" = "${version_latest}" ]]; then
         return "${__BASHIO_EXIT_NOK}"
     fi
 

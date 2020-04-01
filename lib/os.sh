@@ -114,14 +114,14 @@ function bashio::os.version_latest() {
 # ------------------------------------------------------------------------------
 function bashio::os.update_available() {
     local version
-    local last_version
+    local version_latest
 
     bashio::log.trace "${FUNCNAME[0]}"
 
     version=$(bashio::os.version)
-    last_version=$(bashio::os.last_version)
+    version_latest=$(bashio::os.version_latest)
 
-    if [[ "${version}" = "${last_version}" ]]; then
+    if [[ "${version}" = "${version_latest}" ]]; then
         return "${__BASHIO_EXIT_NOK}"
     fi
 
