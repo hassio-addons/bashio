@@ -32,6 +32,14 @@ function bashio::host.reboot() {
 }
 
 # ------------------------------------------------------------------------------
+# Returns the logs created by the host system.
+# ------------------------------------------------------------------------------
+function bashio::host.logs() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::api.supervisor GET /host/logs true
+}
+
+# ------------------------------------------------------------------------------
 # Returns a JSON object with generic Host information.
 #
 # Arguments:
