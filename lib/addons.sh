@@ -400,10 +400,10 @@ function bashio::addon.version() {
 # Arguments:
 #   $1 Add-on slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.last_version() {
+function bashio::addon.version_latest() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.last_version" '.last_version'
+    bashio::addons "${slug}" "addons.${slug}.version_latest" '.version_latest'
 }
 
 # ------------------------------------------------------------------------------
@@ -415,14 +415,14 @@ function bashio::addon.last_version() {
 function bashio::addon.update_available() {
     local addon=${1:-'self'}
     local version
-    local last_version
+    local version_latest
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     version=$(bashio::addon.version "${addon}")
-    last_version=$(bashio::addon.last_version "${addon}")
+    version_latest=$(bashio::addon.version_latest "${addon}")
 
-    if [[ "${version}" = "${last_version}" ]]; then
+    if [[ "${version}" = "${version_latest}" ]]; then
         return "${__BASHIO_EXIT_NOK}"
     fi
 

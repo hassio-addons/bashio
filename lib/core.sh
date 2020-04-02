@@ -116,9 +116,9 @@ function bashio::core.version() {
 # ------------------------------------------------------------------------------
 # Returns the latest version of Home Assistant.
 # ------------------------------------------------------------------------------
-function bashio::core.last_version() {
+function bashio::core.version_latest() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::core 'core.info.last_version' '.last_version'
+    bashio::core 'core.info.version_latest' '.version_latest'
 }
 
 # ------------------------------------------------------------------------------
@@ -126,14 +126,14 @@ function bashio::core.last_version() {
 # ------------------------------------------------------------------------------
 function bashio::supervisor.update_available() {
     local version
-    local last_version
+    local version_latest
 
     bashio::log.trace "${FUNCNAME[0]}"
 
     version=$(bashio::core.version)
-    last_version=$(bashio::core.last_version)
+    version_latest=$(bashio::core.version_latest)
 
-    if [[ "${version}" = "${last_version}" ]]; then
+    if [[ "${version}" = "${version_latest}" ]]; then
         return "${__BASHIO_EXIT_NOK}"
     fi
 

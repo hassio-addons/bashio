@@ -101,9 +101,9 @@ function bashio::supervisor.version() {
 # ------------------------------------------------------------------------------
 # Returns the latest version of the Supervisor.
 # ------------------------------------------------------------------------------
-function bashio::supervisor.last_version() {
+function bashio::supervisor.version_latest() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::supervisor 'supervisor.info.last_version' '.last_version'
+    bashio::supervisor 'supervisor.info.version_latest' '.version_latest'
 }
 
 # ------------------------------------------------------------------------------
@@ -111,14 +111,14 @@ function bashio::supervisor.last_version() {
 # ------------------------------------------------------------------------------
 function bashio::supervisor.update_available() {
     local version
-    local last_version
+    local version_latest
 
     bashio::log.trace "${FUNCNAME[0]}"
 
     version=$(bashio::supervisor.version)
-    last_version=$(bashio::supervisor.last_version)
+    version_latest=$(bashio::supervisor.version_latest)
 
-    if [[ "${version}" = "${last_version}" ]]; then
+    if [[ "${version}" = "${version_latest}" ]]; then
         return "${__BASHIO_EXIT_NOK}"
     fi
 
