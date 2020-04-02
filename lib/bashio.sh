@@ -51,6 +51,8 @@ source "${__BASHIO_LIB_DIR}/cache.sh"
 source "${__BASHIO_LIB_DIR}/addons.sh"
 # shellcheck source=lib/api.sh
 source "${__BASHIO_LIB_DIR}/api.sh"
+# shellcheck source=lib/cli.sh
+source "${__BASHIO_LIB_DIR}/cli.sh"
 # shellcheck source=lib/config.sh
 source "${__BASHIO_LIB_DIR}/config.sh"
 # shellcheck source=lib/core.sh

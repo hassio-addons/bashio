@@ -28,26 +28,6 @@ function bashio::os.update() {
 }
 
 # ------------------------------------------------------------------------------
-# Updates HassOS CLI to the latest version.
-#
-# Arguments:
-#   $1 Version to update to (optional)
-# ------------------------------------------------------------------------------
-function bashio::os.update_cli() {
-    local version=${1:-}
-
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
-
-    if bashio::var.has_value "${version}"; then
-        version=$(bashio::var.json version "${version}")
-        bashio::api.supervisor POST /os/update/cli "${version}"
-    else
-        bashio::api.supervisor POST /os/update/cli
-    fi
-    bashio::cache.flush_all
-}
-
-# ------------------------------------------------------------------------------
 # Load HassOS host configuration from USB stick.
 # ------------------------------------------------------------------------------
 function bashio::os.config_sync() {
@@ -120,41 +100,6 @@ function bashio::os.update_available() {
 
     version=$(bashio::os.version)
     last_version=$(bashio::os.last_version)
-
-    if [[ "${version}" = "${last_version}" ]]; then
-        return "${__BASHIO_EXIT_NOK}"
-    fi
-
-    return "${__BASHIO_EXIT_OK}"
-}
-
-# ------------------------------------------------------------------------------
-# Returns the CLI version of HassOS.
-# ------------------------------------------------------------------------------
-function bashio::os.version_cli() {
-    bashio::log.trace "${FUNCNAME[0]}"
-    bashio::os 'os.info.version_cli' '.version_cli'
-}
-
-# ------------------------------------------------------------------------------
-# Returns the latest CLI version of HassOS.
-# ------------------------------------------------------------------------------
-function bashio::os.version_cli_latest() {
-    bashio::log.trace "${FUNCNAME[0]}"
-    bashio::os 'os.info.version_cli_latest' '.version_cli_latest'
-}
-
-# ------------------------------------------------------------------------------
-# Checks if there is an update available for the Supervisor.
-# ------------------------------------------------------------------------------
-function bashio::os.update_available_cli() {
-    local version
-    local last_version
-
-    bashio::log.trace "${FUNCNAME[0]}"
-
-    version=$(bashio::os.version_cli)
-    last_version=$(bashio::os.version_cli_latest)
 
     if [[ "${version}" = "${last_version}" ]]; then
         return "${__BASHIO_EXIT_NOK}"
