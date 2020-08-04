@@ -15,16 +15,16 @@
 # ------------------------------------------------------------------------------
 function bashio::pwned.is_safe_password() {
     local password="${1}"
-    local occurances
+    local occurrences
 
     bashio::log.trace "${FUNCNAME[0]}" "<REDACTED PASSWORD>"
 
-    if ! occurances=$(bashio::pwned "${password}"); then
+    if ! occurrences=$(bashio::pwned "${password}"); then
         bashio::log.warning "Could not check password, assuming it is safe."
         return "${__BASHIO_EXIT_OK}"
     fi
 
-    if [[ "${occurances}" -ne 0 ]]; then
+    if [[ "${occurrences}" -ne 0 ]]; then
         return "${__BASHIO_EXIT_NOK}"
     fi
 
@@ -32,7 +32,7 @@ function bashio::pwned.is_safe_password() {
 }
 
 # ------------------------------------------------------------------------------
-# Gets the number of occurances of the password in the list.
+# Gets the number of occurrences of the password in the list.
 #
 # Arguments:
 #   $1 The password to check
@@ -80,7 +80,7 @@ function bashio::pwned() {
     )
     bashio::log.debug "Password SHA1: ${password}"
 
-    # Check with have I Been Powned, only send the first 5 chars of the hash
+    # Check with have I Been Pwned, only send the first 5 chars of the hash
     if ! response=$(curl \
         --silent \
         --show-error \
@@ -111,7 +111,7 @@ function bashio::pwned() {
     fi
 
     if [[ "${status}" -ne 200 ]]; then
-        bashio::log.error "Unknown HIBP HTTP error occured."
+        bashio::log.error "Unknown HIBP HTTP error occurred."
         return "${__BASHIO_EXIT_NOK}"
     fi
 
