@@ -59,7 +59,7 @@ function bashio::cache.set() {
 
     if ! bashio::fs.directory_exists "${__BASHIO_CACHE_DIR}"; then
         mkdir -p "${__BASHIO_CACHE_DIR}" ||
-            basshio::exit.nok "Could not create cache folder"
+            bashio::exit.nok "Could not create cache folder"
     fi
 
     if ! printf "%s" "$value" > "${__BASHIO_CACHE_DIR}/${key}.cache"; then
@@ -100,7 +100,7 @@ bashio::cache.flush_all() {
     fi
 
     if ! rm -f -r "${__BASHIO_CACHE_DIR}"; then
-        basshio::exit.nok "Could not flush cache"
+        bashio::exit.nok "Could not flush cache"
         return "${__BASHIO_EXIT_NOK}"
     fi
 
