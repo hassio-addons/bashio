@@ -63,7 +63,7 @@ function bashio::cache.set() {
     fi
 
     if ! printf "%s" "$value" > "${__BASHIO_CACHE_DIR}/${key}.cache"; then
-        bashio::log.warning "An error occured while storing ${key} to cache"
+        bashio::log.warning "An error occurred while storing ${key} to cache"
         return "${__BASHIO_EXIT_NOK}"
     fi
 

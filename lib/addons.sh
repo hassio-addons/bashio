@@ -1187,7 +1187,7 @@ function bashio::require.protected() {
     bashio::log.fatal "protection mode is enabled on this add-on."
     bashio::log.fatal
     bashio::log.fatal "Unfortunately, it has been disabled."
-    bashio::log.fatal "Pleas enable it again!"
+    bashio::log.fatal "Please enable it again!"
     bashio::log.fatal ""
     bashio::log.fatal "Steps:"
     bashio::log.fatal " - Go to the Supervisor Panel."
