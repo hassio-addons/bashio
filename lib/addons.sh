@@ -1010,6 +1010,31 @@ function bashio::addon.ingress_port() {
 }
 
 # ------------------------------------------------------------------------------
+# Returns or sets whether or not watchdog is enabled for this add-on.
+#
+# Arguments:
+#   $1 Add-on slug (optional, default: self)
+#   $2 Set current watchdog state (Optional)
+# ------------------------------------------------------------------------------
+function bashio::addon.watchdog() {
+    local slug=${1:-'self'}
+    local watchdog=${2:-}
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    if bashio::var.has_value "${watchdog}"; then
+        watchdog=$(bashio::var.json watchdog "^${watchdog}")
+        bashio::api.supervisor POST "/addons/${slug}/options" "${watchdog}"
+        bashio::cache.flush_all
+    else
+        bashio::addons \
+            "${slug}" \
+            "addons.${slug}.watchdog" \
+            '.watchdog // false'
+    fi
+}
+
+# ------------------------------------------------------------------------------
 # List all available stats about an add-on.
 #
 # Arguments:
