@@ -124,3 +124,11 @@ function bashio::info.timezone() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::info 'supervisor.info.timezone' '.timezone'
 }
+
+# ------------------------------------------------------------------------------
+# Returns the supported state of the system.
+# ------------------------------------------------------------------------------
+function bashio::info.supported() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::supervisor 'supervisor.info.supported' '.supported'
+}
