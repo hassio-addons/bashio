@@ -134,6 +134,22 @@ function bashio::supervisor.arch() {
 }
 
 # ------------------------------------------------------------------------------
+# Returns the supported state of the system.
+# ------------------------------------------------------------------------------
+function bashio::supervisor.supported() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::supervisor 'supervisor.info.supported' '.supported'
+}
+
+# ------------------------------------------------------------------------------
+# Returns the healthy state of the system.
+# ------------------------------------------------------------------------------
+function bashio::supervisor.healthy() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::supervisor 'supervisor.info.healthy' '.healthy'
+}
+
+# ------------------------------------------------------------------------------
 # Returns or sets the stability channel of the setup.
 #
 # Arguments:
