@@ -130,5 +130,5 @@ function bashio::info.timezone() {
 # ------------------------------------------------------------------------------
 function bashio::info.supported() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::supervisor 'supervisor.info.supported' '.supported'
+    bashio::info 'supervisor.info.supported' '.supported'
 }
