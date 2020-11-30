@@ -119,19 +119,16 @@ function bashio::dns.version_latest() {
 # Checks if there is an update available for the DNS.
 # ------------------------------------------------------------------------------
 function bashio::dns.update_available() {
-    local version
-    local version_latest
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::cli 'dns.info.update_available' '.update_available // false'
+}
 
+# ------------------------------------------------------------------------------
+# Returns a list of local DNS servers used by the DNS.
+# ------------------------------------------------------------------------------
+function bashio::dns.locals() {
     bashio::log.trace "${FUNCNAME[0]}"
-
-    version=$(bashio::dns.version)
-    version_latest=$(bashio::dns.version_latest)
-
-    if [[ "${version}" = "${version_latest}" ]]; then
-        return "${__BASHIO_EXIT_NOK}"
-    fi
-
-    return "${__BASHIO_EXIT_OK}"
+    bashio::dns 'dns.info.locals' '.locals[]'
 }
 
 # ------------------------------------------------------------------------------
