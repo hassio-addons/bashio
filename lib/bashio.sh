@@ -75,6 +75,8 @@ source "${__BASHIO_LIB_DIR}/host.sh"
 source "${__BASHIO_LIB_DIR}/info.sh"
 # shellcheck source=lib/jq.sh
 source "${__BASHIO_LIB_DIR}/jq.sh"
+# shellcheck source=lib/multicast.sh
+source "${__BASHIO_LIB_DIR}/multicast.sh"
 # shellcheck source=lib/net.sh
 source "${__BASHIO_LIB_DIR}/net.sh"
 # shellcheck source=lib/os.sh
