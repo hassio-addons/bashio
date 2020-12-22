@@ -101,15 +101,28 @@ function bashio::addon.update() {
 }
 
 # ------------------------------------------------------------------------------
-# RAW Docker log of the specified add-on.
+# RAW Docker logs of the specified add-on.
 #
 # Arguments:
 #   $1 Add-on slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.log() {
+function bashio::addon.logs() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.supervisor GET "/addons/${slug}/log" true
+    bashio::api.supervisor GET "/addons/${slug}/logs" true
+}
+
+
+# ------------------------------------------------------------------------------
+# Returns the documentation of the add-on.
+#
+# Arguments:
+#   $1 Add-on slug (optional, default: self)
+# ------------------------------------------------------------------------------
+function bashio::addon.documentation() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::api.supervisor GET "/addons/${slug}/documentation" true
 }
 
 # ------------------------------------------------------------------------------
@@ -334,7 +347,7 @@ function bashio::addon.advanced() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns th stage the add-on is currently in.
+# Returns the stage the add-on is currently in.
 #
 # Arguments:
 #   $1 Add-on slug (optional, default: self)
@@ -343,6 +356,18 @@ function bashio::addon.stage() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::addons "${slug}" "addons.${slug}.stage" '.stage'
+}
+
+# ------------------------------------------------------------------------------
+# Returns the phase the add-on is started up.
+#
+# Arguments:
+#   $1 Add-on slug (optional, default: self)
+# ------------------------------------------------------------------------------
+function bashio::addon.startup() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::addons "${slug}" "addons.${slug}.startup" '.startup'
 }
 
 # ------------------------------------------------------------------------------
@@ -706,12 +731,26 @@ function bashio::addon.logo() {
 }
 
 # ------------------------------------------------------------------------------
+# Returns whether or not this add-on has documentation available.
+#
+# Arguments:
+#   $1 Add-on slug (optional, default: self)
+# ------------------------------------------------------------------------------
+function bashio::addon.has_documentation() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::addons \
+        "${slug}" \
+        "addons.${slug}.documentation" '.documentation // false'
+}
+
+# ------------------------------------------------------------------------------
 # Returns whether or not this add-on has a changelog available.
 #
 # Arguments:
 #   $1 Add-on slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.changelog() {
+function bashio::addon.has_changelog() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::addons "${slug}" "addons.${slug}.changelog" '.changelog // false'
@@ -739,6 +778,18 @@ function bashio::addon.hassio_role() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::addons "${slug}" "addons.${slug}.hassio_role" '.hassio_role'
+}
+
+# ------------------------------------------------------------------------------
+# Returns the minimal required Home Assistant version needed by this add-on.
+#
+# Arguments:
+#   $1 Add-on slug (optional, default: self)
+# ------------------------------------------------------------------------------
+function bashio::addon.homeassistant() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::addons "${slug}" "addons.${slug}.homeassistant" '.homeassistant'
 }
 
 # ------------------------------------------------------------------------------
@@ -802,6 +853,21 @@ function bashio::addon.stdin() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::addons "${slug}" "addons.${slug}.stdin" '.stdin // false'
+}
+
+# ------------------------------------------------------------------------------
+# Returns whether or not this add-on has full access
+#
+# Arguments:
+#   $1 Add-on slug (optional, default: self)
+# ------------------------------------------------------------------------------
+function bashio::addon.full_access() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::addons \
+        "${slug}" \
+        "addons.${slug}.full_access" \
+        '.full_access // false'
 }
 
 # ------------------------------------------------------------------------------
