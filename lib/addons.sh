@@ -438,20 +438,11 @@ function bashio::addon.version_latest() {
 #   $1 Add-on slug (optional, default: self)
 # ------------------------------------------------------------------------------
 function bashio::addon.update_available() {
-    local addon=${1:-'self'}
-    local version
-    local version_latest
-
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-
-    version=$(bashio::addon.version "${addon}")
-    version_latest=$(bashio::addon.version_latest "${addon}")
-
-    if [[ "${version}" = "${version_latest}" ]]; then
-        return "${__BASHIO_EXIT_NOK}"
-    fi
-
-    return "${__BASHIO_EXIT_OK}"
+    bashio::addons \
+        "${slug}" \
+        "addons.${slug}.update_available" \
+        '.update_available // false'
 }
 
 # ------------------------------------------------------------------------------

@@ -120,7 +120,7 @@ function bashio::dns.version_latest() {
 # ------------------------------------------------------------------------------
 function bashio::dns.update_available() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::cli 'dns.info.update_available' '.update_available // false'
+    bashio::dns 'dns.info.update_available' '.update_available // false'
 }
 
 # ------------------------------------------------------------------------------
