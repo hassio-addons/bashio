@@ -132,3 +132,19 @@ function bashio::info.supported() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::info 'supervisor.info.supported' '.supported'
 }
+
+# ------------------------------------------------------------------------------
+# Returns the Docker version running on the system.
+# ------------------------------------------------------------------------------
+function bashio::info.docker() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::info 'supervisor.info.docker' '.docker'
+}
+
+# ------------------------------------------------------------------------------
+# Returns the operating system running on the system.
+# ------------------------------------------------------------------------------
+function bashio::info.operating_system() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::info 'supervisor.info.operating_system' '.operating_system'
+}
