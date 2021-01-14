@@ -32,6 +32,14 @@ function bashio::core.restart() {
 }
 
 # ------------------------------------------------------------------------------
+# Rebuild Home Assistant.
+# ------------------------------------------------------------------------------
+function bashio::core.rebuild() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::api.supervisor POST /core/rebuild
+}
+
+# ------------------------------------------------------------------------------
 # Updates Home Assistant to the latest version.
 #
 # Arguments:
