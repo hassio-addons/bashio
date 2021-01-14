@@ -30,7 +30,7 @@ jobs:
       - name: 🚀 Run Shellcheck
         uses: ludeeus/action-shellcheck@1.0.0
         env:
-          SHELLCHECK_OPTS: -s bash
+          SHELLCHECK_OPTS: --external-sources -s bash
 
   lint-yamllint:
     name: YAMLLint
