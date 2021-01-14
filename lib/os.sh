@@ -115,3 +115,11 @@ function bashio::os.board() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::os 'os.info.board' '.board'
 }
+
+# ------------------------------------------------------------------------------
+# Returns the active boot.
+# ------------------------------------------------------------------------------
+function bashio::os.boot() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::os 'os.info.boot' '.boot'
+}
