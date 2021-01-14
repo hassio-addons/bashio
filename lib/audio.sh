@@ -111,19 +111,8 @@ function bashio::audio.version_latest() {
 # Checks if there is an update available for the audio server.
 # ------------------------------------------------------------------------------
 function bashio::audio.update_available() {
-    local version
-    local version_latest
-
-    bashio::log.trace "${FUNCNAME[0]}"
-
-    version=$(bashio::audio.version)
-    version_latest=$(bashio::audio.version_latest)
-
-    if [[ "${version}" = "${version_latest}" ]]; then
-        return "${__BASHIO_EXIT_NOK}"
-    fi
-
-    return "${__BASHIO_EXIT_OK}"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::audio 'audio.info.update_available' '.update_available // false'
 }
 
 # ------------------------------------------------------------------------------

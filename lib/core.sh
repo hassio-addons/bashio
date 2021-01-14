@@ -134,7 +134,7 @@ function bashio::core.version_latest() {
 # ------------------------------------------------------------------------------
 function bashio::core.update_available() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::cli 'core.info.update_available' '.update_available // false'
+    bashio::core 'core.info.update_available' '.update_available // false'
 }
 
 # ------------------------------------------------------------------------------

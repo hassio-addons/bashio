@@ -110,19 +110,8 @@ function bashio::supervisor.version_latest() {
 # Checks if there is an update available for the Supervisor.
 # ------------------------------------------------------------------------------
 function bashio::supervisor.update_available() {
-    local version
-    local version_latest
-
-    bashio::log.trace "${FUNCNAME[0]}"
-
-    version=$(bashio::supervisor.version)
-    version_latest=$(bashio::supervisor.version_latest)
-
-    if [[ "${version}" = "${version_latest}" ]]; then
-        return "${__BASHIO_EXIT_NOK}"
-    fi
-
-    return "${__BASHIO_EXIT_OK}"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::supervisor 'supervisor.info.update_available' '.update_available // false'
 }
 
 # ------------------------------------------------------------------------------
