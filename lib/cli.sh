@@ -85,19 +85,8 @@ function bashio::cli.version_latest() {
 # Checks if there is an update available for the CLI.
 # ------------------------------------------------------------------------------
 function bashio::cli.update_available() {
-    local version
-    local version_latest
-
-    bashio::log.trace "${FUNCNAME[0]}"
-
-    version=$(bashio::cli.version)
-    version_latest=$(bashio::cli.version_latest)
-
-    if [[ "${version}" = "${version_latest}" ]]; then
-        return "${__BASHIO_EXIT_NOK}"
-    fi
-
-    return "${__BASHIO_EXIT_OK}"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::cli 'cli.info.update_available' '.update_available // false'
 }
 
 # ------------------------------------------------------------------------------
