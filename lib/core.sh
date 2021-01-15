@@ -96,7 +96,7 @@ function bashio::core() {
     fi
 
     if bashio::cache.exists 'core.info'; then
-        info=$(bashio::cache.get 'supervisor.core')
+        info=$(bashio::cache.get 'core.info')
     else
         info=$(bashio::api.supervisor GET /core/info false)
         bashio::cache.set 'core.info' "${info}"

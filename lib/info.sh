@@ -15,7 +15,7 @@
 #   $2 jq Filter to apply on the result (optional)
 # ------------------------------------------------------------------------------
 function bashio::info() {
-    local cache_key=${1:-'supervisor.info'}
+    local cache_key=${1:-'info'}
     local filter=${2:-}
     local info
     local response
@@ -27,11 +27,11 @@ function bashio::info() {
         return "${__BASHIO_EXIT_OK}"
     fi
 
-    if bashio::cache.exists 'supervisor.info'; then
-        info=$(bashio::cache.get 'supervisor.info')
+    if bashio::cache.exists 'info'; then
+        info=$(bashio::cache.get 'info')
     else
         info=$(bashio::api.supervisor GET /info false)
-        bashio::cache.set 'supervisor.info' "${info}"
+        bashio::cache.set 'info' "${info}"
     fi
 
     response="${info}"

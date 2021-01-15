@@ -56,7 +56,7 @@ function bashio::os() {
     fi
 
     if bashio::cache.exists 'os.info'; then
-        info=$(bashio::cache.get 'supervisor.os')
+        info=$(bashio::cache.get 'os.info')
     else
         info=$(bashio::api.supervisor GET /os/info false)
         bashio::cache.set 'os.info' "${info}"
