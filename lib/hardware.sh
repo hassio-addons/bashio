@@ -78,6 +78,14 @@ function bashio::hardware.gpio() {
 }
 
 # ------------------------------------------------------------------------------
+# Returns a list of available USB devices on the host system.
+# ------------------------------------------------------------------------------
+function bashio::hardware.usb() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::hardware 'hardware.info.usb' '.usb[]'
+}
+
+# ------------------------------------------------------------------------------
 # Trigger udev device notifications from the host system.
 # ------------------------------------------------------------------------------
 function bashio::hardware.trigger() {
