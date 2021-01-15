@@ -4,7 +4,7 @@
 ![Project Stage][project-stage-shield]
 [![License][license-shield]](LICENSE.md)
 
-[![GitLab CI][gitlabci-shield]][gitlabci]
+[![GitHub Actions][github-actions-shield]][github-actions]
 ![Project Maintenance][maintenance-shield]
 [![GitHub Activity][commits-shield]][commits]
 
@@ -147,7 +147,7 @@ check [the contributor's page][contributors].
 
 MIT License
 
-Copyright (c) 2019-2020 Franck Nijhof
+Copyright (c) 2019-2021 Franck Nijhof
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -177,15 +177,15 @@ SOFTWARE.
 [discord-shield]: https://img.shields.io/discord/478094546522079232.svg
 [discord]: https://discord.me/hassioaddons
 [frenck]: https://github.com/frenck
+[github-actions-shield]: https://gitlab.com/hassio-addons/bashio/badges/master/pipeline.svg
+[github-actions]: https://gitlab.com/hassio-addons/bashio/pipelines
 [github-sponsors-shield]: https://frenck.dev/wp-content/uploads/2019/12/github_sponsor.png
 [github-sponsors]: https://github.com/sponsors/frenck
-[gitlabci-shield]: https://gitlab.com/hassio-addons/bashio/badges/master/pipeline.svg
-[gitlabci]: https://gitlab.com/hassio-addons/bashio/pipelines
 [home-assistant-base]: https://github.com/home-assistant/docker-base
 [issue]: https://github.com/hassio-addons/bashio/issues
 [keepchangelog]: http://keepachangelog.com/en/1.0.0/
 [license-shield]: https://img.shields.io/github/license/hassio-addons/bashio.svg
-[maintenance-shield]: https://img.shields.io/maintenance/yes/2020.svg
+[maintenance-shield]: https://img.shields.io/maintenance/yes/2021.svg
 [patreon-shield]: https://frenck.dev/wp-content/uploads/2019/12/patreon.png
 [patreon]: https://www.patreon.com/frenck
 [project-stage-shield]: https://img.shields.io/badge/project%20stage-experimental-yellow.svg
