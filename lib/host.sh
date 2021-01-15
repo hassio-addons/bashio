@@ -141,3 +141,27 @@ function bashio::host.cpe() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::host 'host.info.cpe' '.cpe'
 }
+
+# ------------------------------------------------------------------------------
+# Returns the available diskspace on the host.
+# ------------------------------------------------------------------------------
+function bashio::host.disk_free() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::host 'host.info.disk_free' '.disk_free'
+}
+
+# ------------------------------------------------------------------------------
+# Returns the total diskspace on the host.
+# ------------------------------------------------------------------------------
+function bashio::host.disk_total() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::host 'host.info.disk_total' '.disk_total'
+}
+
+# ------------------------------------------------------------------------------
+# Returns the available diskspace on the host.
+# ------------------------------------------------------------------------------
+function bashio::host.disk_used() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::host 'host.info.disk_used' '.disk_used'
+}
