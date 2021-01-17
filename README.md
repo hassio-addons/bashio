@@ -177,8 +177,8 @@ SOFTWARE.
 [discord-shield]: https://img.shields.io/discord/478094546522079232.svg
 [discord]: https://discord.me/hassioaddons
 [frenck]: https://github.com/frenck
-[github-actions-shield]: https://gitlab.com/hassio-addons/bashio/badges/master/pipeline.svg
-[github-actions]: https://gitlab.com/hassio-addons/bashio/pipelines
+[github-actions-shield]: https://github.com/hassio-addons/bashio/workflows/CI/badge.svg
+[github-actions]: https://github.com/hassio-addons/bashio/actions
 [github-sponsors-shield]: https://frenck.dev/wp-content/uploads/2019/12/github_sponsor.png
 [github-sponsors]: https://github.com/sponsors/frenck
 [home-assistant-base]: https://github.com/home-assistant/docker-base
