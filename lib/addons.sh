@@ -438,6 +438,7 @@ function bashio::addon.version_latest() {
 #   $1 Add-on slug (optional, default: self)
 # ------------------------------------------------------------------------------
 function bashio::addon.update_available() {
+    local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::addons \
         "${slug}" \
