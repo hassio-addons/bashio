@@ -131,6 +131,45 @@ function bashio::network.name() {
 }
 
 # ------------------------------------------------------------------------------
+# Returns the type of the network interfaces.
+#
+# Arguments:
+#   $1 Interface name for this operation (optional)
+# ------------------------------------------------------------------------------
+function bashio::network.type() {
+    local interface=${1:-'default'}
+
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::network.interface "network.interface.${interface}.info.type" "${interface}" '.type'
+}
+
+# ------------------------------------------------------------------------------
+# Returns if the interface is enabled.
+#
+# Arguments:
+#   $1 Interface name for this operation (optional)
+# ------------------------------------------------------------------------------
+function bashio::network.enabled() {
+    local interface=${1:-'default'}
+
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::network.interface "network.interface.${interface}.info.enabled" "${interface}" '.enabled'
+}
+
+# ------------------------------------------------------------------------------
+# Returns if the interface is connected.
+#
+# Arguments:
+#   $1 Interface name for this operation (optional)
+# ------------------------------------------------------------------------------
+function bashio::network.enabled() {
+    local interface=${1:-'default'}
+
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::network.interface "network.interface.${interface}.info.connected" "${interface}" '.conntected'
+}
+
+# ------------------------------------------------------------------------------
 # Returns the ipv4 method of the network interfaces.
 #
 # Arguments:
@@ -140,7 +179,7 @@ function bashio::network.ipv4_method() {
     local interface=${1:-'default'}
 
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::network.interface "network.interface.${interface}.info.interface.ipv4.method" "${interface}" '.ipv4.method'
+    bashio::network.interface "network.interface.${interface}.info.ipv4.method" "${interface}" '.ipv4.method'
 }
 
 # ------------------------------------------------------------------------------
@@ -153,7 +192,7 @@ function bashio::network.ipv6_method() {
     local interface=${1:-'default'}
 
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::network.interface "network.interface.${interface}.info.interface.ipv6.method" "${interface}" '.ipv6.method'
+    bashio::network.interface "network.interface.${interface}.info.ipv6.method" "${interface}" '.ipv6.method'
 }
 
 # ------------------------------------------------------------------------------
@@ -166,7 +205,7 @@ function bashio::network.ipv4_address() {
     local interface=${1:-'default'}
 
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::network.interface "network.interface.${interface}.info.interface.ipv4.address" "${interface}" '.ipv4.address[]'
+    bashio::network.interface "network.interface.${interface}.info.ipv4.address" "${interface}" '.ipv4.address[]'
 }
 
 # ------------------------------------------------------------------------------
@@ -179,7 +218,7 @@ function bashio::network.ipv6_address() {
     local interface=${1:-'default'}
 
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::network.interface "network.interface.${interface}.info.interface.ipv6.address" "${interface}" '.ipv6.address[]'
+    bashio::network.interface "network.interface.${interface}.info.ipv6.address" "${interface}" '.ipv6.address[]'
 }
 
 # ------------------------------------------------------------------------------
@@ -192,7 +231,7 @@ function bashio::network.ipv4_nameservers() {
     local interface=${1:-'default'}
 
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::network.interface "network.interface.${interface}.info.interface.ipv4.nameservers" "${interface}" '.ipv4.nameservers[]'
+    bashio::network.interface "network.interface.${interface}.info.ipv4.nameservers" "${interface}" '.ipv4.nameservers[]'
 }
 
 # ------------------------------------------------------------------------------
@@ -205,7 +244,7 @@ function bashio::network.ipv6_nameservers() {
     local interface=${1:-'default'}
 
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::network.interface "network.interface.${interface}.info.interface.ipv6.nameservers" "${interface}" '.ipv6.nameservers[]'
+    bashio::network.interface "network.interface.${interface}.info.ipv6.nameservers" "${interface}" '.ipv6.nameservers[]'
 }
 
 # ------------------------------------------------------------------------------
@@ -218,7 +257,7 @@ function bashio::network.ipv4_gateway() {
     local interface=${1:-'default'}
 
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::network.interface "network.interface.${interface}.info.interface.ipv4.gateway" "${interface}" '.ipv4.gateway'
+    bashio::network.interface "network.interface.${interface}.info.ipv4.gateway" "${interface}" '.ipv4.gateway'
 }
 
 # ------------------------------------------------------------------------------
@@ -231,5 +270,5 @@ function bashio::network.ipv6_gateway() {
     local interface=${1:-'default'}
 
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::network.interface "network.interface.${interface}.info.interface.ipv6.gateway" "${interface}" '.ipv6.gateway'
+    bashio::network.interface "network.interface.${interface}.info.ipv6.gateway" "${interface}" '.ipv6.gateway'
 }
