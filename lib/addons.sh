@@ -528,7 +528,7 @@ function bashio::addon.option() {
       if [[ "${value:0:1}" == "^" ]]; then
         item="${value:1}"
       fi
-      options=$(bashio::jq "${options}" ".[${key}]={$item}")
+      options=$(bashio::jq "${options}" ".[${key}]=${item}")
     else
       options=$(bashio::jq "${options}" "del(.[${key}])")
     fi
