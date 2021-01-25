@@ -78,7 +78,7 @@ function bashio::network.interface() {
     if bashio::cache.exists "network.interface.${interface}.info"; then
         info=$(bashio::cache.get "network.${interface}.info")
     else
-        info=$(bashio::api.supervisor GET /network/interface/${interface}/info false)
+        info=$(bashio::api.supervisor GET "/network/interface/${interface}/info" false)
         bashio::cache.set "network.interface.${interface}.info" "${info}"
     fi
 
@@ -130,3 +130,106 @@ function bashio::network.name() {
     bashio::host.interface "network.interface.$interface.info.interface" '.interface'
 }
 
+# ------------------------------------------------------------------------------
+# Returns the ipv4 method of the network interfaces.
+#
+# Arguments:
+#   $1 Interface name for this operation (optional)
+# ------------------------------------------------------------------------------
+function bashio::network.ipv4_method() {
+    local interface=${2:-'default'}
+
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::host.interface "network.interface.$interface.info.interface.ipv4.method" '.ipv4.method'
+}
+
+# ------------------------------------------------------------------------------
+# Returns the ipv6 method of the network interfaces.
+#
+# Arguments:
+#   $1 Interface name for this operation (optional)
+# ------------------------------------------------------------------------------
+function bashio::network.ipv6_method() {
+    local interface=${2:-'default'}
+
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::host.interface "network.interface.$interface.info.interface.ipv6.method" '.ipv6.method'
+}
+
+# ------------------------------------------------------------------------------
+# Returns a list of the ipv4 address of the network interfaces.
+#
+# Arguments:
+#   $1 Interface name for this operation (optional)
+# ------------------------------------------------------------------------------
+function bashio::network.ipv4_address() {
+    local interface=${2:-'default'}
+
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::host.interface "network.interface.$interface.info.interface.ipv4.address" '.ipv4.address[]'
+}
+
+# ------------------------------------------------------------------------------
+# Returns a list of the ipv6 address of the network interfaces.
+#
+# Arguments:
+#   $1 Interface name for this operation (optional)
+# ------------------------------------------------------------------------------
+function bashio::network.ipv6_address() {
+    local interface=${2:-'default'}
+
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::host.interface "network.interface.$interface.info.interface.ipv6.address" '.ipv6.address[]'
+}
+
+# ------------------------------------------------------------------------------
+# Returns a list of ipv4 nameservers of the network interfaces.
+#
+# Arguments:
+#   $1 Interface name for this operation (optional)
+# ------------------------------------------------------------------------------
+function bashio::network.ipv4_nameservers() {
+    local interface=${2:-'default'}
+
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::host.interface "network.interface.$interface.info.interface.ipv4.nameservers" '.ipv4.nameservers[]'
+}
+
+# ------------------------------------------------------------------------------
+# Returns a list ipv6 nameservers of the network interfaces.
+#
+# Arguments:
+#   $1 Interface name for this operation (optional)
+# ------------------------------------------------------------------------------
+function bashio::network.ipv6_nameservers() {
+    local interface=${2:-'default'}
+
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::host.interface "network.interface.$interface.info.interface.ipv6.nameservers" '.ipv6.nameservers[]'
+}
+
+# ------------------------------------------------------------------------------
+# Returns the ipv4 gateway of the network interfaces.
+#
+# Arguments:
+#   $1 Interface name for this operation (optional)
+# ------------------------------------------------------------------------------
+function bashio::network.ipv4_gateway() {
+    local interface=${2:-'default'}
+
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::host.interface "network.interface.$interface.info.interface.ipv4.gateway" '.ipv4.gateway'
+}
+
+# ------------------------------------------------------------------------------
+# Returns the ipv6 gateway of the network interfaces.
+#
+# Arguments:
+#   $1 Interface name for this operation (optional)
+# ------------------------------------------------------------------------------
+function bashio::network.ipv6_gateway() {
+    local interface=${2:-'default'}
+
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::host.interface "network.interface.$interface.info.interface.ipv6.gateway" '.ipv6.gateway'
+}
