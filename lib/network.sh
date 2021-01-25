@@ -54,6 +54,30 @@ function bashio::network() {
 }
 
 # ------------------------------------------------------------------------------
+# Returns if the Host have internet connectivity.
+# ------------------------------------------------------------------------------
+function bashio::network.host_internet() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::network 'network.info.host_internet' '.host_internet'
+}
+
+# ------------------------------------------------------------------------------
+# Returns if the Supervisor have internet connectivity.
+# ------------------------------------------------------------------------------
+function bashio::network.supervisor_internet() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::network 'network.info.supervisor_internet' '.supervisor_internet'
+}
+
+# ------------------------------------------------------------------------------
+# Returns a list of all network interfaces.
+# ------------------------------------------------------------------------------
+function bashio::network.interfaces() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::network 'network.info.interfaces.interface' '.interfaces[] | .interface'
+}
+
+# ------------------------------------------------------------------------------
 # Returns a JSON object with host network interface information.
 #
 # Arguments:
@@ -91,30 +115,6 @@ function bashio::network.interface() {
     printf "%s" "${response}"
 
     return "${__BASHIO_EXIT_OK}"
-}
-
-# ------------------------------------------------------------------------------
-# Returns if the Host have internet connectivity.
-# ------------------------------------------------------------------------------
-function bashio::network.host_internet() {
-    bashio::log.trace "${FUNCNAME[0]}"
-    bashio::network 'network.info.host_internet' '.host_internet'
-}
-
-# ------------------------------------------------------------------------------
-# Returns if the Supervisor have internet connectivity.
-# ------------------------------------------------------------------------------
-function bashio::network.supervisor_internet() {
-    bashio::log.trace "${FUNCNAME[0]}"
-    bashio::network 'network.info.supervisor_internet' '.supervisor_internet'
-}
-
-# ------------------------------------------------------------------------------
-# Returns a list of all network interfaces.
-# ------------------------------------------------------------------------------
-function bashio::network.interfaces() {
-    bashio::log.trace "${FUNCNAME[0]}"
-    bashio::network 'network.info.interfaces.interface' '.interfaces[] | .interface'
 }
 
 # ------------------------------------------------------------------------------
