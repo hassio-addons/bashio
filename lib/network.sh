@@ -13,6 +13,7 @@
 function bashio::network.reload() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor POST /network/reload
+    bashio::cache.flush_all
 }
 
 # ------------------------------------------------------------------------------
