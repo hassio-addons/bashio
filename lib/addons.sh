@@ -524,9 +524,9 @@ function bashio::addon.option() {
     options=$(bashio::addon.options "${slug}")
 
     if bashio::var.has_value "${value}"; then
-      item="\"$i\""
-      if [[ "${i:0:1}" == "^" ]]; then
-        item="${i:1}"
+      item="\"$value\""
+      if [[ "${value:0:1}" == "^" ]]; then
+        item="${value:1}"
       fi
       options=$(bashio::jq "${options}" ".[${key}]={$item}")
     else
