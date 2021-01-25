@@ -80,6 +80,8 @@ source "${__BASHIO_LIB_DIR}/jq.sh"
 source "${__BASHIO_LIB_DIR}/multicast.sh"
 # shellcheck source=lib/net.sh
 source "${__BASHIO_LIB_DIR}/net.sh"
+# shellcheck source=lib/network.sh
+source "${__BASHIO_LIB_DIR}/network.sh"
 # shellcheck source=lib/os.sh
 source "${__BASHIO_LIB_DIR}/os.sh"
 # shellcheck source=lib/pwned.sh
