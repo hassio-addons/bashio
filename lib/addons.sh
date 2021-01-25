@@ -514,7 +514,7 @@ function bashio::addon.options() {
 # ------------------------------------------------------------------------------
 function bashio::addon.option() {
     local key=${1}
-    local value=${2:-"$null"}
+    local value=${2:-}
     local slug=${3:-'self'}
     local options
     local payload
