@@ -100,7 +100,7 @@ function bashio::network.interface() {
     fi
 
     if bashio::cache.exists "network.interface.${interface}.info"; then
-        info=$(bashio::cache.get "network.${interface}.info")
+        info=$(bashio::cache.get "network.interface.${interface}.info")
     else
         info=$(bashio::api.supervisor GET "/network/interface/${interface}/info" false)
         bashio::cache.set "network.interface.${interface}.info" "${info}"
