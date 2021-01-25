@@ -518,9 +518,10 @@ function bashio::addon.option() {
     local slug=${3:-'self'}
     local options
     local payload
+    local item
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    options=$(bashio::addons.options "${slug}")
+    options=$(bashio::addon.options "${slug}")
 
     if bashio::var.has_value "${value}"; then
       item="\"$i\""
