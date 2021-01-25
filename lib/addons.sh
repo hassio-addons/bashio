@@ -528,9 +528,14 @@ function bashio::addon.option() {
       if [[ "${value:0:1}" == "^" ]]; then
         item="${value:1}"
       fi
-      options=$(bashio::jq "${options}" ".[${key}]=${item}")
+
+      if bashio::jq.exists "${options}" ".${key}"; then
+        options=$(bashio::jq "${options}" ".${key} |= ${item}")
+      else
+        options=$(bashio::jq "${options}" ".${key} = ${item}")
+      fi
     else
-      options=$(bashio::jq "${options}" "del(.[${key}])")
+      options=$(bashio::jq "${options}" "del(.${key})")
     fi
     
     payload=$(bashio::var.json options "${options}")    
