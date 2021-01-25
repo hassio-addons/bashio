@@ -505,6 +505,46 @@ function bashio::addon.options() {
 }
 
 # ------------------------------------------------------------------------------
+# Edit options for this add-on.
+#
+# Arguments:
+#   $1 Config Key to set or remove (required)
+#   $2 Value to set (optional, default:null, if null will remove the key pair)
+#   $3 Add-on slug (optional, default: self)
+# ------------------------------------------------------------------------------
+function bashio::addon.option() {
+    local key=${1}
+    local value=${2:-}
+    local slug=${3:-'self'}
+    local options
+    local payload
+    local item
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    options=$(bashio::addon.options "${slug}")
+
+    if bashio::var.has_value "${value}"; then
+      item="\"$value\""
+      if [[ "${value:0:1}" == "^" ]]; then
+        item="${value:1}"
+      fi
+
+      if bashio::jq.exists "${options}" ".${key}"; then
+        options=$(bashio::jq "${options}" ".${key} |= ${item}")
+      else
+        options=$(bashio::jq "${options}" ".${key} = ${item}")
+      fi
+    else
+      options=$(bashio::jq "${options}" "del(.${key})")
+    fi
+    
+    payload=$(bashio::var.json options "^${options}")
+    bashio::api.supervisor POST "/addons/${slug}/options" "${payload}"
+
+    bashio::cache.flush_all
+}
+
+# ------------------------------------------------------------------------------
 # Returns a list of ports which are exposed on the host network for this add-on.
 #
 # Arguments:
