@@ -538,7 +538,7 @@ function bashio::addon.option() {
       options=$(bashio::jq "${options}" "del(.${key})")
     fi
     
-    payload=$(bashio::var.json options "${options}")    
+    payload=$(bashio::var.json options ^${options})    
     bashio::api.supervisor POST "/addons/${slug}/options" "${payload}"
 
     bashio::cache.flush_all
