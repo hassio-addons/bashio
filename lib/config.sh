@@ -462,7 +462,7 @@ function bashio::config.require.safe_password() {
     bashio::log.fatal
     bashio::log.fatal "We are trying to help you to protect your system the"
     bashio::log.fatal "best we can. Therefore, this add-on checks your"
-    bashio::log.fatal "configured password again the HaveIBeenPwned database."
+    bashio::log.fatal "configured password against the HaveIBeenPwned database."
     bashio::log.fatal
     bashio::log.fatal "Unfortunately, your configured password is considered"
     bashio::log.fatal "unsafe. We highly recommend you to pick a different one."
@@ -501,7 +501,7 @@ function bashio::config.suggest.safe_password() {
     bashio::log.warning
     bashio::log.warning "We are trying to help you to protect your system the"
     bashio::log.warning "best we can. Therefore, this add-on checks your"
-    bashio::log.warning "configured password again the HaveIBeenPwned database."
+    bashio::log.warning "configured password against the HaveIBeenPwned database."
     bashio::log.warning
     bashio::log.warning "Unfortunately, your configured password is considered"
     bashio::log.warning "unsafe. It is recommended to pick a different one."
