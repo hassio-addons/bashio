@@ -732,10 +732,22 @@ function bashio::addon.udev() {
 # Arguments:
 #   $1 Add-on slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.auto_uart() {
+function bashio::addon.uart() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.auto_uart" '.auto_uart // false'
+    bashio::addons "${slug}" "addons.${slug}.uart" '.uart // false'
+}
+
+# ------------------------------------------------------------------------------
+# Returns if USB was made available to the add-on.
+#
+# Arguments:
+#   $1 Add-on slug (optional, default: self)
+# ------------------------------------------------------------------------------
+function bashio::addon.usb() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::addons "${slug}" "addons.${slug}.usb" '.usb // false'
 }
 
 # ------------------------------------------------------------------------------
