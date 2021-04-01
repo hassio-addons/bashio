@@ -28,7 +28,7 @@ jobs:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v2.3.4
       - name: 🚀 Run Shellcheck
-        uses: ludeeus/action-shellcheck@1.0.0
+        uses: ludeeus/action-shellcheck@1.1.0
         env:
           SHELLCHECK_OPTS: --external-sources -s bash
 
