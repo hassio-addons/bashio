@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2034
+# shellcheck disable=SC2034,SC2155
 # ==============================================================================
 # Home Assistant Community Add-ons: Bashio
 # Bashio is an bash function library for use with Home Assistant add-ons.
