@@ -44,7 +44,8 @@ function bashio::config() {
         end
 QUERY
 
-    result=$(bashio::jq "${__BASHIO_ADDON_CONFIG}" "${query}")
+    options=$(bashio::addon.options)
+    result=$(bashio::jq "${options}" "${query}")
 
     printf "%s" "${result}"
     return "${__BASHIO_EXIT_OK}"
