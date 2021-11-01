@@ -15,6 +15,7 @@
 # ------------------------------------------------------------------------------
 function bashio::config() {
     local key=${1}
+    local default_value=${2:-}
     local query
     local result
 
@@ -47,7 +48,14 @@ QUERY
     options=$(bashio::addon.options)
     result=$(bashio::jq "${options}" "${query}")
 
-    printf "%s" "${result}"
+    if [[ "${result}" == "null" ]] && bashio::var.has_value "${default_value}";
+    then
+        echo "${default_value}"
+    else
+        printf "%s" "${result}"
+    fi
+
+
     return "${__BASHIO_EXIT_OK}"
 }
 
