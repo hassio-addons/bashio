@@ -9,7 +9,6 @@
 # ==============================================================================
 
 # Defaults
-readonly __BASHIO_DEFAULT_ADDON_CONFIG="/data/options.json"
 readonly __BASHIO_DEFAULT_CACHE_DIR="/tmp/.bashio"
 readonly __BASHIO_DEFAULT_HIBP_ENDPOINT="https://api.pwnedpasswords.com/range"
 readonly __BASHIO_DEFAULT_LOG_FORMAT="[{TIMESTAMP}] {LEVEL}: {MESSAGE}"
