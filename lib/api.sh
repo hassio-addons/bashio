@@ -51,7 +51,7 @@ function bashio::api.supervisor() {
     fi
 
     status=${response##*$'\n'}
-    response=${response%$status}
+    response=${response%"$status"}
 
     bashio::log.debug "Requested API resource: ${__BASHIO_SUPERVISOR_API}${resource}"
     bashio::log.debug "Request method: ${method}"

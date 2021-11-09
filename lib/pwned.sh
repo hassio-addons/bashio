@@ -94,7 +94,7 @@ function bashio::pwned() {
     fi
 
     status=${response##*$'\n'}
-    response=${response%$status}
+    response=${response%"$status"}
 
     bashio::log.debug "Requested API resource: ${__BASHIO_HIBP_ENDPOINT}/${password:0:5}"
     bashio::log.debug "API HTTP Response code: ${status}"
