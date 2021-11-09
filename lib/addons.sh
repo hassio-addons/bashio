@@ -545,6 +545,30 @@ function bashio::addon.option() {
 }
 
 # ------------------------------------------------------------------------------
+# Returns a JSON object with add-on specific config for the addon itself.
+#
+# This can be only used by self.
+# ------------------------------------------------------------------------------
+function bashio::addon.config() {
+    local cache_key="addons.self.options.config"
+    local response
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    if bashio::cache.exists "${cache_key}"; then
+        bashio::cache.get "${cache_key}"
+        return "${__BASHIO_EXIT_OK}"
+    fi
+
+    response=$(bashio::api.supervisor GET "/addons/self/options/config" false)
+
+    bashio::cache.set "${cache_key}" "${response}"
+    printf "%s" "${response}"
+
+    return "${__BASHIO_EXIT_OK}"
+}
+
+# ------------------------------------------------------------------------------
 # Returns a list of ports which are exposed on the host network for this add-on.
 #
 # Arguments:
