@@ -562,6 +562,14 @@ function bashio::addon.config() {
 
     response=$(bashio::api.supervisor GET "/addons/self/options/config" false)
 
+    # If the add-on has no configuration, it returns an empty string.
+    # This is Bashio logic, that is problematic in this case, so make it a
+    # emtpty JSON object instead.
+    if bashio::var.is_empty "${response}";
+    then
+        response="{}"
+    fi
+
     bashio::cache.set "${cache_key}" "${response}"
     printf "%s" "${response}"
 
