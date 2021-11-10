@@ -12,10 +12,11 @@
 #
 # Arguments:
 #   $1 Key of the config option
+#   $2 Default value for not set config option (optional: defaults to 'null')
 # ------------------------------------------------------------------------------
 function bashio::config() {
     local key=${1}
-    local default_value=${2:-}
+    local default_value=${2:-null}
     local query
     local result
 
@@ -48,7 +49,7 @@ QUERY
     options=$(bashio::addon.config)
     result=$(bashio::jq "${options}" "${query}")
 
-    if [[ "${result}" == "null" ]] && bashio::var.has_value "${default_value}";
+    if [[ "${result}" == "null" ]];
     then
         echo "${default_value}"
     else
