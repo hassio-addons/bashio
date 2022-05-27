@@ -13,7 +13,6 @@
 # Arguments:
 #   $1 HTTP Method (GET/POST)
 #   $2 API Resource requested
-#   $3 Whether or not this resource returns raw data instead of json (optional)
 #   $3 In case of a POST method, this parameter is the JSON to POST (optional)
 #   $4 jq filter command (optional)
 # ------------------------------------------------------------------------------
