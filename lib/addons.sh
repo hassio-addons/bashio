@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # Home Assistant Community Add-ons: Bashio
-# Bashio is an bash function library for use with Home Assistant add-ons.
+# Bashio is a bash function library for use with Home Assistant add-ons.
 #
 # It contains a set of commonly used operations and can be used
 # to be included in add-on scripts to reduce code duplication across add-ons.
@@ -311,7 +311,7 @@ function bashio::addon.url() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns the deatched state of an add-on.
+# Returns the detached state of an add-on.
 #
 # Arguments:
 #   $1 Add-on slug (optional, default: self)
@@ -603,7 +603,7 @@ function bashio::addon.network_description() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns a user configured port number for a original port number.
+# Returns a user configured port number for an original port number.
 #
 # Arguments:
 #   $1 Original port number
@@ -783,7 +783,7 @@ function bashio::addon.usb() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns whether or not this add-on has a icon available.
+# Returns whether or not this add-on has an icon available.
 #
 # Arguments:
 #   $1 Add-on slug

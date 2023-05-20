@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # Home Assistant Community Add-ons: Bashio
-# Bashio is an bash function library for use with Home Assistant add-ons.
+# Bashio is a bash function library for use with Home Assistant add-ons.
 #
 # It contains a set of commonly used operations and can be used
 # to be included in add-on scripts to reduce code duplication across add-ons.
@@ -39,15 +39,15 @@ function bashio::pwned.is_safe_password() {
 # ------------------------------------------------------------------------------
 function bashio::pwned.occurances() {
     local password="${1}"
-    local occurances
+    local occurrences
 
     bashio::log.trace "${FUNCNAME[0]}" "<REDACTED PASSWORD>"
 
-    if ! occurances=$(bashio::pwned "${password}"); then
-        occurances="0"
+    if ! occurrences=$(bashio::pwned "${password}"); then
+        occurrences="0"
     fi
 
-    echo -n "${occurances}"
+    echo -n "${occurrences}"
     return "${__BASHIO_EXIT_OK}"
 }
 

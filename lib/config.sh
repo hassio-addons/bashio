@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # Home Assistant Community Add-ons: Bashio
-# Bashio is an bash function library for use with Home Assistant add-ons.
+# Bashio is a bash function library for use with Home Assistant add-ons.
 #
 # It contains a set of commonly used operations and can be used
 # to be included in add-on scripts to reduce code duplication across add-ons.
@@ -544,13 +544,13 @@ function bashio::config.require.ssl() {
     if bashio::config.is_empty "${certfile}"; then
         bashio::log.fatal
         bashio::log.fatal "SSL has been enabled using the '${key}' option,"
-        bashio::log.fatal "this requires a SSL certificate file which is"
+        bashio::log.fatal "this requires an SSL certificate file which is"
         bashio::log.fatal "configured using the '${certfile}' option in the"
         bashio::log.fatal "add-on configuration."
         bashio::log.fatal
         bashio::log.fatal "Unfortunately, the '${certfile}' option is empty."
         bashio::log.fatal
-        bashio::log.fatal "Consider configuring or getting a SSL certificate"
+        bashio::log.fatal "Consider configuring or getting an SSL certificate"
         bashio::log.fatal "or setting the '${key}' option to 'false' in case"
         bashio::log.fatal "you are not planning on using SSL with this add-on."
         bashio::log.fatal
@@ -563,13 +563,13 @@ function bashio::config.require.ssl() {
     if bashio::config.is_empty "${keyfile}"; then
         bashio::log.fatal
         bashio::log.fatal "SSL has been enabled using the '${key}' option,"
-        bashio::log.fatal "this requires a SSL certificate key file which is"
+        bashio::log.fatal "this requires an SSL certificate key file which is"
         bashio::log.fatal "configured using the '${keyfile}' option in the"
         bashio::log.fatal "add-on configuration."
         bashio::log.fatal
         bashio::log.fatal "Unfortunately, the '${keyfile}' option is empty."
         bashio::log.fatal
-        bashio::log.fatal "Consider configuring or getting a SSL certificate"
+        bashio::log.fatal "Consider configuring or getting an SSL certificate"
         bashio::log.fatal "or setting the '${key}' option to 'false' in case"
         bashio::log.fatal "you are not planning on using SSL with this add-on."
         bashio::log.fatal
@@ -582,18 +582,18 @@ function bashio::config.require.ssl() {
     if ! bashio::fs.file_exists "/ssl/$(bashio::config "${certfile}")"; then
         bashio::log.fatal
         bashio::log.fatal "SSL has been enabled using the '${key}' option,"
-        bashio::log.fatal "this requires a SSL certificate file which is"
+        bashio::log.fatal "this requires an SSL certificate file which is"
         bashio::log.fatal "configured using the '${certfile}' option in the"
         bashio::log.fatal "add-on configuration."
         bashio::log.fatal
         bashio::log.fatal "Unfortunately, the file specified in the"
-        bashio::log.fatal "'${certfile}' option does not exists."
+        bashio::log.fatal "'${certfile}' option does not exist."
         bashio::log.fatal
         bashio::log.fatal "Please ensure the certificate file exists and"
         bashio::log.fatal "is placed in the '/ssl/' directory."
         bashio::log.fatal
         bashio::log.fatal "In case you don't have SSL yet, consider getting"
-        bashio::log.fatal "a SSL certificate or setting the '${key}' option"
+        bashio::log.fatal "an SSL certificate or setting the '${key}' option"
         bashio::log.fatal "to 'false' in case you are not planning on using"
         bashio::log.fatal "SSL with this add-on."
         bashio::log.fatal
@@ -606,18 +606,18 @@ function bashio::config.require.ssl() {
     if ! bashio::fs.file_exists "/ssl/$(bashio::config "${keyfile}")"; then
         bashio::log.fatal
         bashio::log.fatal "SSL has been enabled using the '${key}' option,"
-        bashio::log.fatal "this requires a SSL certificate key file which is"
+        bashio::log.fatal "this requires an SSL certificate key file which is"
         bashio::log.fatal "configured using the '${keyfile}' option in the"
         bashio::log.fatal "add-on configuration."
         bashio::log.fatal
         bashio::log.fatal "Unfortunately, the file specified in the"
-        bashio::log.fatal "'${keyfile}' option does not exists."
+        bashio::log.fatal "'${keyfile}' option does not exist."
         bashio::log.fatal
         bashio::log.fatal "Please ensure the certificate key file exists and"
         bashio::log.fatal "is placed in the '/ssl/' directory."
         bashio::log.fatal
         bashio::log.fatal "In case you don't have SSL yet, consider getting"
-        bashio::log.fatal "a SSL certificate or setting the '${key}' option"
+        bashio::log.fatal "an SSL certificate or setting the '${key}' option"
         bashio::log.fatal "to 'false' in case you are not planning on using"
         bashio::log.fatal "SSL with this add-on."
         bashio::log.fatal

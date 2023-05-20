@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # Home Assistant Community Add-ons: Bashio
-# Bashio is an bash function library for use with Home Assistant add-ons.
+# Bashio is a bash function library for use with Home Assistant add-ons.
 #
 # It contains a set of commonly used operations and can be used
 # to be included in add-on scripts to reduce code duplication across add-ons.
