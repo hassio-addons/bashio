@@ -64,6 +64,11 @@ function bashio::api.supervisor() {
         return "${__BASHIO_EXIT_NOK}"
     fi
 
+    if [[ "${status}" -eq 403 ]]; then
+        bashio::log.error "Unable to access the API, forbidden"
+        return "${__BASHIO_EXIT_NOK}"
+    fi
+
     if [[ "${status}" -eq 404 ]]; then
         bashio::log.error "Requested resource ${resource} was not found"
         return "${__BASHIO_EXIT_NOK}"
