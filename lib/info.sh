@@ -150,7 +150,7 @@ function bashio::info.operating_system() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns the current state of Home Assistant Core
+# Returns the current state of Home Assistant Supervisor
 # ------------------------------------------------------------------------------
 function bashio::info.state() {
     bashio::log.trace "${FUNCNAME[0]}"
