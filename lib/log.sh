@@ -111,9 +111,9 @@ function bashio::log.log() {
     timestamp=$(date +"${__BASHIO_LOG_TIMESTAMP}")
 
     output="${__BASHIO_LOG_FORMAT}"
-    output="${output//\{TIMESTAMP\}/${timestamp}}"
-    output="${output//\{MESSAGE\}/${message}}"
-    output="${output//\{LEVEL\}/${__BASHIO_LOG_LEVELS[$level]}}"
+    output="${output//\{TIMESTAMP\}/"${timestamp}"}"
+    output="${output//\{MESSAGE\}/"${message}"}"
+    output="${output//\{LEVEL\}/"${__BASHIO_LOG_LEVELS[$level]}"}"
 
     echo -e "${output}" >&2
 
