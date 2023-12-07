@@ -22,5 +22,7 @@ __BASHIO_LIB_DIR=$(dirname "${__BASHIO_BIN}")
 source "${__BASHIO_LIB_DIR}/bashio.sh"
 
 # Execute source
+BASH_ARGV0=${1:?script to source must be provided}
+shift
 # shellcheck source=/dev/null
-source "$@"
+source "$0" "$@"
