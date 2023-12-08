@@ -93,7 +93,7 @@ function bashio::api.supervisor() {
 
     if bashio::var.true "${raw}"; then
         echo "${response}"
-        return "${__BASHIO_EXIT_NOK}"
+        return "${__BASHIO_EXIT_OK}"
     fi
 
     result=$(bashio::jq "${response}" 'if .data == {} then empty else .data end')
