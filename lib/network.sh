@@ -164,7 +164,7 @@ function bashio::network.enabled() {
 # Arguments:
 #   $1 Interface name for this operation (optional)
 # ------------------------------------------------------------------------------
-function bashio::network.enabled() {
+function bashio::network.connected() {
     local interface=${1:-'default'}
 
     bashio::log.trace "${FUNCNAME[0]}"
