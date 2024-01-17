@@ -8,7 +8,7 @@
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# Checks if a give value is true.
+# Checks if a given value is true.
 #
 # Arguments:
 #   $1 value
@@ -26,7 +26,7 @@ function bashio::var.true() {
 }
 
 # ------------------------------------------------------------------------------
-# Checks if a give value is false.
+# Checks if a given value is false.
 #
 # Arguments:
 #   $1 value
