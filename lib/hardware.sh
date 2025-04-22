@@ -31,6 +31,10 @@ function bashio::hardware() {
         info=$(bashio::cache.get 'hardware.info')
     else
         info=$(bashio::api.supervisor GET /hardware/info false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get hardware info from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         bashio::cache.set 'hardware.info' "${info}"
     fi
 

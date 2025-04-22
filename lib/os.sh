@@ -59,6 +59,10 @@ function bashio::os() {
         info=$(bashio::cache.get 'os.info')
     else
         info=$(bashio::api.supervisor GET /os/info false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get os info from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         bashio::cache.set 'os.info' "${info}"
     fi
 

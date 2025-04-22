@@ -51,6 +51,10 @@ function bashio::observer() {
         info=$(bashio::cache.get 'observer.info')
     else
         info=$(bashio::api.supervisor GET /observer/info false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get observer info from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         bashio::cache.set 'observer.info' "${info}"
     fi
 
@@ -121,6 +125,10 @@ function bashio::observer.stats() {
         info=$(bashio::cache.get 'observer.stats')
     else
         info=$(bashio::api.supervisor GET /observer/stats false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get observer stats from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         bashio::cache.set 'observer.stats' "${info}"
     fi
 

@@ -34,6 +34,10 @@ function bashio::repositories() {
             info=$(bashio::cache.get 'repositories.list')
         else
             info=$(bashio::api.supervisor GET "/addons" false)
+            if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+                bashio::log.error "Failed to get addons from Supervisor API"
+                return "${__BASHIO_EXIT_NOK}"
+            fi
             bashio::cache.set "repositories.list" "${info}"
         fi
     else
@@ -42,6 +46,10 @@ function bashio::repositories() {
         else
             info=$(bashio::api.supervisor GET "/addons" \
                     false ".repositories[] | select(.slug==\"${slug}\")")
+            if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+                bashio::log.error "Failed to get repositories info from Supervisor API"
+                return "${__BASHIO_EXIT_NOK}"
+            fi
             bashio::cache.set "repositories.${slug}.info" "${info}"
         fi
     fi

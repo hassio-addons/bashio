@@ -51,6 +51,10 @@ function bashio::cli() {
         info=$(bashio::cache.get 'cli.info')
     else
         info=$(bashio::api.supervisor GET /cli/info false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get cli info from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         bashio::cache.set 'cli.info' "${info}"
     fi
 
@@ -113,6 +117,10 @@ function bashio::cli.stats() {
         info=$(bashio::cache.get 'cli.stats')
     else
         info=$(bashio::api.supervisor GET /cli/stats false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get cli stats from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         bashio::cache.set 'cli.stats' "${info}"
     fi
 

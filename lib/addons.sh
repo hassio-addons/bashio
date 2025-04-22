@@ -164,6 +164,10 @@ function bashio::addons() {
             info=$(bashio::cache.get 'addons.list')
         else
             info=$(bashio::api.supervisor GET "/addons" false)
+            if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+                bashio::log.error "Failed to get addons from Supervisor API"
+                return "${__BASHIO_EXIT_NOK}"
+            fi
             bashio::cache.set "addons.list" "${info}"
         fi
     else
@@ -171,6 +175,10 @@ function bashio::addons() {
             info=$(bashio::cache.get "addons.${slug}.info")
         else
             info=$(bashio::api.supervisor GET "/addons/${slug}/info" false)
+            if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+                bashio::log.error "Failed to get addon info from Supervisor API"
+                return "${__BASHIO_EXIT_NOK}"
+            fi
             bashio::cache.set "addons.${slug}.info" "${info}"
         fi
     fi
@@ -1202,6 +1210,10 @@ function bashio::addon.stats() {
         info=$(bashio::cache.get "addons.${slug}.stats")
     else
         info=$(bashio::api.supervisor GET "/addons/${slug}/stats" false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get addon stats from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         bashio::cache.set "addons.${slug}.stats" "${info}"
     fi
 

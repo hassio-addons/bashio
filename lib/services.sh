@@ -28,6 +28,10 @@ function bashio::services() {
         config=$(bashio::cache.get "${cache_key}")
     else
         config=$(bashio::api.supervisor GET "/services/${service}" false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get services from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         bashio::cache.set "${cache_key}" "${config}"
     fi
 
