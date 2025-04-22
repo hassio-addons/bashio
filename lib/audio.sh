@@ -77,6 +77,10 @@ function bashio::audio() {
         info=$(bashio::cache.get 'audio.info')
     else
         info=$(bashio::api.supervisor GET /audio/info false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get audio info from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         bashio::cache.set 'audio.info' "${info}"
     fi
 
@@ -147,6 +151,10 @@ function bashio::audio.stats() {
         info=$(bashio::cache.get 'audio.stats')
     else
         info=$(bashio::api.supervisor GET /audio/stats false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get audio stats from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         bashio::cache.set 'audio.stats' "${info}"
     fi
 

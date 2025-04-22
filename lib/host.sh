@@ -63,6 +63,10 @@ function bashio::host() {
         info=$(bashio::cache.get 'host.info')
     else
         info=$(bashio::api.supervisor GET /host/info false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get host info from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         bashio::cache.set 'host.info' "${info}"
     fi
 

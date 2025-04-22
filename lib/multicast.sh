@@ -68,6 +68,10 @@ function bashio::multicast() {
         info=$(bashio::cache.get 'multicast.info')
     else
         info=$(bashio::api.supervisor GET /multicast/info false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get multicast info from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         bashio::cache.set 'multicast.info' "${info}"
     fi
 
@@ -130,6 +134,10 @@ function bashio::multicast.stats() {
         info=$(bashio::cache.get 'multicast.stats')
     else
         info=$(bashio::api.supervisor GET /multicast/stats false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get multicast stats from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         bashio::cache.set 'multicast.stats' "${info}"
     fi
 

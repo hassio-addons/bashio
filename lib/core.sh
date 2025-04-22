@@ -99,6 +99,10 @@ function bashio::core() {
         info=$(bashio::cache.get 'core.info')
     else
         info=$(bashio::api.supervisor GET /core/info false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get core info from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         bashio::cache.set 'core.info' "${info}"
     fi
 
@@ -249,6 +253,10 @@ function bashio::core.stats() {
         info=$(bashio::cache.get 'core.stats')
     else
         info=$(bashio::api.supervisor GET /core/stats false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get core stats from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         bashio::cache.set 'core.stats' "${info}"
     fi
 

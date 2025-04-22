@@ -41,6 +41,10 @@ function bashio::network() {
         info=$(bashio::cache.get 'network.info')
     else
         info=$(bashio::api.supervisor GET /network/info false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get network info from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         bashio::cache.set 'network.info' "${info}"
     fi
 
@@ -105,6 +109,10 @@ function bashio::network.interface() {
         info=$(bashio::cache.get "network.interface.${interface}.info")
     else
         info=$(bashio::api.supervisor GET "/network/interface/${interface}/info" false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get network interface info from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         bashio::cache.set "network.interface.${interface}.info" "${info}"
     fi
 

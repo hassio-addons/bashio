@@ -76,6 +76,10 @@ function bashio::supervisor() {
         info=$(bashio::cache.get 'supervisor.info')
     else
         info=$(bashio::api.supervisor GET /supervisor/info false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get supervisor info from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         bashio::cache.set 'supervisor.info' "${info}"
     fi
 
@@ -314,6 +318,10 @@ function bashio::supervisor.stats() {
         info=$(bashio::cache.get 'supervisor.stats')
     else
         info=$(bashio::api.supervisor GET /supervisor/stats false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get supervisor stats from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         bashio::cache.set 'supervisor.stats' "${info}"
     fi
 

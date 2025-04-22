@@ -77,6 +77,10 @@ function bashio::dns() {
         info=$(bashio::cache.get 'dns.info')
     else
         info=$(bashio::api.supervisor GET /dns/info false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get dns info from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         bashio::cache.set 'dns.info' "${info}"
     fi
 
@@ -163,6 +167,10 @@ function bashio::dns.stats() {
         info=$(bashio::cache.get 'dns.stats')
     else
         info=$(bashio::api.supervisor GET /dns/stats false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get dns stats from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         bashio::cache.set 'dns.stats' "${info}"
     fi
 
