@@ -183,6 +183,26 @@ function bashio::supervisor.timezone() {
 }
 
 # ------------------------------------------------------------------------------
+# Returns or sets the current country of the system.
+#
+# Arguments:
+#   $1 Country to set (optional).
+# ------------------------------------------------------------------------------
+function bashio::supervisor.country() {
+    local country=${1:-}
+
+    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+
+    if bashio::var.has_value "${country}"; then
+        channel=$(bashio::var.json country "${country}")
+        bashio::api.supervisor POST /supervisor/options "${country}"
+        bashio::cache.flush_all
+    else
+        bashio::supervisor 'supervisor.info.country' '.country'
+    fi
+}
+
+# ------------------------------------------------------------------------------
 # Returns the current logging level of the Supervisor.
 #
 # Arguments:
