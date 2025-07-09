@@ -545,7 +545,7 @@ function bashio::addon.option() {
     else
       options=$(bashio::jq "${options}" "del(.${key})")
     fi
-    
+
     payload=$(bashio::var.json options "^${options}")
     bashio::api.supervisor POST "/addons/${slug}/options" "${payload}"
 
@@ -569,6 +569,10 @@ function bashio::addon.config() {
     fi
 
     response=$(bashio::api.supervisor GET "/addons/self/options/config" false)
+    if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+        bashio::log.error "Failed to get addon config from Supervisor API"
+        return "${__BASHIO_EXIT_NOK}"
+    fi
 
     # If the add-on has no configuration, it returns an empty string.
     # This is Bashio logic, that is problematic in this case, so make it a
