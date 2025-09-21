@@ -7,6 +7,14 @@
 # to be included in add-on scripts to reduce code duplication across add-ons.
 # ==============================================================================
 
+# Unless $LOG_FD is already set to a valid fd
+if ! [[ "$LOG_FD" =~ ^[0-9]+$ ]] || ! { true >&"$LOG_FD" ; } 2>/dev/null ; then
+  # Preserve the original STDOUT on a free fd (stored in $LOG_FD) so that we can
+  # log to it without interfering with the STDOUT of subshells whose output we
+  # want to capture for other purposes.
+  exec {LOG_FD}>&1
+fi
+
 # ------------------------------------------------------------------------------
 # Log a message to output.
 #
@@ -15,7 +23,7 @@
 # ------------------------------------------------------------------------------
 bashio::log() {
     local message=$*
-    echo -e "${message}"
+    echo -e "${message}" >&"$LOG_FD"
     return "${__BASHIO_EXIT_OK}"
 }
 
@@ -27,7 +35,7 @@ bashio::log() {
 # ------------------------------------------------------------------------------
 bashio::log.red() {
     local message=$*
-    echo -e "${__BASHIO_COLORS_RED}${message}${__BASHIO_COLORS_RESET}"
+    echo -e "${__BASHIO_COLORS_RED}${message}${__BASHIO_COLORS_RESET}" >&"$LOG_FD"
     return "${__BASHIO_EXIT_OK}"
 }
 
@@ -39,7 +47,7 @@ bashio::log.red() {
 # ------------------------------------------------------------------------------
 bashio::log.green() {
     local message=$*
-    echo -e "${__BASHIO_COLORS_GREEN}${message}${__BASHIO_COLORS_RESET}"
+    echo -e "${__BASHIO_COLORS_GREEN}${message}${__BASHIO_COLORS_RESET}" >&"$LOG_FD"
     return "${__BASHIO_EXIT_OK}"
 }
 
@@ -51,7 +59,7 @@ bashio::log.green() {
 # ------------------------------------------------------------------------------
 bashio::log.yellow() {
     local message=$*
-    echo -e "${__BASHIO_COLORS_YELLOW}${message}${__BASHIO_COLORS_RESET}"
+    echo -e "${__BASHIO_COLORS_YELLOW}${message}${__BASHIO_COLORS_RESET}" >&"$LOG_FD"
     return "${__BASHIO_EXIT_OK}"
 }
 
@@ -63,7 +71,7 @@ bashio::log.yellow() {
 # ------------------------------------------------------------------------------
 bashio::log.blue() {
     local message=$*
-    echo -e "${__BASHIO_COLORS_BLUE}${message}${__BASHIO_COLORS_RESET}"
+    echo -e "${__BASHIO_COLORS_BLUE}${message}${__BASHIO_COLORS_RESET}" >&"$LOG_FD"
     return "${__BASHIO_EXIT_OK}"
 }
 
@@ -75,7 +83,7 @@ bashio::log.blue() {
 # ------------------------------------------------------------------------------
 bashio::log.magenta() {
     local message=$*
-    echo -e "${__BASHIO_COLORS_MAGENTA}${message}${__BASHIO_COLORS_RESET}"
+    echo -e "${__BASHIO_COLORS_MAGENTA}${message}${__BASHIO_COLORS_RESET}" >&"$LOG_FD"
     return "${__BASHIO_EXIT_OK}"
 }
 
@@ -87,7 +95,7 @@ bashio::log.magenta() {
 # ------------------------------------------------------------------------------
 bashio::log.cyan() {
     local message=$*
-    echo -e "${__BASHIO_COLORS_CYAN}${message}${__BASHIO_COLORS_RESET}"
+    echo -e "${__BASHIO_COLORS_CYAN}${message}${__BASHIO_COLORS_RESET}" >&"$LOG_FD"
     return "${__BASHIO_EXIT_OK}"
 }
 
@@ -115,7 +123,7 @@ function bashio::log.log() {
     output="${output//\{MESSAGE\}/"${message}"}"
     output="${output//\{LEVEL\}/"${__BASHIO_LOG_LEVELS[$level]}"}"
 
-    echo -e "${output}"
+    echo -e "${output}" >&"$LOG_FD"
 
     return "${__BASHIO_EXIT_OK}"
 }
