@@ -23,7 +23,7 @@ fi
 # ------------------------------------------------------------------------------
 bashio::log() {
     local message=$*
-    echo -e "${message}" >&"$LOG_FD"
+    printf '%b\n' "${message}" >&"$LOG_FD"
     return "${__BASHIO_EXIT_OK}"
 }
 
@@ -35,7 +35,7 @@ bashio::log() {
 # ------------------------------------------------------------------------------
 bashio::log.red() {
     local message=$*
-    echo -e "${__BASHIO_COLORS_RED}${message}${__BASHIO_COLORS_RESET}" >&"$LOG_FD"
+    printf '%b\n' "${__BASHIO_COLORS_RED}${message}${__BASHIO_COLORS_RESET}" >&"$LOG_FD"
     return "${__BASHIO_EXIT_OK}"
 }
 
@@ -47,7 +47,7 @@ bashio::log.red() {
 # ------------------------------------------------------------------------------
 bashio::log.green() {
     local message=$*
-    echo -e "${__BASHIO_COLORS_GREEN}${message}${__BASHIO_COLORS_RESET}" >&"$LOG_FD"
+    printf '%b\n' "${__BASHIO_COLORS_GREEN}${message}${__BASHIO_COLORS_RESET}" >&"$LOG_FD"
     return "${__BASHIO_EXIT_OK}"
 }
 
@@ -59,7 +59,7 @@ bashio::log.green() {
 # ------------------------------------------------------------------------------
 bashio::log.yellow() {
     local message=$*
-    echo -e "${__BASHIO_COLORS_YELLOW}${message}${__BASHIO_COLORS_RESET}" >&"$LOG_FD"
+    printf '%b\n' "${__BASHIO_COLORS_YELLOW}${message}${__BASHIO_COLORS_RESET}" >&"$LOG_FD"
     return "${__BASHIO_EXIT_OK}"
 }
 
@@ -71,7 +71,7 @@ bashio::log.yellow() {
 # ------------------------------------------------------------------------------
 bashio::log.blue() {
     local message=$*
-    echo -e "${__BASHIO_COLORS_BLUE}${message}${__BASHIO_COLORS_RESET}" >&"$LOG_FD"
+    printf '%b\n' "${__BASHIO_COLORS_BLUE}${message}${__BASHIO_COLORS_RESET}" >&"$LOG_FD"
     return "${__BASHIO_EXIT_OK}"
 }
 
@@ -83,7 +83,7 @@ bashio::log.blue() {
 # ------------------------------------------------------------------------------
 bashio::log.magenta() {
     local message=$*
-    echo -e "${__BASHIO_COLORS_MAGENTA}${message}${__BASHIO_COLORS_RESET}" >&"$LOG_FD"
+    printf '%b\n' "${__BASHIO_COLORS_MAGENTA}${message}${__BASHIO_COLORS_RESET}" >&"$LOG_FD"
     return "${__BASHIO_EXIT_OK}"
 }
 
@@ -95,7 +95,7 @@ bashio::log.magenta() {
 # ------------------------------------------------------------------------------
 bashio::log.cyan() {
     local message=$*
-    echo -e "${__BASHIO_COLORS_CYAN}${message}${__BASHIO_COLORS_RESET}" >&"$LOG_FD"
+    printf '%b\n' "${__BASHIO_COLORS_CYAN}${message}${__BASHIO_COLORS_RESET}" >&"$LOG_FD"
     return "${__BASHIO_EXIT_OK}"
 }
 
@@ -123,7 +123,7 @@ function bashio::log.log() {
     output="${output//\{MESSAGE\}/"${message}"}"
     output="${output//\{LEVEL\}/"${__BASHIO_LOG_LEVELS[$level]}"}"
 
-    echo -e "${output}" >&"$LOG_FD"
+    printf '%b\n' "${output}" >&"$LOG_FD"
 
     return "${__BASHIO_EXIT_OK}"
 }
