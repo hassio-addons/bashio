@@ -8,7 +8,7 @@
 # ==============================================================================
 
 # Unless $LOG_FD is already set to a valid fd
-if ! [[ "$LOG_FD" =~ ^[0-9]+$ ]] || ! { true >&"$LOG_FD" ; } 2>/dev/null ; then
+if ! [[ "${LOG_FD-}" =~ ^[0-9]+$ ]] || ! { : >&"${LOG_FD-2}"; } 2>/dev/null; then
   # Preserve the original STDOUT on a free fd (stored in $LOG_FD) so that we can
   # log to it without interfering with the STDOUT of subshells whose output we
   # want to capture for other purposes.
