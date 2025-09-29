@@ -138,23 +138,35 @@ function bashio::addon.changelog() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns a JSON object with generic version information about addons.
+# Returns a JSON object with information about addons.
 #
 # Arguments:
 #   $1 Add-on slug (optional)
-#   $1 Cache key to store results in (optional)
-#   $2 jq Filter to apply on the result (optional)
+#     (default/empty/'false' for all add-ons)
+#   $2 Cache key to store filtered results in (optional)
+#     (default/empty/'false' to cache only unfiltered results)
+#   $3 jq filter to apply on the result (optional)
+#     (default/empty is '.addons[].slug' with no slug or '.slug' with slug)
+#     ('false' for no filtering)
 # ------------------------------------------------------------------------------
 function bashio::addons() {
     local slug=${1:-false}
-    local cache_key=${2:-'addons.list'}
-    local filter=${3:-'.addons[].slug'}
+    local cache_key=${2:-false}
+    local filter=${3:-}
+    if bashio::var.is_empty "${filter}"; then
+        if bashio::var.false "${slug}"; then
+            filter='.addons[].slug'
+        else
+            filter='.slug'
+        fi
+    fi
     local info
     local response
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
-    if bashio::cache.exists "${cache_key}"; then
+    if ! bashio::var.false "${cache_key}" \
+    && bashio::cache.exists "${cache_key}"; then
         bashio::cache.get "${cache_key}"
         return "${__BASHIO_EXIT_OK}"
     fi
@@ -184,12 +196,14 @@ function bashio::addons() {
     fi
 
     response="${info}"
-    if bashio::var.has_value "${filter}"; then
+    if ! bashio::var.false "${filter}"; then
         response=$(bashio::jq "${info}" "${filter}")
+        if ! bashio::var.false "${cache_key}"; then
+          bashio::cache.set "${cache_key}" "${response}"
+        fi
     fi
 
-    bashio::cache.set "${cache_key}" "${response}"
-    printf "%s" "${response}"
+    printf '%s' "${response}"
 
     return "${__BASHIO_EXIT_OK}"
 }
