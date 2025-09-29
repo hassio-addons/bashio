@@ -145,7 +145,7 @@ function bashio::addon.changelog() {
 #     (default/empty/'false' for all add-ons)
 #   $2 Cache key to store filtered results in (optional)
 #     (default/empty/'false' to cache only unfiltered results)
-#   $3 jq Filter to apply on the result (optional)
+#   $3 jq filter to apply on the result (optional)
 #     (default/empty is '.addons[].slug' with no slug or '.slug' with slug)
 #     ('false' for no filtering)
 # ------------------------------------------------------------------------------
