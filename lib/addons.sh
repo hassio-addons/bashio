@@ -162,6 +162,8 @@ function bashio::addons() {
     fi
     local info
     local response
+    local installed
+    local info_source
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
@@ -171,22 +173,29 @@ function bashio::addons() {
         return "${__BASHIO_EXIT_OK}"
     fi
 
-    if bashio::var.false "${slug}"; then
-        if bashio::cache.exists "addons.list"; then
-            info=$(bashio::cache.get 'addons.list')
-        else
-            info=$(bashio::api.supervisor GET "/addons" false)
-            if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
-                bashio::log.error "Failed to get addons from Supervisor API"
-                return "${__BASHIO_EXIT_NOK}"
-            fi
-            bashio::cache.set "addons.list" "${info}"
-        fi
+    if bashio::cache.exists "store.info"; then
+        info=$(bashio::cache.get 'store.info')
     else
+        info=$(bashio::api.supervisor GET "/store/info" false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get store info from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
+        bashio::cache.set "store.info" "${info}"
+    fi
+
+    if ! bashio::var.false "${slug}"; then
         if bashio::cache.exists "addons.${slug}.info"; then
             info=$(bashio::cache.get "addons.${slug}.info")
         else
-            info=$(bashio::api.supervisor GET "/addons/${slug}/info" false)
+            installed=$(bashio::jq "${info}" '.addons[] | select(.slug == "'"${slug}"'") | .installed')
+            if bashio::var.false "${installed}"; then
+                info_source="store"
+            else
+                info_source="addons"
+            fi
+
+            info=$(bashio::api.supervisor GET "/${info_source}/${slug}/info" false)
             if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
                 bashio::log.error "Failed to get addon info from Supervisor API"
                 return "${__BASHIO_EXIT_NOK}"
@@ -230,6 +239,14 @@ function bashio::addons.installed() {
             "addons.${slug}.installed" \
             'if (.version != null) then true else false end'
     fi
+}
+
+# ------------------------------------------------------------------------------
+# Returns a list of add-on repositories installed.
+# ------------------------------------------------------------------------------
+function bashio::addons.repositories() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::addons 'addons.info.repositories' '.repositories[]'
 }
 
 # ------------------------------------------------------------------------------
