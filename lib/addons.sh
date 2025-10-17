@@ -246,7 +246,7 @@ function bashio::addons.installed() {
 # ------------------------------------------------------------------------------
 function bashio::addons.repositories() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::addons 'addons.info.repositories' '.repositories[]'
+    bashio::addons false 'addons.info.repositories' '.repositories[]'
 }
 
 # ------------------------------------------------------------------------------
