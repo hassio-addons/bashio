@@ -231,26 +231,6 @@ function bashio::supervisor.ip_address() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns the time to wait after boot in seconds.
-#
-# Arguments:
-#   $1 Timezone to set (optional).
-# ------------------------------------------------------------------------------
-function bashio::supervisor.wait_boot() {
-    local wait=${1:-}
-
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
-
-    if bashio::var.has_value "${wait}"; then
-        wait=$(bashio::var.json wait_boot "${wait}")
-        bashio::api.supervisor POST /supervisor/options "${wait}"
-        bashio::cache.flush_all
-    else
-        bashio::supervisor 'supervisor.info.wait_boot' '.wait_boot'
-    fi
-}
-
-# ------------------------------------------------------------------------------
 # Returns if debug is enabled on the supervisor
 #
 # Arguments:
@@ -303,7 +283,7 @@ function bashio::supervisor.debug_block() {
 # ------------------------------------------------------------------------------
 function bashio::supervisor.addons() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::supervisor 'supervisor.info.addons' '.addons[].slug'
+    bashio::addons.installed
 }
 
 # ------------------------------------------------------------------------------
@@ -311,7 +291,7 @@ function bashio::supervisor.addons() {
 # ------------------------------------------------------------------------------
 function bashio::supervisor.addons_repositories() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::supervisor 'supervisor.info.addons_repositories' '.addons_repositories[]'
+    bashio::addons.repositories
 }
 
 # ------------------------------------------------------------------------------
