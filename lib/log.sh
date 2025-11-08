@@ -25,7 +25,7 @@ fi
 # want the log functions to log to the new STDOUT.
 # ------------------------------------------------------------------------------
 function bashio::log.reinitialize_output() {
-    if [[ "${LOG_FD:-}" =~ ^[0-9]+$ ]]; then
+    if [[ "${LOG_FD:-}" =~ ^[0-9]+$ ]] && { : >&"${LOG_FD}"; } 2>/dev/null; then
         eval "exec ${LOG_FD}>&1"
     fi
 }
