@@ -93,7 +93,7 @@ source "${__BASHIO_LIB_DIR}/services.sh"
 source "${__BASHIO_LIB_DIR}/string.sh"
 # shellcheck source=lib/supervisor.sh
 source "${__BASHIO_LIB_DIR}/supervisor.sh"
-# shellcheck source=trace.sh
+# shellcheck source=lib/trace.sh
 source "${__BASHIO_LIB_DIR}/trace.sh"
 # shellcheck source=lib/var.sh
 source "${__BASHIO_LIB_DIR}/var.sh"
