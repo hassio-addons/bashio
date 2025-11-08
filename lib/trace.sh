@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Home Assistant Community Add-ons: Bashio
+# Bashio is a bash function library for use with Home Assistant add-ons.
+#
+# It contains a set of commonly used operations and can be used
+# to be included in add-on scripts to reduce code duplication across add-ons.
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Checks if we are currently running in trace mode, based on the log module.
+# ------------------------------------------------------------------------------
+bashio::trace() {
+    if [[ "${__BASHIO_LOG_LEVEL}" -lt "${__BASHIO_LOG_LEVEL_TRACE}" ]]; then
+        return "${__BASHIO_EXIT_NOK}"
+    fi
+
+    return "${__BASHIO_EXIT_OK}"
+}
