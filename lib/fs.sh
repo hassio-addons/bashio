@@ -54,7 +54,7 @@ function bashio::fs.device_exists() {
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
 
-    if [[ -d "${device}" ]]; then
+    if [[ -b "${device}" || -c "${device}" ]]; then
         return "${__BASHIO_EXIT_OK}"
     fi
 
