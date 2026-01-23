@@ -1178,6 +1178,31 @@ function bashio::addon.ingress_port() {
 }
 
 # ------------------------------------------------------------------------------
+# Returns or sets whether or not ingress_panel is enabled for this add-on.
+#
+# Arguments:
+#   $1 Add-on slug (optional, default: self)
+#   $2 Set current ingress_panel state (Optional)
+# ------------------------------------------------------------------------------
+function bashio::addon.ingress_panel() {
+    local slug=${1:-'self'}
+    local ingress_panel=${2:-}
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    if bashio::var.has_value "${ingress_panel}"; then
+        ingress_panel=$(bashio::var.json ingress_panel "^${ingress_panel}")
+        bashio::api.supervisor POST "/addons/${slug}/options" "${ingress_panel}"
+        bashio::cache.flush_all
+    else
+        bashio::addons \
+            "${slug}" \
+            "addons.${slug}.ingress_panel" \
+            '.ingress_panel // false'
+    fi
+}
+
+# ------------------------------------------------------------------------------
 # Returns or sets whether or not watchdog is enabled for this add-on.
 #
 # Arguments:
