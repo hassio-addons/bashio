@@ -282,6 +282,7 @@ function bashio::supervisor.debug_block() {
 # Returns a list of add-on slugs of the add-ons installed.
 # ------------------------------------------------------------------------------
 function bashio::supervisor.addons() {
+    # this is for backward compatibility
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::addons.installed
 }
@@ -290,8 +291,9 @@ function bashio::supervisor.addons() {
 # Returns a list of add-on repositories installed.
 # ------------------------------------------------------------------------------
 function bashio::supervisor.addons_repositories() {
+    # this is for backward compatibility
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::addons.repositories
+    bashio::repositories false "supervisor.info.addons_repositories" ".[] | {name, slug}"
 }
 
 # ------------------------------------------------------------------------------

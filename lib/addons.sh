@@ -156,6 +156,9 @@ function bashio::addons() {
     if bashio::var.is_empty "${filter}"; then
         if bashio::var.false "${slug}"; then
             filter='.addons[].slug'
+            if bashio::var.false "${cache_key}"; then
+                cache_key="addons.list"
+            fi
         else
             filter='.slug'
         fi
@@ -167,35 +170,36 @@ function bashio::addons() {
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
-    if ! bashio::var.false "${cache_key}" \
-    && bashio::cache.exists "${cache_key}"; then
+    if ! bashio::var.false "${cache_key}" && \
+        bashio::cache.exists "${cache_key}"
+    then
         bashio::cache.get "${cache_key}"
         return "${__BASHIO_EXIT_OK}"
     fi
 
-    if bashio::cache.exists "store.info"; then
-        info=$(bashio::cache.get 'store.info')
+    if bashio::cache.exists "store.addons.info"; then
+        info=$(bashio::cache.get "store.addons.info")
     else
-        info=$(bashio::api.supervisor GET "/store/info" false)
+        info=$(bashio::api.supervisor GET "/store/addons" false)
         if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
-            bashio::log.error "Failed to get store info from Supervisor API"
+            bashio::log.error "Failed to get addons info from Supervisor API"
             return "${__BASHIO_EXIT_NOK}"
         fi
-        bashio::cache.set "store.info" "${info}"
+        bashio::cache.set "store.addons.info" "${info}"
     fi
 
     if ! bashio::var.false "${slug}"; then
         if bashio::cache.exists "addons.${slug}.info"; then
             info=$(bashio::cache.get "addons.${slug}.info")
         else
-            installed=$(bashio::jq "${info}" '.addons[] | select(.slug == "'"${slug}"'") | .installed')
-            if bashio::var.false "${installed}"; then
-                info_source="store"
+            installed=$(bashio::jq "${info}" ".addons[] | select(.slug == \"${slug}\") | .installed")
+            if bashio::var.true "${installed}"; then
+                info_source="/addons/${slug}/info"
             else
-                info_source="addons"
+                info_source="/store/addons/${slug}"
             fi
 
-            info=$(bashio::api.supervisor GET "/${info_source}/${slug}/info" false)
+            info=$(bashio::api.supervisor GET "${info_source}" false)
             if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
                 bashio::log.error "Failed to get addon info from Supervisor API"
                 return "${__BASHIO_EXIT_NOK}"
@@ -208,7 +212,7 @@ function bashio::addons() {
     if ! bashio::var.false "${filter}"; then
         response=$(bashio::jq "${info}" "${filter}")
         if ! bashio::var.false "${cache_key}"; then
-          bashio::cache.set "${cache_key}" "${response}"
+            bashio::cache.set "${cache_key}" "${response}"
         fi
     fi
 
@@ -232,21 +236,23 @@ function bashio::addons.installed() {
         bashio::addons \
             false \
             'addons.info.installed' \
-            '.addons[] | select(.installed != null) | .slug'
+            '.addons[] | select(.installed) | .slug'
     else
-        bashio::addons \
-            "${slug}" \
-            "addons.${slug}.installed" \
-            'if (.version != null) then true else false end'
+        # this is for backward compatibility
+        bashio::addon.installed "${slug}"
     fi
 }
 
 # ------------------------------------------------------------------------------
-# Returns a list of add-on repositories installed.
+# Returns whether or not this add-on is installed.
+#
+# Arguments:
+#   $1 Add-on slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addons.repositories() {
-    bashio::log.trace "${FUNCNAME[0]}"
-    bashio::addons false 'addons.info.repositories' '.repositories[]'
+function bashio::addon.installed() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::addons "${slug}" "addons.${slug}.installed" "if (.installed != null) then false else true end"
 }
 
 # ------------------------------------------------------------------------------
