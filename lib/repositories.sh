@@ -126,3 +126,48 @@ function bashio::repository.maintainer() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::repositories "${slug}" "repositories.${slug}.maintainer" '.maintainer'
 }
+
+# ------------------------------------------------------------------------------
+# Add an addon repository to the store.
+#
+# Arguments:
+#   $1 URL of the addon repository to add to the store.
+# ------------------------------------------------------------------------------
+function bashio::repository.add() {
+    local repository=${1}
+
+    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+
+    repository=$(bashio::var.json repository "${repository}")
+    bashio::api.supervisor POST "/store/repositories" "${repository}"
+
+    bashio::cache.flush_all
+}
+
+# ------------------------------------------------------------------------------
+# Remove an unused addon repository from the store.
+#
+# Arguments:
+#   $1 Repository slug
+# ------------------------------------------------------------------------------
+function bashio::repository.delete() {
+    local slug=${1}
+
+    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::api.supervisor "DELETE" "/store/repositories/${slug}"
+    bashio::cache.flush_all
+}
+
+# ------------------------------------------------------------------------------
+# Repair/reset an addon repository in the store that is missing or showing incorrect information.
+#
+# Arguments:
+#   $1 Repository slug
+# ------------------------------------------------------------------------------
+function bashio::repository.repair() {
+    local slug=${1}
+
+    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::api.supervisor "POST" "/store/repositories/${slug}/repair"
+    bashio::cache.flush_all
+}
