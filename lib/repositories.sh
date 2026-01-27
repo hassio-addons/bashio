@@ -12,7 +12,7 @@
 #
 # Arguments:
 #   $1 Repository slug (optional)
-#     (default/empty/'false' for all add-ons)
+#     (default/empty/'false' for all repositories)
 #   $2 Cache key to store filtered results in (optional)
 #     (default/empty/'false' to cache only unfiltered results)
 #   $3 jq filter to apply on the result (optional)
