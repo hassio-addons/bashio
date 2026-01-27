@@ -70,7 +70,7 @@ function bashio::repositories() {
     if ! bashio::var.false "${filter}"; then
         response=$(bashio::jq "${info}" "${filter}")
         if ! bashio::var.false "${cache_key}"; then
-          bashio::cache.set "${cache_key}" "${response}"
+            bashio::cache.set "${cache_key}" "${response}"
         fi
     fi
 
