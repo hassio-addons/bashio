@@ -8,23 +8,36 @@
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# Returns a JSON object with generic version information about repositories.
+# Returns a JSON object with information about repositories.
 #
 # Arguments:
-#   $1 Add-on slug (optional)
-#   $1 Cache key to store results in (optional)
-#   $2 jq Filter to apply on the result (optional)
+#   $1 Repository slug (optional)
+#     (default/empty/'false' for all add-ons)
+#   $2 Cache key to store filtered results in (optional)
+#     (default/empty/'false' to cache only unfiltered results)
+#   $3 jq filter to apply on the result (optional)
+#     (default/empty is '.[].slug' with no slug or '.slug' with slug)
+#     ('false' for no filtering)
 # ------------------------------------------------------------------------------
 function bashio::repositories() {
     local slug=${1:-false}
-    local cache_key=${2:-'repositories.list'}
-    local filter=${3:-'.repositories[].slug'}
+    local cache_key=${2:-false}
+    local filter=${3:-}
+    if bashio::var.is_empty "${filter}"; then
+        if bashio::var.false "${slug}"; then
+            filter='.[].slug'
+        else
+            filter='.slug'
+        fi
+    fi
     local info
     local response
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
-    if bashio::cache.exists "${cache_key}"; then
+    if ! bashio::var.false "${cache_key}" \
+        && bashio::cache.exists "${cache_key}"
+    then
         bashio::cache.get "${cache_key}"
         return "${__BASHIO_EXIT_OK}"
     fi
@@ -33,9 +46,9 @@ function bashio::repositories() {
         if bashio::cache.exists "repositories.list"; then
             info=$(bashio::cache.get 'repositories.list')
         else
-            info=$(bashio::api.supervisor GET "/addons" false)
+            info=$(bashio::api.supervisor GET "/store/repositories" false)
             if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
-                bashio::log.error "Failed to get addons from Supervisor API"
+                bashio::log.error "Failed to get repositories from Supervisor API"
                 return "${__BASHIO_EXIT_NOK}"
             fi
             bashio::cache.set "repositories.list" "${info}"
@@ -44,10 +57,9 @@ function bashio::repositories() {
         if bashio::cache.exists "repositories.${slug}.info"; then
             info=$(bashio::cache.get "repositories.${slug}.info")
         else
-            info=$(bashio::api.supervisor GET "/addons" \
-                    false ".repositories[] | select(.slug==\"${slug}\")")
+            info=$(bashio::api.supervisor GET "/store/repositories/${slug}" false)
             if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
-                bashio::log.error "Failed to get repositories info from Supervisor API"
+                bashio::log.error "Failed to get repository info from Supervisor API"
                 return "${__BASHIO_EXIT_NOK}"
             fi
             bashio::cache.set "repositories.${slug}.info" "${info}"
@@ -55,12 +67,14 @@ function bashio::repositories() {
     fi
 
     response="${info}"
-    if bashio::var.has_value "${filter}"; then
+    if ! bashio::var.false "${filter}"; then
         response=$(bashio::jq "${info}" "${filter}")
+        if ! bashio::var.false "${cache_key}"; then
+          bashio::cache.set "${cache_key}" "${response}"
+        fi
     fi
 
-    bashio::cache.set "${cache_key}" "${response}"
-    printf "%s" "${response}"
+    printf '%s' "${response}"
 
     return "${__BASHIO_EXIT_OK}"
 }
