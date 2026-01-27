@@ -26,6 +26,9 @@ function bashio::repositories() {
     if bashio::var.is_empty "${filter}"; then
         if bashio::var.false "${slug}"; then
             filter='.[].slug'
+            if bashio::var.false "${cache_key}"; then
+                cache_key="repositories.list"
+            fi
         else
             filter='.slug'
         fi
@@ -35,23 +38,22 @@ function bashio::repositories() {
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
-    if ! bashio::var.false "${cache_key}" \
-        && bashio::cache.exists "${cache_key}"
+    if ! bashio::var.false "${cache_key}" && \
+        bashio::cache.exists "${cache_key}"
     then
         bashio::cache.get "${cache_key}"
         return "${__BASHIO_EXIT_OK}"
     fi
 
     if bashio::var.false "${slug}"; then
-        if bashio::cache.exists "repositories.list"; then
-            info=$(bashio::cache.get 'repositories.list')
+        if bashio::cache.exists "repositories.info"; then
+            info=$(bashio::cache.get 'repositories.info')
         else
             info=$(bashio::api.supervisor GET "/store/repositories" false)
             if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
                 bashio::log.error "Failed to get repositories from Supervisor API"
                 return "${__BASHIO_EXIT_NOK}"
             fi
-            bashio::cache.set "repositories.list" "${info}"
         fi
     else
         if bashio::cache.exists "repositories.${slug}.info"; then
