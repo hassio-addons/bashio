@@ -13,13 +13,7 @@
 function bashio::jobs.reset() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor POST /jobs/reset
-    local exit_status="$?"
     bashio::cache.flush_all
-    if [ "${exit_status}" -ne "${__BASHIO_EXIT_OK}" ]; then
-        bashio::log.error "Failed to access jobs on Supervisor API"
-        return "${__BASHIO_EXIT_NOK}"
-    fi
-    return "${__BASHIO_EXIT_OK}"
 }
 
 
@@ -207,11 +201,5 @@ function bashio::job.delete() {
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
     bashio::api.supervisor "DELETE" "/jobs/${uuid}"
-    local exit_status="$?"
     bashio::cache.flush_all
-    if [ "${exit_status}" -ne "${__BASHIO_EXIT_OK}" ]; then
-        bashio::log.error "Failed to access job on Supervisor API"
-        return "${__BASHIO_EXIT_NOK}"
-    fi
-    return "${__BASHIO_EXIT_OK}"
 }
