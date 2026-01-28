@@ -154,16 +154,25 @@ function bashio::network.type() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns if the interface is enabled.
+# Returns or sets if the interface is enabled.
 #
 # Arguments:
 #   $1 Interface name for this operation (optional)
+#   $2 Set enabled state (Optional)
 # ------------------------------------------------------------------------------
 function bashio::network.enabled() {
     local interface=${1:-'default'}
+    local enabled=${2:-}
 
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::network.interface "network.interface.${interface}.info.enabled" "${interface}" '.enabled'
+
+    if bashio::var.has_value "${enabled}"; then
+        enabled=$(bashio::var.json enabled "^${enabled}")
+        bashio::api.supervisor POST "/network/interface/${interface}/update" "${enabled}"
+        bashio::cache.flush_all
+    else
+        bashio::network.interface "network.interface.${interface}.info.enabled" "${interface}" '.enabled'
+    fi
 }
 
 # ------------------------------------------------------------------------------
@@ -281,4 +290,48 @@ function bashio::network.ipv6_gateway() {
 
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::network.interface "network.interface.${interface}.info.ipv6.gateway" "${interface}" '.ipv6.gateway'
+}
+
+# ------------------------------------------------------------------------------
+# Returns or sets the ipv4 json settings of the network interfaces.
+#
+# Arguments:
+#   $1 Interface name for this operation (optional)
+#   $2 Ipv4 interface settings (Optional)
+# ------------------------------------------------------------------------------
+function bashio::network.ipv4() {
+    local interface=${1:-'default'}
+    local ipv4=${2:-}
+
+    bashio::log.trace "${FUNCNAME[0]}"
+
+    if bashio::var.has_value "${ipv4}"; then
+        ipv4=$(bashio::var.json ipv4 "^${ipv4}")
+        bashio::api.supervisor POST "/network/interface/${interface}/update" "${ipv4}"
+        bashio::cache.flush_all
+    else
+        bashio::network.interface "network.interface.${interface}.info.ipv4" "${interface}" '.ipv4'
+    fi
+}
+
+# ------------------------------------------------------------------------------
+# Returns or sets the ipv6 json settings of the network interfaces.
+#
+# Arguments:
+#   $1 Interface name for this operation (optional)
+#   $2 Ipv6 interface settings (Optional)
+# ------------------------------------------------------------------------------
+function bashio::network.ipv6() {
+    local interface=${1:-'default'}
+    local ipv6=${2:-}
+
+    bashio::log.trace "${FUNCNAME[0]}"
+
+    if bashio::var.has_value "${ipv6}"; then
+        ipv6=$(bashio::var.json ipv6 "^${ipv6}")
+        bashio::api.supervisor POST "/network/interface/${interface}/update" "${ipv6}"
+        bashio::cache.flush_all
+    else
+        bashio::network.interface "network.interface.${interface}.info.ipv6" "${interface}" '.ipv6'
+    fi
 }
