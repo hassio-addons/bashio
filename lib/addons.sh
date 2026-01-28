@@ -192,7 +192,11 @@ function bashio::addons() {
         if bashio::cache.exists "addons.${slug}.info"; then
             info=$(bashio::cache.get "addons.${slug}.info")
         else
-            installed=$(bashio::jq "${info}" ".addons[] | select(.slug == \"${slug}\") | .installed")
+            if bashio::var.equals "${slug}" "self"; then
+                installed=true
+            else
+                installed=$(bashio::jq "${info}" ".addons[] | select(.slug == \"${slug}\") | .installed")
+            fi
             if bashio::var.true "${installed}"; then
                 info_source="/addons/${slug}/info"
             else
