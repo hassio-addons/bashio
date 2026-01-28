@@ -223,7 +223,7 @@ function bashio::addons() {
 
 # ------------------------------------------------------------------------------
 # Returns a list of installed add-ons or for a specific add-ons.
-
+#
 # Arguments:
 #   $1 Add-on slug (optional)
 # ------------------------------------------------------------------------------
