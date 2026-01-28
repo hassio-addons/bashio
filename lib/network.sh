@@ -169,12 +169,7 @@ function bashio::network.enabled() {
     if bashio::var.has_value "${enabled}"; then
         enabled=$(bashio::var.json enabled "^${enabled}")
         bashio::api.supervisor POST "/network/interface/${interface}/update" "${enabled}"
-        local exit_status="$?"
         bashio::cache.flush_all
-        if [ "${exit_status}" -ne "${__BASHIO_EXIT_OK}" ]; then
-            bashio::log.error "Failed to access network interface on Supervisor API"
-            return "${__BASHIO_EXIT_NOK}"
-        fi
     else
         bashio::network.interface "network.interface.${interface}.info.enabled" "${interface}" '.enabled'
     fi
@@ -313,12 +308,7 @@ function bashio::network.ipv4() {
     if bashio::var.has_value "${ipv4}"; then
         ipv4=$(bashio::var.json ipv4 "^${ipv4}")
         bashio::api.supervisor POST "/network/interface/${interface}/update" "${ipv4}"
-        local exit_status="$?"
         bashio::cache.flush_all
-        if [ "${exit_status}" -ne "${__BASHIO_EXIT_OK}" ]; then
-            bashio::log.error "Failed to access network interface on Supervisor API"
-            return "${__BASHIO_EXIT_NOK}"
-        fi
     else
         bashio::network.interface "network.interface.${interface}.info.ipv4" "${interface}" '.ipv4'
     fi
@@ -340,12 +330,7 @@ function bashio::network.ipv6() {
     if bashio::var.has_value "${ipv6}"; then
         ipv6=$(bashio::var.json ipv6 "^${ipv6}")
         bashio::api.supervisor POST "/network/interface/${interface}/update" "${ipv6}"
-        local exit_status="$?"
         bashio::cache.flush_all
-        if [ "${exit_status}" -ne "${__BASHIO_EXIT_OK}" ]; then
-            bashio::log.error "Failed to access network interface on Supervisor API"
-            return "${__BASHIO_EXIT_NOK}"
-        fi
     else
         bashio::network.interface "network.interface.${interface}.info.ipv6" "${interface}" '.ipv6'
     fi
