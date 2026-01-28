@@ -142,8 +142,13 @@ function bashio::repository.add() {
 
     repository=$(bashio::var.json repository "${repository}")
     bashio::api.supervisor POST "/store/repositories" "${repository}"
+    if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+        bashio::log.error "Failed to post repository info to Supervisor API"
+        return "${__BASHIO_EXIT_NOK}"
+    fi
 
     bashio::cache.flush_all
+    return "${__BASHIO_EXIT_OK}"
 }
 
 # ------------------------------------------------------------------------------
@@ -157,7 +162,13 @@ function bashio::repository.delete() {
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
     bashio::api.supervisor "DELETE" "/store/repositories/${slug}"
+    if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+        bashio::log.error "Failed to post repository info to Supervisor API"
+        return "${__BASHIO_EXIT_NOK}"
+    fi
+
     bashio::cache.flush_all
+    return "${__BASHIO_EXIT_OK}"
 }
 
 # ------------------------------------------------------------------------------
@@ -171,5 +182,11 @@ function bashio::repository.repair() {
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
     bashio::api.supervisor "POST" "/store/repositories/${slug}/repair"
+    if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+        bashio::log.error "Failed to post repository info to Supervisor API"
+        return "${__BASHIO_EXIT_NOK}"
+    fi
+
     bashio::cache.flush_all
+    return "${__BASHIO_EXIT_OK}"
 }
