@@ -196,6 +196,7 @@ function bashio::addons() {
             if bashio::var.true "${installed}"; then
                 info_source="/addons/${slug}/info"
             else
+                # in case of unknown slug we will intentionally fail on store API access
                 info_source="/store/addons/${slug}"
             fi
 
@@ -252,7 +253,8 @@ function bashio::addons.installed() {
 function bashio::addon.installed() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.installed" "if (.installed != null) then false else true end"
+    # when info is coming from store API, .installed is always false, when data is coming from addons API, .installed is null
+    bashio::addons "${slug}" "addons.${slug}.installed" "if (.installed != null) then .installed else true end"
 }
 
 # ------------------------------------------------------------------------------
