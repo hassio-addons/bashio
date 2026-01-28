@@ -1193,12 +1193,7 @@ function bashio::addon.ingress_panel() {
     if bashio::var.has_value "${ingress_panel}"; then
         ingress_panel=$(bashio::var.json ingress_panel "^${ingress_panel}")
         bashio::api.supervisor POST "/addons/${slug}/options" "${ingress_panel}"
-        local exit_status="$?"
         bashio::cache.flush_all
-        if [ "${exit_status}" -ne "${__BASHIO_EXIT_OK}" ]; then
-            bashio::log.error "Failed to access addon info on Supervisor API"
-            return "${__BASHIO_EXIT_NOK}"
-        fi
     else
         bashio::addons \
             "${slug}" \
