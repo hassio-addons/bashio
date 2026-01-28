@@ -143,13 +143,7 @@ function bashio::repository.add() {
 
     repository=$(bashio::var.json repository "${repository}")
     bashio::api.supervisor POST "/store/repositories" "${repository}"
-    local exit_status="$?"
     bashio::cache.flush_all
-    if [ "${exit_status}" -ne "${__BASHIO_EXIT_OK}" ]; then
-        bashio::log.error "Failed to access repository on Supervisor API"
-        return "${__BASHIO_EXIT_NOK}"
-    fi
-    return "${__BASHIO_EXIT_OK}"
 }
 
 # ------------------------------------------------------------------------------
@@ -163,13 +157,7 @@ function bashio::repository.delete() {
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
     bashio::api.supervisor "DELETE" "/store/repositories/${slug}"
-    local exit_status="$?"
     bashio::cache.flush_all
-    if [ "${exit_status}" -ne "${__BASHIO_EXIT_OK}" ]; then
-        bashio::log.error "Failed to access repository on Supervisor API"
-        return "${__BASHIO_EXIT_NOK}"
-    fi
-    return "${__BASHIO_EXIT_OK}"
 }
 
 # ------------------------------------------------------------------------------
@@ -183,11 +171,5 @@ function bashio::repository.repair() {
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
     bashio::api.supervisor "POST" "/store/repositories/${slug}/repair"
-    local exit_status="$?"
     bashio::cache.flush_all
-    if [ "${exit_status}" -ne "${__BASHIO_EXIT_OK}" ]; then
-        bashio::log.error "Failed to access repository on Supervisor API"
-        return "${__BASHIO_EXIT_NOK}"
-    fi
-    return "${__BASHIO_EXIT_OK}"
 }
