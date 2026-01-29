@@ -24,7 +24,7 @@ function bashio::jobs.reset() {
 #   $1 Job uuid (optional)
 #     (default/empty/'false' for all jobs)
 #   $2 Cache key to store filtered results in (optional)
-#     (default/empty/'false' to cache only unfiltered results)
+#     (default/empty/'false' for no caching)
 #   $3 jq filter to apply on the result (optional)
 #     (default/empty is '.jobs[].uuid' with no uuid or 'false' with uuid)
 #     ('false' for no filtering)
