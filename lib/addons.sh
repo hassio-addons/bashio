@@ -112,7 +112,6 @@ function bashio::addon.logs() {
     bashio::api.supervisor GET "/addons/${slug}/logs" true
 }
 
-
 # ------------------------------------------------------------------------------
 # Returns the documentation of the add-on.
 #
@@ -120,7 +119,8 @@ function bashio::addon.logs() {
 #   $1 Add-on slug (optional, default: self)
 # ------------------------------------------------------------------------------
 function bashio::addon.documentation() {
-    local slug=${1:-'self'}
+    # This call is redirected to the store, and store doesn't support 'self'
+    local slug=${1:-$(bashio::addon.slug)}
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor GET "/addons/${slug}/documentation" true
 }
@@ -132,7 +132,8 @@ function bashio::addon.documentation() {
 #   $1 Add-on slug (optional, default: self)
 # ------------------------------------------------------------------------------
 function bashio::addon.changelog() {
-    local slug=${1:-'self'}
+    # This call is redirected to the store, and store doesn't support 'self'
+    local slug=${1:-$(bashio::addon.slug)}
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor GET "/addons/${slug}/changelog" true
 }
@@ -259,6 +260,18 @@ function bashio::addon.installed() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
     # when info is coming from store API, .installed is always false, when data is coming from addons API, .installed is null
     bashio::addons "${slug}" "addons.${slug}.installed" "if (.installed != null) then .installed else true end"
+}
+
+# ------------------------------------------------------------------------------
+# Returns the slug of an add-on.
+#
+# Arguments:
+#   $1 Add-on slug (optional, default: self)
+# ------------------------------------------------------------------------------
+function bashio::addon.slug() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::addons "${slug}" "addons.${slug}.slug" '.slug'
 }
 
 # ------------------------------------------------------------------------------
