@@ -16,7 +16,6 @@ function bashio::jobs.reset() {
     bashio::cache.flush_all
 }
 
-
 # ------------------------------------------------------------------------------
 # Returns a JSON object with information about jobs.
 #
