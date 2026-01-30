@@ -7,13 +7,17 @@
 # to be included in add-on scripts to reduce code duplication across add-ons.
 # ==============================================================================
 
-# Unless $LOG_FD is already set to a valid fd
-if ! [[ "${LOG_FD-}" =~ ^[0-9]+$ ]] || ! { : >&"${LOG_FD-2}"; } 2>/dev/null; then
+# Unless $LOG_FD is already set to a valid fd.
+if ! [[ "${LOG_FD:-}" =~ ^[0-9]+$ ]] || ! { : >&"${LOG_FD:-}"; } 2>/dev/null; then
   # Preserve the original STDOUT on a free fd (stored in $LOG_FD) so that we can
-  # log to it without interfering with the STDOUT of subshells whose output we
-  # want to capture for other purposes.
+  # log to it without interfering with the STDOUT of subshells or child processes
+  # whose output we want to capture for other purposes.
   exec {LOG_FD}>&1
 fi
+# Export LOG_FD for use by child bashio processes.
+# This is done outside of the above conditional to ensure that LOG_FD is also
+# exported if it was already set without using `export`.
+export LOG_FD
 
 # ------------------------------------------------------------------------------
 # Log a message to output.
