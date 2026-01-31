@@ -11,6 +11,7 @@ set -o errexit  # Exit script when a command exits with non-zero status
 set -o errtrace # Exit on error inside any functions or sub-shells
 set -o nounset  # Exit script on use of an undefined variable
 set -o pipefail # Return exit status of the last command in the pipe that failed
+shopt -s inherit_errexit # Command substitution inherits the value of errexit
 
 # ==============================================================================
 # GLOBALS
@@ -95,5 +96,7 @@ source "${__BASHIO_LIB_DIR}/string.sh"
 source "${__BASHIO_LIB_DIR}/supervisor.sh"
 # shellcheck source=lib/trace.sh
 source "${__BASHIO_LIB_DIR}/trace.sh"
+# shellcheck source=lib/try.sh
+source "${__BASHIO_LIB_DIR}/try.sh"
 # shellcheck source=lib/var.sh
 source "${__BASHIO_LIB_DIR}/var.sh"
