@@ -97,7 +97,7 @@ function bashio::addon.uninstall() {
 #   $1 Add-on slug (optional, default: self)
 # ------------------------------------------------------------------------------
 function bashio::addon.update() {
-    local slug=${1:-'self'}
+    local slug=${1:-$(bashio::addon.slug)}
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor POST "/store/addons/${slug}/update"
     bashio::cache.flush_all
