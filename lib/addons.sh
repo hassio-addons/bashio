@@ -267,15 +267,11 @@ function bashio::addon.installed() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns the slug of an add-on.
-#
-# Arguments:
-#   $1 Add-on slug (optional, default: self)
+# Returns the slug of the current (self) add-on.
 # ------------------------------------------------------------------------------
 function bashio::addon.slug() {
-    local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.slug" '.slug'
+    bashio::addons 'self' 'addons.self.slug' '.slug'
 }
 
 # ------------------------------------------------------------------------------
