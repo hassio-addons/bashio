@@ -62,6 +62,7 @@ function bashio::addon.install() {
     local slug=${1}
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor POST "/store/addons/${slug}/install"
+    bashio::cache.flush_all
 }
 
 # ------------------------------------------------------------------------------
@@ -86,6 +87,7 @@ function bashio::addon.uninstall() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor POST "/addons/${slug}/uninstall"
+    bashio::cache.flush_all
 }
 
 # ------------------------------------------------------------------------------
@@ -98,6 +100,7 @@ function bashio::addon.update() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor POST "/store/addons/${slug}/update"
+    bashio::cache.flush_all
 }
 
 # ------------------------------------------------------------------------------
