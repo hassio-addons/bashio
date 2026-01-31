@@ -68,12 +68,10 @@ QUERY
 # ------------------------------------------------------------------------------
 function bashio::config.exists() {
     local key=${1}
-    local value
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
 
-    value=$(bashio::config "${key}")
-    if [[ "${value}" == "null" ]]; then
+    if [[ $(bashio::config "${key}") == "null" ]]; then
         return "${__BASHIO_EXIT_NOK}"
     fi
 
