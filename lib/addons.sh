@@ -270,7 +270,7 @@ function bashio::addon.installed() {
 # Returns the slug of the current (self) add-on.
 # ------------------------------------------------------------------------------
 function bashio::addon.slug() {
-    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::log.trace "${FUNCNAME[0]}"
     bashio::addons 'self' 'addons.self.slug' '.slug'
 }
 
