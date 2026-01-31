@@ -17,7 +17,8 @@ declare __BASHIO_TRY_EXIT_STATUS=0
 #
 #
 # Use this function to get the exit status of a subshell for a condition (eg.
-# 'if') without disabling errexit option in it.
+# 'if') without disabling errexit option in it. All Bashio functions that
+# execute changes through the API are depend on enabled errexit option.
 #
 # Simple example:
 #   ~ # function test { false; echo "Don't print it"; }
