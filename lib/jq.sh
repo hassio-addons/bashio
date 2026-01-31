@@ -37,10 +37,12 @@ function bashio::jq() {
 function bashio::jq.exists() {
     local data=${1}
     local filter=${2:-}
+    local value
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
 
-    if [[ $(bashio::jq "${data}" "${filter}") = "null" ]]; then
+    value=$(bashio::jq "${data}" "${filter}")
+    if bashio::var.equals "${value}" "null"; then
         return "${__BASHIO_EXIT_NOK}"
     fi
 
@@ -90,7 +92,7 @@ function bashio::jq.is() {
     value=$(bashio::jq "${data}" \
         "${filter} | if type==\"${type}\" then true else false end")
 
-    if [[ "${value}" = "false" ]]; then
+    if [[ "${value}" != "true" ]]; then
         return "${__BASHIO_EXIT_NOK}"
     fi
 
