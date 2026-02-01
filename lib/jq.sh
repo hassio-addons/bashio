@@ -66,7 +66,7 @@ function bashio::jq.has_value() {
 
     if ! value=$(bashio::jq "${data}" \
             "${filter} | if (. == {} or . == []) then empty else . end // empty") || \
-        || ! bashio::var.has_value "${value}"
+        ! bashio::var.has_value "${value}"
     then
         return "${__BASHIO_EXIT_NOK}"
     fi
