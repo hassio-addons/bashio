@@ -179,3 +179,22 @@ function bashio::var.json_string() {
     return "${__BASHIO_EXIT_NOK}"
 }
 
+# ------------------------------------------------------------------------------
+# Converts a bash array to a JSON array.
+#
+# Arguments:
+#   $@ Bash array
+# ------------------------------------------------------------------------------
+function bashio::var.json_array() {
+    local array=("$@")
+    local json_array
+
+    # https://stackoverflow.com/a/67489301/2755656
+    if json_array=$(jq -cn '$ARGS.positional' --args -- "${array[@]}"); then
+        echo "${json_array}"
+        return "${__BASHIO_EXIT_OK}"
+    fi
+
+    bashio::log.error "Failed to convert array"
+    return "${__BASHIO_EXIT_NOK}"
+}
