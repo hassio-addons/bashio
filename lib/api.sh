@@ -81,7 +81,9 @@ function bashio::api.supervisor() {
         return "${__BASHIO_EXIT_NOK}"
     fi
 
-    if ! bashio::var.true "${raw}"; then
+    if ! bashio::var.true "${raw}" || \
+        bashio::jq.exists "${response}" ".result" 2> /dev/null
+    then
         result=$(bashio::jq "${response}" ".result")
         if bashio::var.equals "${result}" "error"; then
             bashio::log.error "Got unexpected response from the API:" \
