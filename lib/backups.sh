@@ -38,7 +38,7 @@ function bashio::backups.thaw() {
 # Returns or sets the number of days until a backup is considered stale.
 #
 # Arguments:
-#   $2 Set days_until_stale (Optional)
+#   $1 Set days_until_stale (Optional)
 # ------------------------------------------------------------------------------
 function bashio::backups.days_until_stale() {
     local days_until_stale=${1:-}
@@ -377,6 +377,6 @@ function bashio::backup.restore_partial() {
     local slug=${1}
     local options=${2}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::api.supervisor POST "/backups/${slug}/partial/full" "${options}"
+    bashio::api.supervisor POST "/backups/${slug}/restore/partial" "${options}"
     bashio::cache.flush_all
 }
