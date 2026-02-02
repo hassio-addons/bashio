@@ -53,7 +53,7 @@ function bashio::backups.days_until_stale() {
         bashio::backups \
             false \
             "backups.days_until_stale" \
-            '.days_until_stale // false'
+            '.days_until_stale // empty'
     fi
 }
 
