@@ -344,6 +344,10 @@ function bashio::backup.new_full() {
     local options=${1}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::api.supervisor POST "/backups/new/full" "${options}"
+    if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+        bashio::log.error "Failed to create new backup with Supervisor API"
+        return "${__BASHIO_EXIT_NOK}"
+    fi
     bashio::cache.flush_all
 }
 
@@ -357,6 +361,10 @@ function bashio::backup.new_partial() {
     local options=${1}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::api.supervisor POST "/backups/new/partial" "${options}"
+    if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+        bashio::log.error "Failed to create new backup with Supervisor API"
+        return "${__BASHIO_EXIT_NOK}"
+    fi
     bashio::cache.flush_all
 }
 
@@ -385,6 +393,10 @@ function bashio::backup.restore_full() {
     local options=${2}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::api.supervisor POST "/backups/${slug}/restore/full" "${options}"
+    if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+        bashio::log.error "Failed to restore backup with Supervisor API"
+        return "${__BASHIO_EXIT_NOK}"
+    fi
     bashio::cache.flush_all
 }
 
@@ -400,5 +412,9 @@ function bashio::backup.restore_partial() {
     local options=${2}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::api.supervisor POST "/backups/${slug}/restore/partial" "${options}"
+    if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+        bashio::log.error "Failed to restore backup with Supervisor API"
+        return "${__BASHIO_EXIT_NOK}"
+    fi
     bashio::cache.flush_all
 }
