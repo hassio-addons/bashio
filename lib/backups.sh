@@ -18,10 +18,20 @@ function bashio::backups.reload() {
 
 # ------------------------------------------------------------------------------
 # Freezes the backups.
+#
+# Arguments:
+#   $1 Timeout (Optional)
 # ------------------------------------------------------------------------------
 function bashio::backups.freeze() {
-    bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.supervisor POST /backups/freeze
+    local timeout=${1:-}
+    local options=
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    if bashio::var.has_value "${timeout}"; then
+        options=$(bashio::var.json timeout "^${timeout}")
+    fi
+    bashio::api.supervisor POST /backups/freeze "${options}"
     bashio::cache.flush_all
 }
 
