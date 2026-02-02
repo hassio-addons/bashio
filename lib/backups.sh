@@ -236,6 +236,18 @@ function bashio::backup.homeassistant_version() {
 }
 
 # ------------------------------------------------------------------------------
+# Returns the version of Supervisor that was in use when the backup is
+# created.
+#
+# Arguments: $1 Backup slug
+# ------------------------------------------------------------------------------
+function bashio::backup.supervisor_version() {
+    local slug=${1}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    bashio::backups "${slug}" "backups.${slug}.supervisor_version" '.supervisor_version // empty'
+}
+
+# ------------------------------------------------------------------------------
 # Returns the addons of a backup.
 #
 # Arguments:
