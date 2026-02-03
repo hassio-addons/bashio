@@ -22,7 +22,7 @@ function bashio::config() {
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
 
-    read -r -d '' query << QUERY
+    read -r -d '' query << QUERY || true
         if (.${key} == null) then
             null
         elif (.${key} | type == "string") then
