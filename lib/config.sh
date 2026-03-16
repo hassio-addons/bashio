@@ -22,7 +22,7 @@ function bashio::config() {
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
 
-    read -r -d '' query << QUERY
+    read -r -d '' query << QUERY || true
         if (.${key} == null) then
             null
         elif (.${key} | type == "string") then
@@ -68,10 +68,12 @@ QUERY
 # ------------------------------------------------------------------------------
 function bashio::config.exists() {
     local key=${1}
+    local value
 
     bashio::log.trace "${FUNCNAME[0]}:" "$@"
 
-    if [[ $(bashio::config "${key}") == "null" ]]; then
+    value=$(bashio::config "${key}")
+    if [[ "${value}" == "null" ]]; then
         return "${__BASHIO_EXIT_NOK}"
     fi
 
