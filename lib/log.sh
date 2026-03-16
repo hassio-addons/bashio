@@ -16,6 +16,21 @@ if ! [[ "${LOG_FD-}" =~ ^[0-9]+$ ]] || ! { : >&"${LOG_FD-2}"; } 2>/dev/null; the
 fi
 
 # ------------------------------------------------------------------------------
+# Redirects the $LOG_FD fd to a changed STDOUT.
+#
+# If an add-on script changed the STDOUT (after the $LOG_FD fd was redirected to
+# it, see above), this function redirects the $LOG_FD fd to the new STDOUT.
+#
+# Add-on developers must call this function after changing the STDOUT if they
+# want the log functions to log to the new STDOUT.
+# ------------------------------------------------------------------------------
+function bashio::log.reinitialize_output() {
+    if [[ "${LOG_FD:-}" =~ ^[0-9]+$ ]] && { : >&"${LOG_FD}"; } 2>/dev/null; then
+        eval "exec ${LOG_FD}>&1"
+    fi
+}
+
+# ------------------------------------------------------------------------------
 # Log a message to output.
 #
 # Arguments:
