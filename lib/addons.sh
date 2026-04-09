@@ -61,7 +61,8 @@ function bashio::addon.stop() {
 function bashio::addon.install() {
     local slug=${1}
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.supervisor POST "/addons/${slug}/install"
+    bashio::api.supervisor POST "/store/addons/${slug}/install"
+    bashio::cache.flush_all
 }
 
 # ------------------------------------------------------------------------------
@@ -86,6 +87,7 @@ function bashio::addon.uninstall() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor POST "/addons/${slug}/uninstall"
+    bashio::cache.flush_all
 }
 
 # ------------------------------------------------------------------------------
@@ -95,9 +97,10 @@ function bashio::addon.uninstall() {
 #   $1 Add-on slug (optional, default: self)
 # ------------------------------------------------------------------------------
 function bashio::addon.update() {
-    local slug=${1:-'self'}
+    local slug=${1:-$(bashio::addon.slug)}
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.supervisor POST "/addons/${slug}/update"
+    bashio::api.supervisor POST "/store/addons/${slug}/update"
+    bashio::cache.flush_all
 }
 
 # ------------------------------------------------------------------------------
@@ -112,7 +115,6 @@ function bashio::addon.logs() {
     bashio::api.supervisor GET "/addons/${slug}/logs" true
 }
 
-
 # ------------------------------------------------------------------------------
 # Returns the documentation of the add-on.
 #
@@ -120,7 +122,8 @@ function bashio::addon.logs() {
 #   $1 Add-on slug (optional, default: self)
 # ------------------------------------------------------------------------------
 function bashio::addon.documentation() {
-    local slug=${1:-'self'}
+    # This call is redirected to the store, and store doesn't support 'self'
+    local slug=${1:-$(bashio::addon.slug)}
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor GET "/addons/${slug}/documentation" true
 }
@@ -132,7 +135,8 @@ function bashio::addon.documentation() {
 #   $1 Add-on slug (optional, default: self)
 # ------------------------------------------------------------------------------
 function bashio::addon.changelog() {
-    local slug=${1:-'self'}
+    # This call is redirected to the store, and store doesn't support 'self'
+    local slug=${1:-$(bashio::addon.slug)}
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor GET "/addons/${slug}/changelog" true
 }
@@ -156,37 +160,55 @@ function bashio::addons() {
     if bashio::var.is_empty "${filter}"; then
         if bashio::var.false "${slug}"; then
             filter='.addons[].slug'
+            if bashio::var.false "${cache_key}"; then
+                cache_key="addons.list"
+            fi
         else
             filter='.slug'
         fi
     fi
     local info
     local response
+    local installed
+    local info_source
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
-    if ! bashio::var.false "${cache_key}" \
-    && bashio::cache.exists "${cache_key}"; then
+    if ! bashio::var.false "${cache_key}" && \
+        bashio::cache.exists "${cache_key}"
+    then
         bashio::cache.get "${cache_key}"
         return "${__BASHIO_EXIT_OK}"
     fi
 
-    if bashio::var.false "${slug}"; then
-        if bashio::cache.exists "addons.list"; then
-            info=$(bashio::cache.get 'addons.list')
-        else
-            info=$(bashio::api.supervisor GET "/addons" false)
-            if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
-                bashio::log.error "Failed to get addons from Supervisor API"
-                return "${__BASHIO_EXIT_NOK}"
-            fi
-            bashio::cache.set "addons.list" "${info}"
-        fi
+    if bashio::cache.exists "store.addons.info"; then
+        info=$(bashio::cache.get "store.addons.info")
     else
+        info=$(bashio::api.supervisor GET "/store/addons" false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get addons info from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
+        bashio::cache.set "store.addons.info" "${info}"
+    fi
+
+    if ! bashio::var.false "${slug}"; then
         if bashio::cache.exists "addons.${slug}.info"; then
             info=$(bashio::cache.get "addons.${slug}.info")
         else
-            info=$(bashio::api.supervisor GET "/addons/${slug}/info" false)
+            if bashio::var.equals "${slug}" "self"; then
+                installed=true
+            else
+                installed=$(bashio::jq "${info}" ".addons[] | select(.slug == \"${slug}\") | .installed")
+            fi
+            if bashio::var.true "${installed}"; then
+                info_source="/addons/${slug}/info"
+            else
+                # in case of unknown slug we will intentionally fail on store API access
+                info_source="/store/addons/${slug}"
+            fi
+
+            info=$(bashio::api.supervisor GET "${info_source}" false)
             if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
                 bashio::log.error "Failed to get addon info from Supervisor API"
                 return "${__BASHIO_EXIT_NOK}"
@@ -198,8 +220,12 @@ function bashio::addons() {
     response="${info}"
     if ! bashio::var.false "${filter}"; then
         response=$(bashio::jq "${info}" "${filter}")
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to execute the jq filter"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         if ! bashio::var.false "${cache_key}"; then
-          bashio::cache.set "${cache_key}" "${response}"
+            bashio::cache.set "${cache_key}" "${response}"
         fi
     fi
 
@@ -210,7 +236,7 @@ function bashio::addons() {
 
 # ------------------------------------------------------------------------------
 # Returns a list of installed add-ons or for a specific add-ons.
-
+#
 # Arguments:
 #   $1 Add-on slug (optional)
 # ------------------------------------------------------------------------------
@@ -223,13 +249,32 @@ function bashio::addons.installed() {
         bashio::addons \
             false \
             'addons.info.installed' \
-            '.addons[] | select(.installed != null) | .slug'
+            '.addons[] | select(.installed) | .slug'
     else
-        bashio::addons \
-            "${slug}" \
-            "addons.${slug}.installed" \
-            'if (.version != null) then true else false end'
+        # this is for backward compatibility
+        bashio::addon.installed "${slug}"
     fi
+}
+
+# ------------------------------------------------------------------------------
+# Returns whether or not this add-on is installed.
+#
+# Arguments:
+#   $1 Add-on slug (optional, default: self)
+# ------------------------------------------------------------------------------
+function bashio::addon.installed() {
+    local slug=${1:-'self'}
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    # when info is coming from store API, .installed is always false, when data is coming from addons API, .installed is null
+    bashio::addons "${slug}" "addons.${slug}.installed" "if (.installed != null) then .installed else true end"
+}
+
+# ------------------------------------------------------------------------------
+# Returns the slug of the current (self) add-on.
+# ------------------------------------------------------------------------------
+function bashio::addon.slug() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::addons 'self' 'addons.self.slug' '.slug'
 }
 
 # ------------------------------------------------------------------------------
