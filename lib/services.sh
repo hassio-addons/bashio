@@ -38,7 +38,7 @@ function bashio::services() {
     response="${config}"
     if bashio::var.has_value "${key}"; then
 
-        read -r -d '' query << QUERY
+        read -r -d '' query << QUERY || true
             if (.${key} == null) then
                 null
             elif (.${key} | type == "string") then
