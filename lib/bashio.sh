@@ -11,7 +11,7 @@ set -o errexit  # Exit script when a command exits with non-zero status
 set -o errtrace # Exit on error inside any functions or sub-shells
 set -o nounset  # Exit script on use of an undefined variable
 set -o pipefail # Return exit status of the last command in the pipe that failed
-shopt -s inherit_errexit # Command substitution inherits the value of errexit
+shopt -s inherit_errexit 2>/dev/null || true # Command substitution inherits the value of errexit when supported
 
 # ==============================================================================
 # GLOBALS

@@ -11,9 +11,9 @@ declare __BASHIO_TRY_EXIT_STATUS=0
 
 # ------------------------------------------------------------------------------
 # Executes a command/function in a subshell with enabled and effective errexit
-# option and saves it's exit status.
+# option and saves its exit status.
 #
-# Arguments: $* Command/function and it's arguments
+# Arguments: $* Command/function and its arguments
 #
 #
 # Use this function to get the exit status of a subshell for a condition (eg.
@@ -37,7 +37,7 @@ function bashio::try {
 }
 
 # ------------------------------------------------------------------------------
-# Checks whether that last command executed by bashio::try has suceeded.
+# Checks whether that last command executed by bashio::try has succeeded.
 # ------------------------------------------------------------------------------
 function bashio::try.succeeded {
     if ((__BASHIO_TRY_EXIT_STATUS)); then
