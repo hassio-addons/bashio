@@ -16,7 +16,7 @@
 function bashio::exit.nok() {
     local message=${1:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${message}"; then
         bashio::log.fatal "${message}"
@@ -36,7 +36,7 @@ function bashio::exit.die_if_false() {
     local value=${1:-}
     local message=${2:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.false "${value}"; then
         bashio::exit.nok "${message}"
@@ -55,7 +55,7 @@ function hass.die_if_true() {
     local value=${1:-}
     local message=${2:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.true "${value}"; then
         bashio::exit.nok "${message}"
@@ -73,7 +73,7 @@ function hass.die_if_empty() {
     local value=${1:-}
     local message=${2:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.is_empty "${value}"; then
         bashio::exit.nok "${message}"

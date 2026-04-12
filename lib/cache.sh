@@ -16,7 +16,7 @@
 function bashio::cache.exists() {
     local key=${1}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::fs.file_exists "${__BASHIO_CACHE_DIR}/${key}.cache"; then
         return "${__BASHIO_EXIT_OK}"
@@ -34,7 +34,7 @@ function bashio::cache.exists() {
 function bashio::cache.get() {
     local key=${1}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if ! bashio::cache.exists "${key}"; then
         return "${__BASHIO_EXIT_NOK}"
@@ -55,7 +55,7 @@ function bashio::cache.set() {
     local key=${1}
     local value=${2}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if ! bashio::fs.directory_exists "${__BASHIO_CACHE_DIR}"; then
         mkdir -p "${__BASHIO_CACHE_DIR}" ||
@@ -79,7 +79,7 @@ function bashio::cache.set() {
 function bashio::cache.flush() {
     local key=${1}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if ! rm -f "${__BASHIO_CACHE_DIR}/${key}.cache"; then
         bashio::exit.nok "An error while flushing ${key} from cache"

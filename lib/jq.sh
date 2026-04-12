@@ -18,7 +18,7 @@ function bashio::jq() {
     local data=${1}
     local filter=${2:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if [[ -f "${data}" ]]; then
         jq --raw-output -c -M "$filter" "${data}"
@@ -39,7 +39,7 @@ function bashio::jq.exists() {
     local filter=${2:-}
     local value
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if ! value=$(bashio::jq "${data}" "${filter}") || \
         bashio::var.equals "${value}" "null"
@@ -62,7 +62,7 @@ function bashio::jq.has_value() {
     local filter=${2:-}
     local value
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if ! value=$(bashio::jq "${data}" \
             "${filter} | if (. == {} or . == []) then empty else . end // empty") || \
@@ -88,7 +88,7 @@ function bashio::jq.is() {
     local type=${3}
     local value
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if ! value=$(bashio::jq "${data}" \
             "${filter} | if type==\"${type}\" then true else false end") || \
@@ -111,7 +111,7 @@ function bashio::jq.is_boolean() {
     local data=${1}
     local filter=${2:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::jq.is "${data}" "${filter}" "boolean"
 }
 
@@ -126,7 +126,7 @@ function bashio::jq.is_string() {
     local data=${1}
     local filter=${2:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::jq.is "${data}" "${filter}" "string"
 }
 
@@ -141,7 +141,7 @@ function bashio::jq.is_object() {
     local data=${1}
     local filter=${2:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::jq.is "${data}" "${filter}" "object"
 }
 
@@ -156,7 +156,7 @@ function bashio::jq.is_number() {
     local data=${1}
     local filter=${2:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::jq.is "${data}" "${filter}" "number"
 }
 
@@ -171,6 +171,6 @@ function bashio::jq.is_array() {
     local data=${1}
     local filter=${2:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::jq.is "${data}" "${filter}" "array"
 }
