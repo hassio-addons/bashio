@@ -20,7 +20,7 @@ function bashio::backups.reload() {
 # Freezes the backups.
 #
 # Arguments:
-#   $1 Timeout (Optional)
+#   $1 Timeout (optional)
 # ------------------------------------------------------------------------------
 function bashio::backups.freeze() {
     local timeout=${1:-}
@@ -48,7 +48,7 @@ function bashio::backups.thaw() {
 # Returns or sets the number of days until a backup is considered stale.
 #
 # Arguments:
-#   $1 Set days_until_stale (Optional)
+#   $1 Set days_until_stale (optional)
 # ------------------------------------------------------------------------------
 function bashio::backups.days_until_stale() {
     local days_until_stale=${1:-}
@@ -74,7 +74,7 @@ function bashio::backups.days_until_stale() {
 #   $1 Backup slug (optional)
 #     (default/empty/'false' for all backups)
 #   $2 Cache key to store filtered results in (optional)
-#     (default/empty/'false' to cache only unfiltered results)
+#     (default/empty/'false' for no caching)
 #   $3 jq filter to apply on the result (optional)
 #     (default/empty is '.backups[].slug' with no slug or 'false' with slug)
 #     ('false' for no filtering)
