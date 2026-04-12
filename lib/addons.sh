@@ -99,7 +99,7 @@ function bashio::addon.uninstall() {
 function bashio::addon.update() {
     local slug=${1:-'self'}
     # This call is redirected to the store, and store doesn't support 'self'
-    if bashio::var.equals() "${slug}" 'self'; then
+    if bashio::var.equals "${slug}" 'self'; then
         slug=$(bashio::addon.slug)
     fi
     bashio::log.trace "${FUNCNAME[0]}"
@@ -128,7 +128,7 @@ function bashio::addon.logs() {
 function bashio::addon.documentation() {
     local slug=${1:-'self'}
     # This call is redirected to the store, and store doesn't support 'self'
-    if bashio::var.equals() "${slug}" 'self'; then
+    if bashio::var.equals "${slug}" 'self'; then
         slug=$(bashio::addon.slug)
     fi
     bashio::log.trace "${FUNCNAME[0]}"
@@ -144,7 +144,7 @@ function bashio::addon.documentation() {
 function bashio::addon.changelog() {
     local slug=${1:-'self'}
     # This call is redirected to the store, and store doesn't support 'self'
-    if bashio::var.equals() "${slug}" 'self'; then
+    if bashio::var.equals "${slug}" 'self'; then
         slug=$(bashio::addon.slug)
     fi
     bashio::log.trace "${FUNCNAME[0]}"
