@@ -19,7 +19,7 @@ function bashio::discovery() {
     local config=${2}
     local payload
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     payload=$(\
         bashio::var.json \
@@ -40,7 +40,7 @@ function bashio::discovery() {
 function bashio::discovery.delete() {
     local uuid=${1}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::api.supervisor "DELETE" "/discovery/${uuid}"
     bashio::cache.flush_all
 }

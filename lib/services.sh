@@ -78,7 +78,7 @@ QUERY
 function bashio::services.available() {
     local service=${1}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if ! bashio::api.supervisor GET "/services/${service}" > /dev/null 2>&1;
     then
@@ -99,7 +99,7 @@ function bashio::services.publish() {
     local service=${1}
     local config=${2}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     bashio::api.supervisor "POST" "/services/${service}" "${config}"
     bashio::cache.flush_all
@@ -114,7 +114,7 @@ function bashio::services.publish() {
 function bashio::services.delete() {
     local service=${1}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::api.supervisor "DELETE" "/services/${service}"
     bashio::cache.flush_all
 }

@@ -16,7 +16,7 @@
 function bashio::var.true() {
     local value=${1:-null}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if [[ "${value}" = "true" ]]; then
         return "${__BASHIO_EXIT_OK}"
@@ -34,7 +34,7 @@ function bashio::var.true() {
 function bashio::var.false() {
     local value=${1:-null}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if [[ "${value}" = "false" ]]; then
         return "${__BASHIO_EXIT_OK}"
@@ -52,7 +52,7 @@ function bashio::var.false() {
 bashio::var.defined() {
     local variable=${1}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     [[ "${!variable-X}" = "${!variable-Y}" ]]
 }
@@ -66,7 +66,7 @@ bashio::var.defined() {
 function bashio::var.has_value() {
     local value=${1}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if [[ -n "${value}" ]]; then
         return "${__BASHIO_EXIT_OK}"
@@ -84,7 +84,7 @@ function bashio::var.has_value() {
 function bashio::var.is_empty() {
     local value=${1}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if [[ -z "${value}" ]]; then
         return "${__BASHIO_EXIT_OK}"
@@ -104,7 +104,7 @@ function bashio::var.equals() {
     local value=${1}
     local equals=${2}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if [[ "${value}" = "${equals}" ]]; then
         return "${__BASHIO_EXIT_OK}"

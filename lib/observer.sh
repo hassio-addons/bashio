@@ -16,7 +16,7 @@
 function bashio::observer.update() {
     local version=${1:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${version}"; then
         version=$(bashio::var.json version "${version}")
