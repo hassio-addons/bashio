@@ -345,7 +345,7 @@ function bashio::addon.long_description() {
 #
 # Arguments:
 #   $1 Add-on slug (optional, default: self)
-#   $2 Set current auto update state (Optional)
+#   $2 Set current auto update state (optional)
 # ------------------------------------------------------------------------------
 function bashio::addon.auto_update() {
     local slug=${1:-'self'}
@@ -1133,7 +1133,7 @@ function bashio::addon.audio_input() {
 #
 # Arguments:
 #   $1 Add-on slug (optional, default: self)
-#   $2 Audio output device to set (Optional)
+#   $2 Audio output device to set (optional)
 # ------------------------------------------------------------------------------
 function bashio::addon.audio_output() {
     local slug=${1:-'self'}
@@ -1227,7 +1227,7 @@ function bashio::addon.ingress_port() {
 #
 # Arguments:
 #   $1 Add-on slug (optional, default: self)
-#   $2 Set current ingress_panel state (Optional)
+#   $2 Set current ingress_panel state (optional)
 # ------------------------------------------------------------------------------
 function bashio::addon.ingress_panel() {
     local slug=${1:-'self'}
@@ -1252,7 +1252,7 @@ function bashio::addon.ingress_panel() {
 #
 # Arguments:
 #   $1 Add-on slug (optional, default: self)
-#   $2 Set current watchdog state (Optional)
+#   $2 Set current watchdog state (optional)
 # ------------------------------------------------------------------------------
 function bashio::addon.watchdog() {
     local slug=${1:-'self'}
