@@ -20,7 +20,7 @@ function bashio::config() {
     local query
     local result
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     read -r -d '' query << QUERY || true
         if (.${key} == null) then
@@ -70,7 +70,7 @@ function bashio::config.exists() {
     local key=${1}
     local value
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     value=$(bashio::config "${key}")
     if [[ "${value}" == "null" ]]; then
@@ -90,7 +90,7 @@ function bashio::config.has_value() {
     local key=${1}
     local value
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     value=$(bashio::config "${key}")
     if [[ "${value}" == "null" ]]; then
@@ -114,7 +114,7 @@ function bashio::config.is_empty() {
     local key=${1}
     local value
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     value=$(bashio::config "${key}")
     if bashio::var.is_empty "${value}"; then
@@ -140,7 +140,7 @@ function bashio::config.equals() {
     local equals=${2}
     local value
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     value=$(bashio::config "${key}")
     if ! bashio::var.equals "${value}" "${equals}"; then
@@ -160,7 +160,7 @@ function bashio::config.true() {
     local key=${1}
     local value
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     value=$(bashio::config "${key}")
     if ! bashio::var.true "${value}"; then
@@ -180,7 +180,7 @@ function bashio::config.false() {
     local key=${1}
     local value
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     value=$(bashio::config "${key}")
     if ! bashio::var.false "${value}"; then
@@ -200,7 +200,7 @@ function bashio::config.is_safe_password() {
     local key=${1}
     local password
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     # If the password is safe, we'll accept it anyways.
     password=$(bashio::config "${key}")
@@ -229,7 +229,7 @@ function bashio::config.require() {
     local key=${1}
     local reason=${2:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::config.has_value "${key}"; then
         return "${__BASHIO_EXIT_OK}"
@@ -262,7 +262,7 @@ function bashio::config.suggest() {
     local key=${1}
     local reason=${2:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if ! bashio::config.has_value "${key}"; then
         bashio::log.warning
@@ -294,7 +294,7 @@ function bashio::config.suggest.true() {
     local key=${1}
     local reason=${2:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if ! bashio::config.true "${key}"; then
         bashio::log.warning
@@ -326,7 +326,7 @@ function bashio::config.suggest.false() {
     local key=${1}
     local reason=${2:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if ! bashio::config.false "${key}"; then
         bashio::log.warning
@@ -356,7 +356,7 @@ function bashio::config.suggest.false() {
 function bashio::config.require.username() {
     local key=${1:-"username"}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::config.has_value "${key}"; then
         return "${__BASHIO_EXIT_OK}"
@@ -382,7 +382,7 @@ function bashio::config.require.username() {
 function bashio::config.suggest.username() {
     local key=${1}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if ! bashio::config.has_value "${key}"; then
         bashio::log.warning
@@ -407,7 +407,7 @@ function bashio::config.suggest.username() {
 function bashio::config.require.password() {
     local key=${1:-"password"}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::config.has_value "${key}"; then
         return "${__BASHIO_EXIT_OK}"
@@ -433,7 +433,7 @@ function bashio::config.require.password() {
 function bashio::config.suggest.password() {
     local key=${1:-"password"}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::config.has_value "${key}"; then
         return "${__BASHIO_EXIT_OK}"
@@ -461,7 +461,7 @@ function bashio::config.require.safe_password() {
     local key=${1:-"password"}
     local password
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     bashio::config.require.password "${key}"
 
@@ -497,7 +497,7 @@ function bashio::config.suggest.safe_password() {
     local key=${1:-"password"}
     local password
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if ! bashio::config.has_value "${key}"; then
         bashio::config.suggest.password "${key}"

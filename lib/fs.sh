@@ -16,7 +16,7 @@
 function bashio::fs.directory_exists() {
     local directory=${1}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if [[ -d "${directory}" ]]; then
         return "${__BASHIO_EXIT_OK}"
@@ -34,7 +34,7 @@ function bashio::fs.directory_exists() {
 function bashio::fs.file_exists() {
     local file=${1}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if [[ -f "${file}" ]]; then
         return "${__BASHIO_EXIT_OK}"
@@ -52,7 +52,7 @@ function bashio::fs.file_exists() {
 function bashio::fs.device_exists() {
     local device=${1}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if [[ -b "${device}" || -c "${device}" ]]; then
         return "${__BASHIO_EXIT_OK}"
@@ -70,7 +70,7 @@ function bashio::fs.device_exists() {
 function bashio::fs.socket_exists() {
     local socket=${1}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if [[ -S "${socket}" ]]; then
         return "${__BASHIO_EXIT_OK}"

@@ -143,7 +143,7 @@ function bashio::repository.maintainer() {
 function bashio::repository.add() {
     local repository=${1}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     repository=$(bashio::var.json repository "${repository}")
     bashio::api.supervisor POST "/store/repositories" "${repository}"
@@ -159,7 +159,7 @@ function bashio::repository.add() {
 function bashio::repository.delete() {
     local slug=${1}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::api.supervisor "DELETE" "/store/repositories/${slug}"
     bashio::cache.flush_all
 }
@@ -173,7 +173,7 @@ function bashio::repository.delete() {
 function bashio::repository.repair() {
     local slug=${1}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::api.supervisor "POST" "/store/repositories/${slug}/repair"
     bashio::cache.flush_all
 }

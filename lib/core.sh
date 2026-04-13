@@ -48,7 +48,7 @@ function bashio::core.rebuild() {
 function bashio::core.update() {
     local version=${1:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${version}"; then
         version=$(bashio::var.json version "${version}")
@@ -170,7 +170,7 @@ function bashio::core.machine() {
 function bashio::core.image() {
     local image=${1:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${image}"; then
         image=$(bashio::var.json image "${image}")
@@ -222,7 +222,7 @@ function bashio::core.ssl() {
 function bashio::core.watchdog() {
     local watchdog=${1:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${watchdog}"; then
         watchdog=$(bashio::var.json watchdog "^${watchdog}")

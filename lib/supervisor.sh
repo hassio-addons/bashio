@@ -24,7 +24,7 @@ function bashio::supervisor.ping() {
 function bashio::supervisor.update() {
     local version=${1:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${version}"; then
         version=$(bashio::var.json version "${version}")
@@ -155,7 +155,7 @@ function bashio::supervisor.healthy() {
 function bashio::supervisor.channel() {
     local channel=${1:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${channel}"; then
         channel=$(bashio::var.json channel "${channel}")
@@ -175,7 +175,7 @@ function bashio::supervisor.channel() {
 function bashio::supervisor.timezone() {
     local timezone=${1:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${timezone}"; then
         channel=$(bashio::var.json timezone "${timezone}")
@@ -195,7 +195,7 @@ function bashio::supervisor.timezone() {
 function bashio::supervisor.country() {
     local country=${1:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${country}"; then
         channel=$(bashio::var.json country "${country}")
@@ -215,7 +215,7 @@ function bashio::supervisor.country() {
 function bashio::supervisor.logging() {
     local logging=${1:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${logging}"; then
         logging=$(bashio::var.json logging "${logging}")
@@ -243,7 +243,7 @@ function bashio::supervisor.ip_address() {
 function bashio::supervisor.debug() {
     local debug=${1:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${debug}"; then
         if bashio::var.true "${debug}"; then
@@ -267,7 +267,7 @@ function bashio::supervisor.debug() {
 function bashio::supervisor.debug_block() {
     local debug=${1:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${debug}"; then
         if bashio::var.true "${debug}"; then

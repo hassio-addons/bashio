@@ -16,7 +16,7 @@
 function bashio::string.lower() {
     local string="${1}"
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     printf "%s" "${string,,}"
 }
@@ -30,7 +30,7 @@ function bashio::string.lower() {
 function bashio::string.upper() {
     local string="${1}"
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     printf "%s" "${string^^}"
 }
@@ -48,7 +48,7 @@ function bashio::string.replace() {
     local needle="${2}"
     local replacement="${3}"
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     printf "%s" "${string//${needle}/${replacement}}"
 }
@@ -62,7 +62,7 @@ function bashio::string.replace() {
 bashio::string.length() {
     local string="${1}"
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     printf "%s" "${#string}"
 }
@@ -86,7 +86,7 @@ bashio::string.substring() {
     local position="${2}"
     local length="${3:-}"
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${length}"; then
         printf "%s" "${string:${position}:${length}}"

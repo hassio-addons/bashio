@@ -91,7 +91,7 @@ function bashio::host() {
 function bashio::host.hostname() {
     local hostname=${1:-}
 
-    bashio::log.trace "${FUNCNAME[0]}:" "$@"
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${hostname}"; then
         hostname=$(bashio::var.json hostname "${hostname}")
