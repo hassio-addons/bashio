@@ -133,7 +133,7 @@ function bashio::job.stage() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns the done of a job.
+# Returns whether a job is done.
 #
 # Arguments:
 #   $1 Job uuid
@@ -145,7 +145,7 @@ function bashio::job.done() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns the created of a job.
+# Returns the creation timestamp of a job.
 #
 # Arguments:
 #   $1 Job uuid
@@ -157,7 +157,7 @@ function bashio::job.created() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns the child_jobs of a job.
+# Returns the child jobs for a job.
 #
 # Arguments:
 #   $1 Job uuid
@@ -181,7 +181,7 @@ function bashio::job.errors() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns the extra of a job.
+# Returns the extra metadata for a job.
 #
 # Arguments:
 #   $1 Job uuid

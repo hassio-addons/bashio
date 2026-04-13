@@ -166,7 +166,7 @@ function bashio::network.type() {
 #
 # Arguments:
 #   $1 Interface name for this operation (optional)
-#   $2 Set enabled state (Optional)
+#   $2 Set enabled state (optional)
 # ------------------------------------------------------------------------------
 function bashio::network.enabled() {
     local interface=${1:-'default'}
@@ -305,7 +305,7 @@ function bashio::network.ipv6_gateway() {
 #
 # Arguments:
 #   $1 Interface name for this operation (optional)
-#   $2 Ipv4 interface settings (Optional)
+#   $2 Ipv4 interface settings (optional)
 # ------------------------------------------------------------------------------
 function bashio::network.ipv4() {
     local interface=${1:-'default'}
@@ -327,7 +327,7 @@ function bashio::network.ipv4() {
 #
 # Arguments:
 #   $1 Interface name for this operation (optional)
-#   $2 Ipv6 interface settings (Optional)
+#   $2 Ipv6 interface settings (optional)
 # ------------------------------------------------------------------------------
 function bashio::network.ipv6() {
     local interface=${1:-'default'}
