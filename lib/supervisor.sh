@@ -45,11 +45,37 @@ function bashio::supervisor.reload() {
 }
 
 # ------------------------------------------------------------------------------
+# Restarts the Supervisor.
+# ------------------------------------------------------------------------------
+function bashio::supervisor.restart() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::api.supervisor POST /supervisor/restart
+    bashio::cache.flush_all
+}
+
+# ------------------------------------------------------------------------------
+# Repairs the Supervisor.
+# ------------------------------------------------------------------------------
+function bashio::supervisor.repair() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::api.supervisor POST /supervisor/repair
+    bashio::cache.flush_all
+}
+
+# ------------------------------------------------------------------------------
 # Returns the logs created by the Supervisor.
 # ------------------------------------------------------------------------------
 function bashio::supervisor.logs() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor GET /supervisor/logs true
+}
+
+# ------------------------------------------------------------------------------
+# Returns all logs of the latest startup of the Supervisor.
+# ------------------------------------------------------------------------------
+function bashio::supervisor.logs_latest() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::api.supervisor GET /supervisor/logs/latest true
 }
 
 # ------------------------------------------------------------------------------
@@ -279,6 +305,75 @@ function bashio::supervisor.debug_block() {
         bashio::cache.flush_all
     else
         bashio::supervisor 'supervisor.info.debug_block' '.debug_block // false'
+    fi
+}
+
+# ------------------------------------------------------------------------------
+# Returns if sending diagnostics is enabled on the supervisor.
+#
+# Arguments:
+#   $1 Set diagnostics (optional).
+# ------------------------------------------------------------------------------
+function bashio::supervisor.diagnostics() {
+    local diagnostics=${1:-}
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    if bashio::var.has_value "${diagnostics}"; then
+        if bashio::var.true "${diagnostics}"; then
+            diagnostics=$(bashio::var.json diagnostics "^true")
+        else
+            diagnostics=$(bashio::var.json diagnostics "^false")
+        fi
+        bashio::api.supervisor POST /supervisor/options "${diagnostics}"
+        bashio::cache.flush_all
+    else
+        bashio::supervisor 'supervisor.info.diagnostics' '.diagnostics'
+    fi
+}
+
+# ------------------------------------------------------------------------------
+# Returns if auto update is enabled on the supervisor.
+#
+# Arguments:
+#   $1 Set auto update (optional).
+# ------------------------------------------------------------------------------
+function bashio::supervisor.auto_update() {
+    local auto_update=${1:-}
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    if bashio::var.has_value "${auto_update}"; then
+        if bashio::var.true "${auto_update}"; then
+            auto_update=$(bashio::var.json auto_update "^true")
+        else
+            auto_update=$(bashio::var.json auto_update "^false")
+        fi
+        bashio::api.supervisor POST /supervisor/options "${auto_update}"
+        bashio::cache.flush_all
+    else
+        bashio::supervisor 'supervisor.info.auto_update' '.auto_update'
+    fi
+}
+
+# ------------------------------------------------------------------------------
+# Returns if supervisor raises exceptions for blocking I/O in event loop.
+#
+# Arguments:
+#   $1 Set detect blocking I/O (optional).
+#     (valid values are on, off and on-at-startup)
+# ------------------------------------------------------------------------------
+function bashio::supervisor.detect_blocking_io() {
+    local detect_blocking_io=${1:-}
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    if bashio::var.has_value "${detect_blocking_io}"; then
+        detect_blocking_io=$(bashio::var.json detect_blocking_io "${detect_blocking_io}")
+        bashio::api.supervisor POST /supervisor/options "${detect_blocking_io}"
+        bashio::cache.flush_all
+    else
+        bashio::supervisor 'supervisor.info.detect_blocking_io' '.detect_blocking_io'
     fi
 }
 
