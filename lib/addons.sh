@@ -560,15 +560,25 @@ function bashio::addon.build() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns options for this add-on.
+# Returns or sets options for this add-on.
 #
 # Arguments:
 #   $1 Add-on slug (optional, default: self)
+#   $2 The app configuration (optional)
 # ------------------------------------------------------------------------------
 function bashio::addon.options() {
     local slug=${1:-'self'}
+    local options=${2:-'{}'}
+
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.options" '.options'
+
+    if bashio::var.equals "$#" 2; then
+        options=$(bashio::var.json options "^${options}")
+        bashio::api.supervisor POST "/addons/${slug}/options" "${options}"
+        bashio::cache.flush_all
+    else
+        bashio::addons "${slug}" "addons.${slug}.options" '.options'
+    fi
 }
 
 # ------------------------------------------------------------------------------
@@ -584,7 +594,6 @@ function bashio::addon.option() {
     local value=${2:-}
     local slug=${3:-'self'}
     local options
-    local payload
     local item
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
@@ -605,10 +614,7 @@ function bashio::addon.option() {
       options=$(bashio::jq "${options}" "del(.${key})")
     fi
 
-    payload=$(bashio::var.json options "^${options}")
-    bashio::api.supervisor POST "/addons/${slug}/options" "${payload}"
-
-    bashio::cache.flush_all
+    bashio::addon.options "${slug}" "${options}"
 }
 
 # ------------------------------------------------------------------------------
@@ -648,15 +654,27 @@ function bashio::addon.config() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns a list of ports which are exposed on the host network for this add-on.
+# Returns or sets a list of ports which are exposed on the host network for this add-on.
 #
 # Arguments:
 #   $1 Add-on slug (optional, default: self)
+#   $2 A map of network configuration (optional)
 # ------------------------------------------------------------------------------
 function bashio::addon.network() {
     local slug=${1:-'self'}
+    local network=${2:-'null'}
+
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.network" '.network'
+
+    if bashio::var.equals "$#" 2; then
+        network=$(bashio::var.json network "^${network}")
+        bashio::api.supervisor POST "/addons/${slug}/options" "${network}"
+        bashio::cache.flush_all
+    else
+        bashio::addons "${slug}" \
+            "addons.${slug}.network" \
+            '.network // empty | if . == {} then empty else . end'
+    fi
 }
 
 # ------------------------------------------------------------------------------
@@ -670,19 +688,22 @@ function bashio::addon.network_description() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
     bashio::addons "${slug}" \
         "addons.${slug}.network_description" \
-        '.network_description'
+        '.network_description // empty'
 }
 
 # ------------------------------------------------------------------------------
-# Returns a user configured port number for an original port number.
+# Returns or sets a user configured port number for an original port number.
 #
 # Arguments:
 #   $1 Original port number
 #   $2 Add-on slug (optional, default: self)
+#   $3 User configured port number (optional)
 # ------------------------------------------------------------------------------
 function bashio::addon.port() {
     local port=${1:-}
     local slug=${2:-'self'}
+    local value=${3:-'null'}
+    local network
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
@@ -691,10 +712,16 @@ function bashio::addon.port() {
         port="${port}/tcp"
     fi
 
-    bashio::addons \
-        "${slug}" \
-        "addons.${slug}.network.${port//\//-}" \
-        ".network[\"${port}\"] // empty"
+    if bashio::var.equals "$#" 3; then
+        network=$(bashio::addon.network "${slug}")
+        network=$(bashio::jq "${network}" ".\"${port}\" |= ${value}")
+        bashio::addon.network "${slug}" "${network}"
+    else
+        bashio::addons \
+            "${slug}" \
+            "addons.${slug}.network.${port//\//-}" \
+            ".network[\"${port}\"] // empty"
+    fi
 }
 
 # ------------------------------------------------------------------------------
