@@ -526,7 +526,7 @@ function bashio::addon.state() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns the current boot setting of this add-on.
+# Returns or sets the current boot setting of this add-on.
 #
 # Arguments:
 #   $1 Add-on slug (optional, default: self)
@@ -1105,18 +1105,19 @@ function bashio::addon.audio() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns the available audio input device for an add-on.
+# Returns or sets the available audio input device for an add-on.
 #
 # Arguments:
 #   $1 Add-on slug (optional, default: self)
+#   $2 Audio input device to set (optional)
 # ------------------------------------------------------------------------------
 function bashio::addon.audio_input() {
     local slug=${1:-'self'}
-    local audio_input=${2:-}
+    local audio_input=${2:-'^null'}
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
-    if bashio::var.has_value "${audio_input}"; then
+    if bashio::var.equals "$#" 2; then
         audio_input=$(bashio::var.json audio_input "${audio_input}")
         bashio::api.supervisor POST "/addons/${slug}/options" "${audio_input}"
         bashio::cache.flush_all
@@ -1129,7 +1130,7 @@ function bashio::addon.audio_input() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns the available audio output device for an add-on.
+# Returns or sets the available audio output device for an add-on.
 #
 # Arguments:
 #   $1 Add-on slug (optional, default: self)
@@ -1137,11 +1138,11 @@ function bashio::addon.audio_input() {
 # ------------------------------------------------------------------------------
 function bashio::addon.audio_output() {
     local slug=${1:-'self'}
-    local audio_output=${2:-}
+    local audio_output=${2:-'^null'}
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
-    if bashio::var.has_value "${audio_output}"; then
+    if bashio::var.equals "$#" 2; then
         audio_output=$(bashio::var.json audio_output "${audio_output}")
         bashio::api.supervisor POST "/addons/${slug}/options" "${audio_output}"
         bashio::cache.flush_all
