@@ -714,6 +714,7 @@ function bashio::addon.port() {
 
     if bashio::var.equals "$#" 3; then
         network=$(bashio::addon.network "${slug}")
+        network=${network:-'{}'}
         network=$(bashio::jq "${network}" ".\"${port}\" |= ${value}")
         bashio::addon.network "${slug}" "${network}"
     else
