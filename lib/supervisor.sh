@@ -309,7 +309,7 @@ function bashio::supervisor.debug_block() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns if sending diagnostics is enabled on the supervisor.
+# Returns or sets if sending diagnostics is enabled on the supervisor.
 #
 # Arguments:
 #   $1 Set diagnostics (optional).
@@ -333,7 +333,7 @@ function bashio::supervisor.diagnostics() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns if auto update is enabled on the supervisor.
+# Returns or sets  if auto update is enabled on the supervisor.
 #
 # Arguments:
 #   $1 Set auto update (optional).
@@ -357,7 +357,7 @@ function bashio::supervisor.auto_update() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns if supervisor raises exceptions for blocking I/O in event loop.
+# Returns or sets  if supervisor raises exceptions for blocking I/O in event loop.
 #
 # Arguments:
 #   $1 Set detect blocking I/O (optional).
