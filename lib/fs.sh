@@ -44,6 +44,24 @@ function bashio::fs.file_exists() {
 }
 
 # ------------------------------------------------------------------------------
+# Check whether or not a file exists and is non-empty (size > 0 bytes).
+#
+# Arguments:
+#   $1 Path to file
+# ------------------------------------------------------------------------------
+function bashio::fs.file_non_empty() {
+    local file=${1}
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    if [[ -s "${file}" ]]; then
+        return "${__BASHIO_EXIT_OK}"
+    fi
+
+    return "${__BASHIO_EXIT_NOK}"
+}
+
+# ------------------------------------------------------------------------------
 # Check whether or not a device exists.
 #
 # Arguments:
