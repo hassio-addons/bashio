@@ -97,7 +97,11 @@ function bashio::addon.uninstall() {
 #   $1 Add-on slug (optional, default: self)
 # ------------------------------------------------------------------------------
 function bashio::addon.update() {
-    local slug=${1:-$(bashio::addon.slug)}
+    local slug=${1:-'self'}
+    # This call is redirected to the store, and store doesn't support 'self'
+    if bashio::var.equals "${slug}" 'self'; then
+        slug=$(bashio::addon.slug)
+    fi
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor POST "/store/addons/${slug}/update"
     bashio::cache.flush_all
@@ -122,8 +126,11 @@ function bashio::addon.logs() {
 #   $1 Add-on slug (optional, default: self)
 # ------------------------------------------------------------------------------
 function bashio::addon.documentation() {
+    local slug=${1:-'self'}
     # This call is redirected to the store, and store doesn't support 'self'
-    local slug=${1:-$(bashio::addon.slug)}
+    if bashio::var.equals "${slug}" 'self'; then
+        slug=$(bashio::addon.slug)
+    fi
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor GET "/addons/${slug}/documentation" true
 }
@@ -135,8 +142,11 @@ function bashio::addon.documentation() {
 #   $1 Add-on slug (optional, default: self)
 # ------------------------------------------------------------------------------
 function bashio::addon.changelog() {
+    local slug=${1:-'self'}
     # This call is redirected to the store, and store doesn't support 'self'
-    local slug=${1:-$(bashio::addon.slug)}
+    if bashio::var.equals "${slug}" 'self'; then
+        slug=$(bashio::addon.slug)
+    fi
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor GET "/addons/${slug}/changelog" true
 }
