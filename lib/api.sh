@@ -36,6 +36,7 @@ function bashio::api.supervisor() {
 
     if [[ "${method}" = "POST" ]] && bashio::var.has_value "${raw}"; then
         data="${raw}"
+        raw=
     fi
 
     if ! response=$(curl --silent --show-error \
@@ -80,10 +81,13 @@ function bashio::api.supervisor() {
         return "${__BASHIO_EXIT_NOK}"
     fi
 
-    if [[ $(bashio::jq "${response}" ".result") = "error" ]]; then
-        bashio::log.error "Got unexpected response from the API:" \
-            "$(bashio::jq "${response}" '.message // empty')"
-        return "${__BASHIO_EXIT_NOK}"
+    if ! bashio::var.true "${raw}"; then
+        result=$(bashio::jq "${response}" ".result")
+        if bashio::var.equals "${result}" "error"; then
+            bashio::log.error "Got unexpected response from the API:" \
+                "$(bashio::jq "${response}" '.message // empty')"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
     fi
 
     if [[ "${status}" -ne 200 ]]; then
