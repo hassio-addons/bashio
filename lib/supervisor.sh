@@ -333,7 +333,7 @@ function bashio::supervisor.diagnostics() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns or sets  if auto update is enabled on the supervisor.
+# Returns or sets if auto update is enabled on the supervisor.
 #
 # Arguments:
 #   $1 Set auto update (optional).
