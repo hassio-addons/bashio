@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Home Assistant Community Add-ons: Bashio
-# Bashio is a bash function library for use with Home Assistant add-ons.
+# Home Assistant Community Apps: Bashio
+# Bashio is a bash function library for use with Home Assistant apps.
 #
 # It contains a set of commonly used operations and can be used
-# to be included in add-on scripts to reduce code duplication across add-ons.
+# to be included in app scripts to reduce code duplication across apps.
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
@@ -37,6 +37,24 @@ function bashio::fs.file_exists() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if [[ -f "${file}" ]]; then
+        return "${__BASHIO_EXIT_OK}"
+    fi
+
+    return "${__BASHIO_EXIT_NOK}"
+}
+
+# ------------------------------------------------------------------------------
+# Check whether or not a file exists and is non-empty (size > 0 bytes).
+#
+# Arguments:
+#   $1 Path to file
+# ------------------------------------------------------------------------------
+function bashio::fs.file_non_empty() {
+    local file=${1}
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    if [[ -s "${file}" ]]; then
         return "${__BASHIO_EXIT_OK}"
     fi
 

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Home Assistant Community Add-ons: Bashio
-# Bashio is a bash function library for use with Home Assistant add-ons.
+# Home Assistant Community Apps: Bashio
+# Bashio is a bash function library for use with Home Assistant apps.
 #
 # It contains a set of commonly used operations and can be used
-# to be included in add-on scripts to reduce code duplication across add-ons.
+# to be included in app scripts to reduce code duplication across apps.
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
@@ -309,7 +309,7 @@ function bashio::supervisor.debug_block() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns or sets if sending diagnostics is enabled on the supervisor.
+# Returns or sets if sending diagnostics is enabled on the Supervisor.
 #
 # Arguments:
 #   $1 Set diagnostics (optional).
@@ -333,7 +333,7 @@ function bashio::supervisor.diagnostics() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns or sets if auto update is enabled on the supervisor.
+# Returns or sets if auto update is enabled on the Supervisor.
 #
 # Arguments:
 #   $1 Set auto update (optional).
@@ -357,7 +357,8 @@ function bashio::supervisor.auto_update() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns or sets  if supervisor raises exceptions for blocking I/O in event loop.
+# Returns or sets if the Supervisor raises exceptions for blocking I/O in the
+# event loop.
 #
 # Arguments:
 #   $1 Set detect blocking I/O (optional).
@@ -378,7 +379,7 @@ function bashio::supervisor.detect_blocking_io() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns a list of add-on slugs of the add-ons installed.
+# Returns a list of app slugs of the apps installed.
 # ------------------------------------------------------------------------------
 function bashio::supervisor.addons() {
     # this is for backward compatibility
@@ -387,7 +388,7 @@ function bashio::supervisor.addons() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns a list of add-on repositories installed.
+# Returns a list of app repositories installed.
 # ------------------------------------------------------------------------------
 function bashio::supervisor.addons_repositories() {
     # this is for backward compatibility

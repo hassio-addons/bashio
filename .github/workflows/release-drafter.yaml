@@ -7,12 +7,18 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   update_release_draft:
     name: ✏️ Draft release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
     steps:
       - name: 🚀 Run Release Drafter
-        uses: release-drafter/release-drafter@v7.2.0
+        uses: release-drafter/release-drafter@693d20e7c1ce1a81d3a41962f85914253b518449 # v7.3.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

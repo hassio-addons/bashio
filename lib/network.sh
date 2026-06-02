@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2317
 # ==============================================================================
-# Home Assistant Community Add-ons: Bashio
-# Bashio is a bash function library for use with Home Assistant add-ons.
+# Home Assistant Community Apps: Bashio
+# Bashio is a bash function library for use with Home Assistant apps.
 #
 # It contains a set of commonly used operations and can be used
-# to be included in add-on scripts to reduce code duplication across add-ons.
+# to be included in app scripts to reduce code duplication across apps.
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ function bashio::network() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns if the Host have internet connectivity.
+# Returns if the Host has internet connectivity.
 # ------------------------------------------------------------------------------
 function bashio::network.host_internet() {
     bashio::log.trace "${FUNCNAME[0]}"
@@ -72,7 +72,7 @@ function bashio::network.host_internet() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns if the Supervisor have internet connectivity.
+# Returns if the Supervisor has internet connectivity.
 # ------------------------------------------------------------------------------
 function bashio::network.supervisor_internet() {
     bashio::log.trace "${FUNCNAME[0]}"
@@ -136,7 +136,7 @@ function bashio::network.interface() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns a name of the network interfaces.
+# Returns the name of the network interface.
 #
 # Arguments:
 #   $1 Interface name for this operation (optional)
@@ -262,7 +262,7 @@ function bashio::network.ipv4_nameservers() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns a list ipv6 nameservers of the network interfaces.
+# Returns a list of ipv6 nameservers of the network interfaces.
 #
 # Arguments:
 #   $1 Interface name for this operation (optional)

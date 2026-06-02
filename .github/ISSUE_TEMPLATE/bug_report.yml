@@ -1,0 +1,77 @@
+---
+# yamllint disable rule:line-length
+name: Bug Report
+description: Report a problem with one of Bashio's functions or modules.
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug in Bashio!
+
+        Bashio is a Bash function library used by Home Assistant apps. Please
+        make sure you are running the latest release before filing this report.
+
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Describe the issue you are experiencing
+      description: Provide a clear and concise description of what the bug is.
+
+  - type: input
+    validations:
+      required: true
+    attributes:
+      label: Bashio version
+      description: The version of Bashio you are using.
+      placeholder: e.g. v0.16.0
+
+  - type: input
+    validations:
+      required: true
+    attributes:
+      label: Affected module or function
+      description: >
+        Which module in [`lib/`](https://github.com/hassio-addons/bashio/tree/main/lib)
+        or which `bashio::` function is involved?
+      placeholder: e.g. config.sh / bashio::config
+
+  - type: input
+    validations:
+      required: true
+    attributes:
+      label: Base image
+      description: Which base image is your app built on?
+      placeholder: e.g. ghcr.io/hassio-addons/base:17.0.0
+
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Steps to reproduce the issue
+      description: |
+        Tell us exactly how to reproduce the problem. A minimal script that
+        triggers the issue is the most helpful.
+      value: |
+        1.
+        2.
+        3.
+        ...
+      render: bash
+
+  - type: textarea
+    attributes:
+      label: Relevant log output
+      description: >
+        Paste any relevant log output here. Enabling debug logging via
+        `bashio::log.level "debug"` often provides useful detail.
+      render: txt
+
+  - type: textarea
+    attributes:
+      label: Additional information
+      description: >
+        If you have any additional information for us, use the field below.
+        You can attach screenshots by dragging and dropping files here.
