@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Home Assistant Community Add-ons: Bashio
-# Bashio is a bash function library for use with Home Assistant add-ons.
+# Home Assistant Community Apps: Bashio
+# Bashio is a bash function library for use with Home Assistant apps.
 #
 # It contains a set of commonly used operations and can be used
-# to be included in add-on scripts to reduce code duplication across add-ons.
+# to be included in app scripts to reduce code duplication across apps.
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
@@ -95,9 +95,8 @@ function bashio::backups() {
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
-    if ! bashio::var.false "${cache_key}" && \
-        bashio::cache.exists "${cache_key}"
-    then
+    if ! bashio::var.false "${cache_key}" &&
+        bashio::cache.exists "${cache_key}"; then
         bashio::cache.get "${cache_key}"
         return "${__BASHIO_EXIT_OK}"
     fi
@@ -224,7 +223,7 @@ function bashio::backup.location() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns the version of Home Assistant that was in use when the backup is
+# Returns the version of Home Assistant that was in use when the backup was
 # created.
 #
 # Arguments: $1 Backup slug
@@ -236,7 +235,7 @@ function bashio::backup.homeassistant_version() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns the version of Supervisor that was in use when the backup is
+# Returns the version of Supervisor that was in use when the backup was
 # created.
 #
 # Arguments: $1 Backup slug

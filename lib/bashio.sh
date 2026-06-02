@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2034,SC2155
 # ==============================================================================
-# Home Assistant Community Add-ons: Bashio
-# Bashio is a bash function library for use with Home Assistant add-ons.
+# Home Assistant Community Apps: Bashio
+# Bashio is a bash function library for use with Home Assistant apps.
 #
 # It contains a set of commonly used operations and can be used
-# to be included in add-on scripts to reduce code duplication across add-ons.
+# to be included in app scripts to reduce code duplication across apps.
 # ==============================================================================
-set -o errexit  # Exit script when a command exits with non-zero status
-set -o errtrace # Exit on error inside any functions or sub-shells
-set -o nounset  # Exit script on use of an undefined variable
-set -o pipefail # Return exit status of the last command in the pipe that failed
+set -o errexit                               # Exit script when a command exits with non-zero status
+set -o errtrace                              # Exit on error inside any functions or sub-shells
+set -o nounset                               # Exit script on use of an undefined variable
+set -o pipefail                              # Return exit status of the last command in the pipe that failed
 shopt -s inherit_errexit 2>/dev/null || true # Command substitution inherits the value of errexit when supported
 
 # ==============================================================================

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Home Assistant Community Add-ons: Bashio
-# Bashio is a bash function library for use with Home Assistant add-ons.
+# Home Assistant Community Apps: Bashio
+# Bashio is a bash function library for use with Home Assistant apps.
 #
 # It contains a set of commonly used operations and can be used
-# to be included in add-on scripts to reduce code duplication across add-ons.
+# to be included in app scripts to reduce code duplication across apps.
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ function bashio::string.upper() {
 }
 
 # ------------------------------------------------------------------------------
-# Replaces parts of the string with an other string.
+# Replaces parts of the string with another string.
 #
 # Arguments:
 #   $1 String to make replacements in
@@ -71,13 +71,13 @@ bashio::string.length() {
 # Returns a substring of a string.
 #
 # stringZ=abcABC123ABCabc
-# hass.string.substring "${stringZ}" 0      # abcABC123ABCabc
-# hass.string.substring "${stringZ}" 1      # bcABC123ABCabc
-# hass.string.substring "${stringZ}" 7      # 23ABCabc
-# hass.string.substring "${stringZ}" 7 3    # 23AB
+# bashio::string.substring "${stringZ}" 0      # abcABC123ABCabc
+# bashio::string.substring "${stringZ}" 1      # bcABC123ABCabc
+# bashio::string.substring "${stringZ}" 7      # 23ABCabc
+# bashio::string.substring "${stringZ}" 7 3    # 23AB
 #
 # Arguments:
-#   $1 String to return a substring off
+#   $1 String to return a substring of
 #   $2 Position to start
 #   $3 Length of the substring (optional)
 # ------------------------------------------------------------------------------

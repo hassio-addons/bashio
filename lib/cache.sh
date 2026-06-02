@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Home Assistant Community Add-ons: Bashio
-# Bashio is a bash function library for use with Home Assistant add-ons.
+# Home Assistant Community Apps: Bashio
+# Bashio is a bash function library for use with Home Assistant apps.
 #
 # It contains a set of commonly used operations and can be used
-# to be included in add-on scripts to reduce code duplication across add-ons.
+# to be included in app scripts to reduce code duplication across apps.
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ function bashio::cache.set() {
             bashio::exit.nok "Could not create cache folder"
     fi
 
-    if ! printf "%s" "$value" > "${__BASHIO_CACHE_DIR}/${key}.cache"; then
+    if ! printf "%s" "$value" >"${__BASHIO_CACHE_DIR}/${key}.cache"; then
         bashio::log.warning "An error occurred while storing ${key} to cache"
         return "${__BASHIO_EXIT_NOK}"
     fi
@@ -82,7 +82,7 @@ function bashio::cache.flush() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if ! rm -f "${__BASHIO_CACHE_DIR}/${key}.cache"; then
-        bashio::exit.nok "An error while flushing ${key} from cache"
+        bashio::exit.nok "An error occurred while flushing ${key} from cache"
         return "${__BASHIO_EXIT_NOK}"
     fi
 
@@ -96,7 +96,7 @@ bashio::cache.flush_all() {
     bashio::log.trace "${FUNCNAME[0]}"
 
     if ! bashio::fs.directory_exists "${__BASHIO_CACHE_DIR}"; then
-         return "${__BASHIO_EXIT_OK}"
+        return "${__BASHIO_EXIT_OK}"
     fi
 
     if ! rm -f -r "${__BASHIO_CACHE_DIR}"; then

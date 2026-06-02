@@ -1,0 +1,12 @@
+# Normalize line endings to LF on checkout and commit.
+* text=auto eol=lf
+
+# Shell scripts are always LF.
+*.sh text eol=lf
+lib/bashio text eol=lf
+
+# Treat the shebang-less entrypoint as a shell script for GitHub Linguist.
+lib/bashio linguist-language=Shell
+
+# Generated files excluded from language statistics and diffs.
+package-lock.json linguist-generated=true

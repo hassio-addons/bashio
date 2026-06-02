@@ -1,10 +1,11 @@
-# Home Assistant Community Add-ons: Bashio
+# Home Assistant Community Apps: Bashio
 
 [![GitHub Release][releases-shield]][releases]
 ![Project Stage][project-stage-shield]
 [![License][license-shield]](LICENSE.md)
 
 [![GitHub Actions][github-actions-shield]][github-actions]
+[![OpenSSF Scorecard][scorecard-shield]][scorecard]
 ![Project Maintenance][maintenance-shield]
 [![GitHub Activity][commits-shield]][commits]
 
@@ -16,42 +17,41 @@
 
 ## About
 
-Bashio is a bash function library for use with Home Assistant add-ons.
+Bashio is a bash function library for use with Home Assistant apps.
 
-It contains a set of commonly used operations and can be used
-to be included in add-ons to reduce code duplication across add-ons and
-therefore making it easier to develop and maintain add-ons.
+It bundles commonly used operations so apps can include it instead of
+duplicating code, making them easier to develop and maintain.
 
 Main goals:
 
-- Reduce the number of operations needed in add-ons.
-- Reduce the amount of code needed in add-ons.
-- Make add-on code more readable.
-- Providing a trusted and tested code base.
+- Reduce the number of operations needed in apps.
+- Reduce the amount of code needed in apps.
+- Make app code more readable.
+- Provide a trusted and tested code base.
 
-Quicker add-on development, by allowing you to focus on the add-on logic
-instead of other things.
+This speeds up app development by letting you focus on the app's
+logic rather than boilerplate.
 
 ## Installation
 
-The library is installed in the Home Assistant Community Add-ons base images and
+The library is installed in the Home Assistant Community Apps base images and
 the official Home Assistant base images.
 
 Currently available base images:
 
-- [Home Assistant Community Add-ons Alpine Base Image][base-alpine]
-- [Home Assistant Community Add-ons Alpine Python Base Image][base-alpine-python]
-- [Home Assistant Community Add-ons Debian Base Image][base-debian]
-- [Home Assistant Community Add-ons Ubuntu Base Image][base-ubuntu]
+- [Home Assistant Community Apps Alpine Base Image][base-alpine]
+- [Home Assistant Community Apps Alpine Python Base Image][base-alpine-python]
+- [Home Assistant Community Apps Debian Base Image][base-debian]
+- [Home Assistant Community Apps Ubuntu Base Image][base-ubuntu]
 - [Official Home Assistant Alpine Docker Base Image][home-assistant-base]
 - [Official Home Assistant Alpine Python Docker Base Image][home-assistant-base]
 - [Official Home Assistant Debian Docker Base Image][home-assistant-base]
 - [Official Home Assistant Raspbian Docker Base Image][home-assistant-base]
 - [Official Home Assistant Ubuntu Docker Base Image][home-assistant-base]
 
-Using those images as the base for your Home Assistant add-on will provide this
+Using those images as the base for your Home Assistant app will provide this
 function library out of the box. Our base images are updated frequently and
-provide the minimal needed base image for a great add-on.
+provide the minimal needed base image for a great app.
 
 If you want to add Bashio to your own images, please take a look at the
 Dockerfile of the above base images to see how they are added at build time.
@@ -86,7 +86,7 @@ bashio::log.info "${USERNAME}"
 
 ## Functions
 
-Bashio has more than 250+ functions available: communicating with
+Bashio has more than 250 functions available: communicating with
 the Supervisor API, Have I Been Pwned, file system, logging, configuration handling
 and a lot more!
 
@@ -95,7 +95,7 @@ available in the [`lib`](lib) folder. Each module has its own file, and each
 function has been documented inside the codebase.
 
 Furthermore, Bashio is used by the
-[Home Assistant Community Add-ons project][repository], those add-ons will be
+[Home Assistant Community Apps project][repository], those apps will be
 a great resource of practical examples.
 
 ## Known issues and limitations
@@ -122,7 +122,7 @@ Got questions?
 
 You have several options to get them answered:
 
-- The [Home Assistant Community Add-ons Discord chat server][discord] for add-on
+- The [Home Assistant Community Apps Discord chat server][discord] for app
   support and feature requests.
 - You could also [open an issue here][issue] GitHub.
 
@@ -132,7 +132,7 @@ This is an active open-source project. We are always open to people who want to
 use the code or contribute to it.
 
 We have set up a separate document containing our
-[contribution guidelines](CONTRIBUTING.md).
+[contribution guidelines](.github/CONTRIBUTING.md).
 
 Thank you for being involved! :heart_eyes:
 
@@ -147,7 +147,7 @@ check [the contributor's page][contributors].
 
 MIT License
 
-Copyright (c) 2019-2025 Franck Nijhof
+Copyright (c) 2019-2026 Franck Nijhof
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -172,7 +172,7 @@ SOFTWARE.
 [base-debian]: https://github.com/hassio-addons/addon-debian-base
 [base-ubuntu]: https://github.com/hassio-addons/addon-ubuntu-base
 [commits-shield]: https://img.shields.io/github/commit-activity/y/hassio-addons/bashio.svg
-[commits]: https://github.com/hassio-addons/bashio/commits/master
+[commits]: https://github.com/hassio-addons/bashio/commits/main
 [contributors]: https://github.com/hassio-addons/bashio/graphs/contributors
 [discord-shield]: https://img.shields.io/discord/478094546522079232.svg
 [discord]: https://discord.me/hassioaddons
@@ -185,11 +185,13 @@ SOFTWARE.
 [issue]: https://github.com/hassio-addons/bashio/issues
 [keepchangelog]: http://keepachangelog.com/en/1.0.0/
 [license-shield]: https://img.shields.io/github/license/hassio-addons/bashio.svg
-[maintenance-shield]: https://img.shields.io/maintenance/yes/2025.svg
+[maintenance-shield]: https://img.shields.io/maintenance/yes/2026.svg
 [patreon-shield]: https://frenck.dev/wp-content/uploads/2019/12/patreon.png
 [patreon]: https://www.patreon.com/frenck
 [project-stage-shield]: https://img.shields.io/badge/project%20stage-experimental-yellow.svg
 [releases-shield]: https://img.shields.io/github/release/hassio-addons/bashio.svg
 [releases]: https://github.com/hassio-addons/bashio/releases
 [repository]: https://github.com/hassio-addons/repository
+[scorecard-shield]: https://api.scorecard.dev/projects/github.com/hassio-addons/bashio/badge
+[scorecard]: https://scorecard.dev/viewer/?uri=github.com/hassio-addons/bashio
 [semver]: http://semver.org/spec/v2.0.0
