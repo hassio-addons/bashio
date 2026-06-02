@@ -1,0 +1,13 @@
+---
+# yamllint disable rule:line-length
+blank_issues_enabled: false
+contact_links:
+  - name: Feature request or idea
+    url: https://github.com/hassio-addons/bashio/discussions
+    about: Please share feature requests and ideas on our GitHub Discussions board.
+  - name: I have a question or need support
+    url: https://discord.me/hassioaddons
+    about: Please use our Discord community for questions and support.
+  - name: Report a security vulnerability
+    url: https://github.com/hassio-addons/bashio/security/advisories/new
+    about: Please report security vulnerabilities privately, not as a public issue.

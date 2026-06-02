@@ -1,0 +1,26 @@
+---
+name: PR Labels
+
+# yamllint disable-line rule:truthy
+on:
+  pull_request:
+    types:
+      - opened
+      - labeled
+      - unlabeled
+      - synchronize
+  workflow_call:
+
+permissions: {}
+
+jobs:
+  pr_labels:
+    name: Verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏷 Verify PR has a valid label
+        uses: ludeeus/action-require-labels@7ef0dba93830452589680da7cdea2e2c4c0f8dff # 1.1.0
+        with:
+          labels: >-
+            breaking-change, bugfix, documentation, enhancement,
+            refactor, performance, new-feature, maintenance, ci, dependencies

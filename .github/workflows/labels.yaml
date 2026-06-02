@@ -9,14 +9,19 @@ on:
     paths:
       - .github/labels.yml
 
+permissions:
+  issues: write
+
 jobs:
   labels:
     name: ♻️ Sync labels
     runs-on: ubuntu-latest
     steps:
       - name: ⤵️ Check out code from GitHub
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
       - name: 🚀 Run Label Syncer
-        uses: micnncim/action-label-syncer@v1.3.0
+        uses: micnncim/action-label-syncer@3abd5ab72571f4beb13fa48ee8c7fec7cbc8db2d # v1.3.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Home Assistant Community Add-ons: Bashio
-# Bashio is a bash function library for use with Home Assistant add-ons.
+# Home Assistant Community Apps: Bashio
+# Bashio is a bash function library for use with Home Assistant apps.
 #
 # It contains a set of commonly used operations and can be used
-# to be included in add-on scripts to reduce code duplication across add-ons.
+# to be included in app scripts to reduce code duplication across apps.
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
@@ -120,7 +120,7 @@ function bashio::var.equals() {
 #   $@ Bash array of key/value pairs, prefix integer or boolean values with ^
 # ------------------------------------------------------------------------------
 function bashio::var.json() {
-    local data=("$@");
+    local data=("$@")
     local number_of_items=${#data[@]}
     local json=''
     local separator
@@ -132,18 +132,18 @@ function bashio::var.json() {
         return "${__BASHIO_EXIT_NOK}"
     fi
 
-    if [[ $((number_of_items%2)) -eq 1 ]]; then
+    if [[ $((number_of_items % 2)) -eq 1 ]]; then
         bashio::log.error "Length of input array needs to be even (key/value pairs)"
         return "${__BASHIO_EXIT_NOK}"
     fi
 
-    counter=0;
+    counter=0
     for i in "${data[@]}"; do
         item="\"$i\""
 
         separator=","
-        if [ $((++counter%2)) -eq 0 ]; then
-            separator=":";
+        if [ $((++counter % 2)) -eq 0 ]; then
+            separator=":"
 
             if [[ "${i:0:1}" == "^" ]]; then
                 item="${i:1}"
@@ -152,10 +152,10 @@ function bashio::var.json() {
             fi
         fi
 
-        json="$json$separator$item";
+        json="$json$separator$item"
     done
 
-    echo "{${json:1}}";
+    echo "{${json:1}}"
     return "${__BASHIO_EXIT_OK}"
 }
 

@@ -1,0 +1,12 @@
+# Coverage artifacts
+coverage/
+*.cov
+cov.xml
+
+# Editor & OS cruft
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/*
+!.vscode/extensions.json

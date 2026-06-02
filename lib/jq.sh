@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Home Assistant Community Add-ons: Bashio
-# Bashio is a bash function library for use with Home Assistant add-ons.
+# Home Assistant Community Apps: Bashio
+# Bashio is a bash function library for use with Home Assistant apps.
 #
 # It contains a set of commonly used operations and can be used
-# to be included in add-on scripts to reduce code duplication across add-ons.
+# to be included in app scripts to reduce code duplication across apps.
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
@@ -23,7 +23,7 @@ function bashio::jq() {
     if [[ -f "${data}" ]]; then
         jq --raw-output -c -M "$filter" "${data}"
     else
-        jq --raw-output -c -M "$filter" <<< "${data}"
+        jq --raw-output -c -M "$filter" <<<"${data}"
     fi
 }
 
@@ -41,9 +41,8 @@ function bashio::jq.exists() {
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
-    if ! value=$(bashio::jq "${data}" "${filter}") || \
-        bashio::var.equals "${value}" "null"
-    then
+    if ! value=$(bashio::jq "${data}" "${filter}") ||
+        bashio::var.equals "${value}" "null"; then
         return "${__BASHIO_EXIT_NOK}"
     fi
 
@@ -65,9 +64,8 @@ function bashio::jq.has_value() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if ! value=$(bashio::jq "${data}" \
-            "${filter} | if (. == {} or . == []) then empty else . end // empty") || \
-        ! bashio::var.has_value "${value}"
-    then
+        "${filter} | if (. == {} or . == []) then empty else . end // empty") ||
+        ! bashio::var.has_value "${value}"; then
         return "${__BASHIO_EXIT_NOK}"
     fi
 
@@ -91,9 +89,8 @@ function bashio::jq.is() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if ! value=$(bashio::jq "${data}" \
-            "${filter} | if type==\"${type}\" then true else false end") || \
-        [[ "${value}" != "true" ]]
-    then
+        "${filter} | if type==\"${type}\" then true else false end") ||
+        [[ "${value}" != "true" ]]; then
         return "${__BASHIO_EXIT_NOK}"
     fi
 

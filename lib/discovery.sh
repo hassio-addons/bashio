@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Home Assistant Community Add-ons: Bashio
-# Bashio is a bash function library for use with Home Assistant add-ons.
+# Home Assistant Community Apps: Bashio
+# Bashio is a bash function library for use with Home Assistant apps.
 #
 # It contains a set of commonly used operations and can be used
-# to be included in add-on scripts to reduce code duplication across add-ons.
+# to be included in app scripts to reduce code duplication across apps.
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
@@ -21,10 +21,10 @@ function bashio::discovery() {
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
-    payload=$(\
+    payload=$(
         bashio::var.json \
             service "${service}" \
-            config "^${config}" \
+            config "^${config}"
     )
 
     bashio::api.supervisor "POST" "/discovery" "${payload}" ".uuid"

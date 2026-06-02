@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Home Assistant Community Add-ons: Bashio
-# Bashio is a bash function library for use with Home Assistant add-ons.
+# Home Assistant Community Apps: Bashio
+# Bashio is a bash function library for use with Home Assistant apps.
 #
 # It contains a set of commonly used operations and can be used
-# to be included in add-on scripts to reduce code duplication across add-ons.
+# to be included in app scripts to reduce code duplication across apps.
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# Fetches a configuration value from the add-on config file.
+# Fetches a configuration value from the app config file.
 #
 # Arguments:
 #   $1 Key of the config option
@@ -22,7 +22,7 @@ function bashio::config() {
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
-    read -r -d '' query << QUERY || true
+    read -r -d '' query <<QUERY || true
         if (.${key} == null) then
             null
         elif (.${key} | type == "string") then
@@ -49,13 +49,11 @@ QUERY
     options=$(bashio::addon.config)
     result=$(bashio::jq "${options}" "${query}")
 
-    if [[ "${result}" == "null" ]];
-    then
+    if [[ "${result}" == "null" ]]; then
         echo "${default_value}"
     else
         printf "%s" "${result}"
     fi
-
 
     return "${__BASHIO_EXIT_OK}"
 }
@@ -223,7 +221,7 @@ function bashio::config.is_safe_password() {
 #
 # Arguments:
 #   $1 Key of the config option
-#   $2 Addition reason why this is needed
+#   $2 Additional reason why this is needed
 # ------------------------------------------------------------------------------
 function bashio::config.require() {
     local key=${1}
@@ -236,7 +234,7 @@ function bashio::config.require() {
     fi
 
     bashio::log.fatal
-    bashio::log.fatal "A required add-on configuration option is missing!"
+    bashio::log.fatal "A required app configuration option is missing!"
     bashio::log.fatal
     bashio::log.fatal "Please set a value for the '${key}' option."
     if bashio::var.has_value "${reason}"; then
@@ -245,7 +243,7 @@ function bashio::config.require() {
         bashio::log.fatal "${reason}"
     fi
     bashio::log.fatal
-    bashio::log.fatal "If unsure, check the add-on manual for more information."
+    bashio::log.fatal "If unsure, check the app manual for more information."
     bashio::log.fatal
 
     bashio::exit.nok
@@ -256,7 +254,7 @@ function bashio::config.require() {
 #
 # Arguments:
 #   $1 Key of the config option
-#   $2 Addition reason why this is needed
+#   $2 Additional reason why this is needed
 # ------------------------------------------------------------------------------
 function bashio::config.suggest() {
     local key=${1}
@@ -267,7 +265,7 @@ function bashio::config.suggest() {
     if ! bashio::config.has_value "${key}"; then
         bashio::log.warning
         bashio::log.warning \
-            "A recommended add-on configuration option is not set."
+            "A recommended app configuration option is not set."
         bashio::log.warning
         bashio::log.warning "The configuration key '${key}' seems to be empty."
         bashio::log.warning
@@ -276,7 +274,7 @@ function bashio::config.suggest() {
             bashio::log.warning "Consider configuring this because:"
             bashio::log.warning "${reason}"
         fi
-        bashio::log.warning "Check the add-on manual for more information."
+        bashio::log.warning "Check the app manual for more information."
         bashio::log.warning
     fi
 
@@ -288,7 +286,7 @@ function bashio::config.suggest() {
 #
 # Arguments:
 #   $1 Key of the config option
-#   $2 Addition reason why this is needed
+#   $2 Additional reason why this is needed
 # ------------------------------------------------------------------------------
 function bashio::config.suggest.true() {
     local key=${1}
@@ -299,16 +297,16 @@ function bashio::config.suggest.true() {
     if ! bashio::config.true "${key}"; then
         bashio::log.warning
         bashio::log.warning \
-            "A recommended add-on configuration option is not enabled."
+            "A recommended app configuration option is not enabled."
         if bashio::var.has_value "${reason}"; then
             bashio::log.warning
             bashio::log.warning "Consider enabling this because:"
             bashio::log.warning "${reason}"
         fi
         bashio::log.warning
-        bashio::log.warning "Enable config option '${key}' hide this message."
+        bashio::log.warning "Enable config option '${key}' to hide this message."
         bashio::log.warning
-        bashio::log.warning "Check the add-on manual for more information."
+        bashio::log.warning "Check the app manual for more information."
         bashio::log.warning
     fi
 
@@ -320,7 +318,7 @@ function bashio::config.suggest.true() {
 #
 # Arguments:
 #   $1 Key of the config option
-#   $2 Addition reason why this is needed
+#   $2 Additional reason why this is needed
 # ------------------------------------------------------------------------------
 function bashio::config.suggest.false() {
     local key=${1}
@@ -331,16 +329,16 @@ function bashio::config.suggest.false() {
     if ! bashio::config.false "${key}"; then
         bashio::log.warning
         bashio::log.warning \
-            "A recommended add-on configuration option is not disabled."
+            "A recommended app configuration option is not disabled."
         if bashio::var.has_value "${reason}"; then
             bashio::log.warning
             bashio::log.warning "Consider disabling this because:"
             bashio::log.warning "${reason}"
         fi
         bashio::log.warning
-        bashio::log.warning "Disable config option '${key}' hide this message."
+        bashio::log.warning "Disable config option '${key}' to hide this message."
         bashio::log.warning
-        bashio::log.warning "Check the add-on manual for more information."
+        bashio::log.warning "Check the app manual for more information."
         bashio::log.warning
     fi
 
@@ -365,9 +363,9 @@ function bashio::config.require.username() {
     bashio::log.fatal
     bashio::log.fatal "Setting a username is required!"
     bashio::log.fatal
-    bashio::log.fatal "Please username in the '${key}' option."
+    bashio::log.fatal "Please set a username in the '${key}' option."
     bashio::log.fatal
-    bashio::log.fatal "If unsure, check the add-on manual for more information."
+    bashio::log.fatal "If unsure, check the app manual for more information."
     bashio::log.fatal
 
     bashio::exit.nok
@@ -391,7 +389,7 @@ function bashio::config.suggest.username() {
         bashio::log.warning
         bashio::log.warning "Define a username in the '${key}' option."
         bashio::log.warning
-        bashio::log.warning "Check the add-on manual for more information."
+        bashio::log.warning "Check the app manual for more information."
         bashio::log.warning
     fi
 
@@ -418,7 +416,7 @@ function bashio::config.require.password() {
     bashio::log.fatal
     bashio::log.fatal "Please set a password in the '${key}' option."
     bashio::log.fatal
-    bashio::log.fatal "If unsure, check the add-on manual for more information."
+    bashio::log.fatal "If unsure, check the app manual for more information."
     bashio::log.fatal
 
     bashio::exit.nok
@@ -445,7 +443,7 @@ function bashio::config.suggest.password() {
     bashio::log.warning "Please set a password in the '${key}' option."
     bashio::log.warning
     bashio::log.warning \
-        "If unsure, check the add-on manual for more information."
+        "If unsure, check the app manual for more information."
     bashio::log.warning
 
     return "${__BASHIO_EXIT_OK}"
@@ -473,15 +471,15 @@ function bashio::config.require.safe_password() {
 
     bashio::log.fatal
     bashio::log.fatal "We are trying to help you to protect your system the"
-    bashio::log.fatal "best we can. Therefore, this add-on checks your"
+    bashio::log.fatal "best we can. Therefore, this app checks your"
     bashio::log.fatal "configured password against the HaveIBeenPwned database."
     bashio::log.fatal
     bashio::log.fatal "Unfortunately, your configured password is considered"
-    bashio::log.fatal "unsafe. We highly recommend you to pick a different one."
+    bashio::log.fatal "unsafe. We highly recommend you pick a different one."
     bashio::log.fatal
     bashio::log.fatal "Please change the password in the '${key}' option."
     bashio::log.fatal
-    bashio::log.fatal "Check the add-on manual for more information."
+    bashio::log.fatal "Check the app manual for more information."
     bashio::log.fatal
 
     bashio::exit.nok
@@ -512,7 +510,7 @@ function bashio::config.suggest.safe_password() {
 
     bashio::log.warning
     bashio::log.warning "We are trying to help you to protect your system the"
-    bashio::log.warning "best we can. Therefore, this add-on checks your"
+    bashio::log.warning "best we can. Therefore, this app checks your"
     bashio::log.warning "configured password against the HaveIBeenPwned database."
     bashio::log.warning
     bashio::log.warning "Unfortunately, your configured password is considered"
@@ -520,7 +518,7 @@ function bashio::config.suggest.safe_password() {
     bashio::log.warning
     bashio::log.warning "Please change the password in the '${key}' option."
     bashio::log.warning
-    bashio::log.warning "Check the add-on manual for more information."
+    bashio::log.warning "Check the app manual for more information."
     bashio::log.warning
 
     return "${__BASHIO_EXIT_OK}"
@@ -548,15 +546,15 @@ function bashio::config.require.ssl() {
         bashio::log.fatal "SSL has been enabled using the '${key}' option,"
         bashio::log.fatal "this requires an SSL certificate file which is"
         bashio::log.fatal "configured using the '${certfile}' option in the"
-        bashio::log.fatal "add-on configuration."
+        bashio::log.fatal "app configuration."
         bashio::log.fatal
         bashio::log.fatal "Unfortunately, the '${certfile}' option is empty."
         bashio::log.fatal
         bashio::log.fatal "Consider configuring or getting an SSL certificate"
         bashio::log.fatal "or setting the '${key}' option to 'false' in case"
-        bashio::log.fatal "you are not planning on using SSL with this add-on."
+        bashio::log.fatal "you are not planning on using SSL with this app."
         bashio::log.fatal
-        bashio::log.fatal "Check the add-on manual for more information."
+        bashio::log.fatal "Check the app manual for more information."
         bashio::log.fatal
 
         bashio::exit.nok
@@ -567,15 +565,15 @@ function bashio::config.require.ssl() {
         bashio::log.fatal "SSL has been enabled using the '${key}' option,"
         bashio::log.fatal "this requires an SSL certificate key file which is"
         bashio::log.fatal "configured using the '${keyfile}' option in the"
-        bashio::log.fatal "add-on configuration."
+        bashio::log.fatal "app configuration."
         bashio::log.fatal
         bashio::log.fatal "Unfortunately, the '${keyfile}' option is empty."
         bashio::log.fatal
         bashio::log.fatal "Consider configuring or getting an SSL certificate"
         bashio::log.fatal "or setting the '${key}' option to 'false' in case"
-        bashio::log.fatal "you are not planning on using SSL with this add-on."
+        bashio::log.fatal "you are not planning on using SSL with this app."
         bashio::log.fatal
-        bashio::log.fatal "Check the add-on manual for more information."
+        bashio::log.fatal "Check the app manual for more information."
         bashio::log.fatal
 
         bashio::exit.nok
@@ -586,7 +584,7 @@ function bashio::config.require.ssl() {
         bashio::log.fatal "SSL has been enabled using the '${key}' option,"
         bashio::log.fatal "this requires an SSL certificate file which is"
         bashio::log.fatal "configured using the '${certfile}' option in the"
-        bashio::log.fatal "add-on configuration."
+        bashio::log.fatal "app configuration."
         bashio::log.fatal
         bashio::log.fatal "Unfortunately, the file specified in the"
         bashio::log.fatal "'${certfile}' option does not exist."
@@ -597,9 +595,9 @@ function bashio::config.require.ssl() {
         bashio::log.fatal "In case you don't have SSL yet, consider getting"
         bashio::log.fatal "an SSL certificate or setting the '${key}' option"
         bashio::log.fatal "to 'false' in case you are not planning on using"
-        bashio::log.fatal "SSL with this add-on."
+        bashio::log.fatal "SSL with this app."
         bashio::log.fatal
-        bashio::log.fatal "Check the add-on manual for more information."
+        bashio::log.fatal "Check the app manual for more information."
         bashio::log.fatal
 
         bashio::exit.nok
@@ -610,7 +608,7 @@ function bashio::config.require.ssl() {
         bashio::log.fatal "SSL has been enabled using the '${key}' option,"
         bashio::log.fatal "this requires an SSL certificate key file which is"
         bashio::log.fatal "configured using the '${keyfile}' option in the"
-        bashio::log.fatal "add-on configuration."
+        bashio::log.fatal "app configuration."
         bashio::log.fatal
         bashio::log.fatal "Unfortunately, the file specified in the"
         bashio::log.fatal "'${keyfile}' option does not exist."
@@ -621,9 +619,9 @@ function bashio::config.require.ssl() {
         bashio::log.fatal "In case you don't have SSL yet, consider getting"
         bashio::log.fatal "an SSL certificate or setting the '${key}' option"
         bashio::log.fatal "to 'false' in case you are not planning on using"
-        bashio::log.fatal "SSL with this add-on."
+        bashio::log.fatal "SSL with this app."
         bashio::log.fatal
-        bashio::log.fatal "Check the add-on manual for more information."
+        bashio::log.fatal "Check the app manual for more information."
         bashio::log.fatal
 
         bashio::exit.nok

@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Home Assistant Community Add-ons: Bashio
-# Bashio is a bash function library for use with Home Assistant add-ons.
+# Home Assistant Community Apps: Bashio
+# Bashio is a bash function library for use with Home Assistant apps.
 #
 # It contains a set of commonly used operations and can be used
-# to be included in add-on scripts to reduce code duplication across add-ons.
+# to be included in app scripts to reduce code duplication across apps.
 # ==============================================================================
 
 # Unless $LOG_FD is already set to a valid fd.
 if ! [[ "${LOG_FD:-}" =~ ^[0-9]+$ ]] || ! { : >&"${LOG_FD:-}"; } 2>/dev/null; then
-  # Preserve the original STDOUT on a free fd (stored in $LOG_FD) so that we can
-  # log to it without interfering with the STDOUT of subshells or child processes
-  # whose output we want to capture for other purposes.
-  exec {LOG_FD}>&1
+    # Preserve the original STDOUT on a free fd (stored in $LOG_FD) so that we can
+    # log to it without interfering with the STDOUT of subshells or child processes
+    # whose output we want to capture for other purposes.
+    exec {LOG_FD}>&1
 fi
 # Export LOG_FD for use by child bashio processes.
 # This is done outside of the above conditional to ensure that LOG_FD is also
@@ -22,10 +22,10 @@ export LOG_FD
 # ------------------------------------------------------------------------------
 # Redirects the $LOG_FD fd to a changed STDOUT.
 #
-# If an add-on script changed the STDOUT (after the $LOG_FD fd was redirected to
+# If an app script changed the STDOUT (after the $LOG_FD fd was redirected to
 # it, see above), this function redirects the $LOG_FD fd to the new STDOUT.
 #
-# Add-on developers must call this function after changing the STDOUT if they
+# App developers must call this function after changing the STDOUT if they
 # want the log functions to log to the new STDOUT.
 # ------------------------------------------------------------------------------
 function bashio::log.reinitialize_output() {
@@ -266,7 +266,7 @@ function bashio::log.level() {
         error)
             log_level="${__BASHIO_LOG_LEVEL_ERROR}"
             ;;
-        fatal|critical)
+        fatal | critical)
             log_level="${__BASHIO_LOG_LEVEL_FATAL}"
             ;;
         off)
@@ -274,6 +274,7 @@ function bashio::log.level() {
             ;;
         *)
             bashio::exit.nok "Unknown log_level: ${log_level}"
+            ;;
     esac
 
     export __BASHIO_LOG_LEVEL="${log_level}"

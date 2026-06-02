@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Home Assistant Community Add-ons: Bashio
-# Bashio is a bash function library for use with Home Assistant add-ons.
+# Home Assistant Community Apps: Bashio
+# Bashio is a bash function library for use with Home Assistant apps.
 #
 # It contains a set of commonly used operations and can be used
-# to be included in add-on scripts to reduce code duplication across add-ons.
+# to be included in app scripts to reduce code duplication across apps.
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
@@ -13,8 +13,8 @@
 # Arguments:
 #   $1 HTTP Method (GET/POST)
 #   $2 API Resource requested
-#   $3 Whether or not this resource returns raw data instead of json (optional)
-#   $3 In case of a POST method, this parameter is the JSON to POST (optional)
+#   $3 For GET: whether this resource returns raw data instead of JSON (optional)
+#      For POST: the JSON document to send as the request body (optional)
 #   $4 jq filter command (optional)
 # ------------------------------------------------------------------------------
 function bashio::api.supervisor() {
@@ -39,12 +39,13 @@ function bashio::api.supervisor() {
         raw=
     fi
 
-    if ! response=$(curl --silent --show-error \
-        --write-out '\n%{http_code}' --request "${method}" \
-        -H "${auth_header}" \
-        -H "Content-Type: application/json" \
-        -d "${data}" \
-        "${__BASHIO_SUPERVISOR_API}${resource}"
+    if ! response=$(
+        curl --silent --show-error \
+            --write-out '\n%{http_code}' --request "${method}" \
+            -H "${auth_header}" \
+            -H "Content-Type: application/json" \
+            -d "${data}" \
+            "${__BASHIO_SUPERVISOR_API}${resource}"
     ); then
         bashio::log.debug "${response}"
         bashio::log.error "Something went wrong contacting the API"
