@@ -73,10 +73,10 @@ function bashio::pwned() {
     local hibp_hash
     local count
 
-    bashio::log.trace "${FUNCNAME[0]}" "${password//./x}"
+    bashio::log.trace "${FUNCNAME[0]}" "<REDACTED PASSWORD>"
 
     # Do not check empty password
-    if ! bashio::var.has_value "${password}"; then
+    if [[ -z "${password}" ]]; then
         bashio::log.warning 'Cannot check empty password against HaveIBeenPwned.'
         return "${__BASHIO_EXIT_NOK}"
     fi
