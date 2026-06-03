@@ -3,7 +3,7 @@
 name: Bug Report
 description: Report a problem with one of Bashio's functions or modules.
 labels:
-  - bug
+  - bugfix
 body:
   - type: markdown
     attributes:

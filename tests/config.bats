@@ -62,3 +62,11 @@ setup() {
     run bashio::config.equals "port" "1234"
     [ "${status}" -eq 0 ]
 }
+
+@test "config does not leak its options variable into the caller's scope" {
+    # A caller may legitimately use a variable named 'options'; bashio::config
+    # must not clobber it.
+    options="caller-value"
+    bashio::config "username" >/dev/null
+    [ "${options}" = "caller-value" ]
+}
