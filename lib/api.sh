@@ -26,18 +26,31 @@ function bashio::api.supervisor() {
     local response
     local status
     local data='{}'
+    local data_file
     local result
 
-    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    # The request body can carry secrets (for example app options), so it is
+    # deliberately kept out of the trace log.
+    bashio::log.trace "${FUNCNAME[0]}" "${method}" "${resource}"
 
     if [[ -n "${__BASHIO_SUPERVISOR_TOKEN:-}" ]]; then
         auth_header="Authorization: Bearer ${__BASHIO_SUPERVISOR_TOKEN}"
     fi
 
-    if [[ "${method}" = "POST" ]] && bashio::var.has_value "${raw}"; then
+    # Use a plain emptiness test (not bashio::var.has_value) so the request
+    # body, which can carry secrets, is never passed to a helper that traces
+    # its arguments.
+    if [[ "${method}" = "POST" ]] && [[ -n "${raw}" ]]; then
         data="${raw}"
         raw=
     fi
+
+    # Pass the request body through a temporary file (curl --data-binary @file)
+    # instead of a command-line argument, so a body carrying secrets is not
+    # exposed in the process list (/proc/<pid>/cmdline). The file is created
+    # with restrictive permissions by mktemp and removed right after the call.
+    data_file=$(mktemp)
+    printf '%s' "${data}" >"${data_file}"
 
     if ! response=$(
         # Pass the authorization header via stdin (curl -H @-) instead of a
@@ -48,20 +61,21 @@ function bashio::api.supervisor() {
             --write-out '\n%{http_code}' --request "${method}" \
             -H @- \
             -H "Content-Type: application/json" \
-            -d "${data}" \
+            --data-binary @"${data_file}" \
             "${__BASHIO_SUPERVISOR_API}${resource}" <<<"${auth_header}"
     ); then
+        rm -f "${data_file}"
         bashio::log.debug "${response}"
         bashio::log.error "Something went wrong contacting the API"
         return "${__BASHIO_EXIT_NOK}"
     fi
+    rm -f "${data_file}"
 
     status=${response##*$'\n'}
     response=${response%"$status"}
 
     bashio::log.debug "Requested API resource: ${__BASHIO_SUPERVISOR_API}${resource}"
     bashio::log.debug "Request method: ${method}"
-    bashio::log.debug "Request data: ${data}"
     bashio::log.debug "API HTTP Response code: ${status}"
     bashio::log.debug "API Response: ${response}"
 

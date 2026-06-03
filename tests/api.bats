@@ -71,3 +71,39 @@ setup() {
     run cat "${BATS_TEST_TMPDIR}/stdin"
     [[ "${output}" == *"SUPER_SECRET_TOKEN"* ]]
 }
+
+@test "api.supervisor keeps the POST body out of the curl arguments" {
+    # Record argv, and resolve the --data-binary @file reference to its content.
+    curl() {
+        printf '%s' "$*" >"${BATS_TEST_TMPDIR}/argv"
+        local prev='' arg body=''
+        for arg in "$@"; do
+            if [[ "${prev}" == "--data-binary" || "${prev}" == "--data" || "${prev}" == "-d" ]]; then
+                body="${arg}"
+            fi
+            prev="${arg}"
+        done
+        if [[ "${body}" == @* ]]; then
+            cat "${body:1}" >"${BATS_TEST_TMPDIR}/body"
+        else
+            printf '%s' "${body}" >"${BATS_TEST_TMPDIR}/body"
+        fi
+        cat >/dev/null
+        printf '%s\n%s' '{"result":"ok"}' '200'
+    }
+    bashio::api.supervisor POST /test '{"password":"SUPER_SECRET_BODY"}' >/dev/null
+    # The body must not appear in the process arguments...
+    run cat "${BATS_TEST_TMPDIR}/argv"
+    [[ "${output}" != *"SUPER_SECRET_BODY"* ]]
+    # ...but must still be delivered to curl (via the data file).
+    run cat "${BATS_TEST_TMPDIR}/body"
+    [[ "${output}" == *"SUPER_SECRET_BODY"* ]]
+}
+
+@test "api.supervisor never logs the request body" {
+    log_out=''
+    bashio::log.debug() { log_out+=" $*"; }
+    bashio::log.trace() { log_out+=" $*"; }
+    bashio::api.supervisor POST /test '{"password":"SECRET_IN_BODY"}' >/dev/null
+    [[ "${log_out}" != *"SECRET_IN_BODY"* ]]
+}
