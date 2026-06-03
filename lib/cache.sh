@@ -67,11 +67,13 @@ function bashio::cache.set() {
 
     # Enforce owner-only access even if the directory already existed, for
     # example one left behind by an older version with broader permissions.
-    if ! chmod 0700 "${__BASHIO_CACHE_DIR}"; then
-        bashio::log.warning "Could not restrict permissions on the cache folder"
-    fi
+    # Fail hard rather than write secrets into a directory we cannot secure.
+    chmod 0700 "${__BASHIO_CACHE_DIR}" ||
+        bashio::exit.nok "Could not restrict permissions on the cache folder"
 
-    if ! printf "%s" "$value" >"${__BASHIO_CACHE_DIR}/${key}.cache"; then
+    # Write under a tight umask so the cache file (which can hold secrets) is
+    # created owner-only instead of with the ambient umask.
+    if ! (umask 077 && printf "%s" "$value" >"${__BASHIO_CACHE_DIR}/${key}.cache"); then
         bashio::log.warning "An error occurred while storing ${key} to cache"
         return "${__BASHIO_EXIT_NOK}"
     fi

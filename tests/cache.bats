@@ -29,13 +29,17 @@ setup() {
     bashio::cache.set "key" "value"
     [ -d "${__BASHIO_CACHE_DIR}" ]
     [ "$(stat -c '%a' "${__BASHIO_CACHE_DIR}")" = "700" ]
+    # The cache file itself must also be owner-only.
+    [ "$(stat -c '%a' "${__BASHIO_CACHE_DIR}/key.cache")" = "600" ]
 }
 
 @test "cache.set tightens permissions on an existing cache directory" {
     # A directory left behind by an older version (or another process) with
     # broader permissions must be restricted before secrets are written into it.
+    umask 022
     mkdir -p "${__BASHIO_CACHE_DIR}"
     chmod 0755 "${__BASHIO_CACHE_DIR}"
     bashio::cache.set "key" "value"
     [ "$(stat -c '%a' "${__BASHIO_CACHE_DIR}")" = "700" ]
+    [ "$(stat -c '%a' "${__BASHIO_CACHE_DIR}/key.cache")" = "600" ]
 }
