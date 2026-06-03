@@ -20,9 +20,9 @@ function bashio::dns.update() {
 
     if bashio::var.has_value "${version}"; then
         version=$(bashio::var.json version "${version}")
-        bashio::api.supervisor POST /dns/update "${version}"
+        bashio::api.supervisor POST /dns/update "${version}" || return "${__BASHIO_EXIT_NOK}"
     else
-        bashio::api.supervisor POST /dns/update
+        bashio::api.supervisor POST /dns/update || return "${__BASHIO_EXIT_NOK}"
     fi
     bashio::cache.flush_all
 }
@@ -32,7 +32,7 @@ function bashio::dns.update() {
 # ------------------------------------------------------------------------------
 function bashio::dns.reset() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.supervisor POST /dns/reset
+    bashio::api.supervisor POST /dns/reset || return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 
@@ -41,7 +41,7 @@ function bashio::dns.reset() {
 # ------------------------------------------------------------------------------
 function bashio::dns.restart() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.supervisor POST /dns/restart
+    bashio::api.supervisor POST /dns/restart || return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 

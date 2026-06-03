@@ -28,9 +28,9 @@ function bashio::supervisor.update() {
 
     if bashio::var.has_value "${version}"; then
         version=$(bashio::var.json version "${version}")
-        bashio::api.supervisor POST /supervisor/update "${version}"
+        bashio::api.supervisor POST /supervisor/update "${version}" || return "${__BASHIO_EXIT_NOK}"
     else
-        bashio::api.supervisor POST /supervisor/update
+        bashio::api.supervisor POST /supervisor/update || return "${__BASHIO_EXIT_NOK}"
     fi
     bashio::cache.flush_all
 }
@@ -40,7 +40,7 @@ function bashio::supervisor.update() {
 # ------------------------------------------------------------------------------
 function bashio::supervisor.reload() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.supervisor POST /supervisor/reload
+    bashio::api.supervisor POST /supervisor/reload || return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 
@@ -49,7 +49,7 @@ function bashio::supervisor.reload() {
 # ------------------------------------------------------------------------------
 function bashio::supervisor.restart() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.supervisor POST /supervisor/restart
+    bashio::api.supervisor POST /supervisor/restart || return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 
@@ -58,7 +58,7 @@ function bashio::supervisor.restart() {
 # ------------------------------------------------------------------------------
 function bashio::supervisor.repair() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.supervisor POST /supervisor/repair
+    bashio::api.supervisor POST /supervisor/repair || return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 
@@ -185,7 +185,7 @@ function bashio::supervisor.channel() {
 
     if bashio::var.has_value "${channel}"; then
         channel=$(bashio::var.json channel "${channel}")
-        bashio::api.supervisor POST /supervisor/options "${channel}"
+        bashio::api.supervisor POST /supervisor/options "${channel}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::supervisor 'supervisor.info.channel' '.channel // false'
@@ -205,7 +205,7 @@ function bashio::supervisor.timezone() {
 
     if bashio::var.has_value "${timezone}"; then
         timezone=$(bashio::var.json timezone "${timezone}")
-        bashio::api.supervisor POST /supervisor/options "${timezone}"
+        bashio::api.supervisor POST /supervisor/options "${timezone}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::supervisor 'supervisor.info.timezone' '.timezone'
@@ -225,7 +225,7 @@ function bashio::supervisor.country() {
 
     if bashio::var.has_value "${country}"; then
         country=$(bashio::var.json country "${country}")
-        bashio::api.supervisor POST /supervisor/options "${country}"
+        bashio::api.supervisor POST /supervisor/options "${country}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::supervisor 'supervisor.info.country' '.country'
@@ -245,7 +245,7 @@ function bashio::supervisor.logging() {
 
     if bashio::var.has_value "${logging}"; then
         logging=$(bashio::var.json logging "${logging}")
-        bashio::api.supervisor POST /supervisor/options "${logging}"
+        bashio::api.supervisor POST /supervisor/options "${logging}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::supervisor 'supervisor.info.logging' '.logging'
@@ -277,7 +277,7 @@ function bashio::supervisor.debug() {
         else
             debug=$(bashio::var.json debug "^false")
         fi
-        bashio::api.supervisor POST /supervisor/options "${debug}"
+        bashio::api.supervisor POST /supervisor/options "${debug}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::supervisor 'supervisor.info.debug' '.debug // false'
@@ -301,7 +301,7 @@ function bashio::supervisor.debug_block() {
         else
             debug=$(bashio::var.json debug_block "^false")
         fi
-        bashio::api.supervisor POST /supervisor/options "${debug}"
+        bashio::api.supervisor POST /supervisor/options "${debug}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::supervisor 'supervisor.info.debug_block' '.debug_block // false'
@@ -325,7 +325,7 @@ function bashio::supervisor.diagnostics() {
         else
             diagnostics=$(bashio::var.json diagnostics "^false")
         fi
-        bashio::api.supervisor POST /supervisor/options "${diagnostics}"
+        bashio::api.supervisor POST /supervisor/options "${diagnostics}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::supervisor 'supervisor.info.diagnostics' '.diagnostics'
@@ -349,7 +349,7 @@ function bashio::supervisor.auto_update() {
         else
             auto_update=$(bashio::var.json auto_update "^false")
         fi
-        bashio::api.supervisor POST /supervisor/options "${auto_update}"
+        bashio::api.supervisor POST /supervisor/options "${auto_update}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::supervisor 'supervisor.info.auto_update' '.auto_update'
@@ -371,7 +371,7 @@ function bashio::supervisor.detect_blocking_io() {
 
     if bashio::var.has_value "${detect_blocking_io}"; then
         detect_blocking_io=$(bashio::var.json detect_blocking_io "${detect_blocking_io}")
-        bashio::api.supervisor POST /supervisor/options "${detect_blocking_io}"
+        bashio::api.supervisor POST /supervisor/options "${detect_blocking_io}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::supervisor 'supervisor.info.detect_blocking_io' '.detect_blocking_io'

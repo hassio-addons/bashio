@@ -32,7 +32,7 @@ function bashio::audio.update() {
 # ------------------------------------------------------------------------------
 function bashio::audio.reload() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.supervisor POST /audio/reload
+    bashio::api.supervisor POST /audio/reload || return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 
@@ -41,7 +41,7 @@ function bashio::audio.reload() {
 # ------------------------------------------------------------------------------
 function bashio::audio.restart() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.supervisor POST /audio/restart
+    bashio::api.supervisor POST /audio/restart || return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 
