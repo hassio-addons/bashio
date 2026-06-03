@@ -19,6 +19,7 @@ function bashio::config() {
     local default_value=${2:-null}
     local query
     local result
+    local options
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
