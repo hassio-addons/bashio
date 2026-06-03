@@ -44,6 +44,15 @@ setup() {
     [ "$(stat -c '%a' "${__BASHIO_CACHE_DIR}/key.cache")" = "600" ]
 }
 
+@test "cache.set fails if a stale entry cannot be removed" {
+    # If the existing entry cannot be removed, the value must not be written
+    # into an unknown target (for example a leftover symlink).
+    mkdir -p "${__BASHIO_CACHE_DIR}"
+    rm() { return 1; }
+    run bashio::cache.set "key" "value"
+    [ "${status}" -ne 0 ]
+}
+
 @test "cache.set tightens permissions on an existing cache file" {
     # A cache file left behind with a permissive mode must not keep that mode
     # when a new value is written into it.
