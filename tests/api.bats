@@ -118,6 +118,15 @@ setup() {
     [ "${curl_called}" -eq 0 ]
 }
 
+@test "api.supervisor GET does not depend on mktemp" {
+    # A GET has no secret body, so it must not fail when mktemp is unavailable.
+    mktemp() { return 1; }
+    MOCK_BODY='{"result":"ok","data":{"hello":"world"}}'
+    run bashio::api.supervisor GET /test false '.hello'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "world" ]
+}
+
 @test "api.supervisor never logs the request body" {
     log_out=''
     bashio::log.debug() { log_out+=" $*"; }

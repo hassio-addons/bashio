@@ -26,7 +26,7 @@ function bashio::api.supervisor() {
     local response
     local status
     local data='{}'
-    local data_file
+    local data_file=''
     local result
 
     # The request body can carry secrets (for example app options), so it is
@@ -45,15 +45,23 @@ function bashio::api.supervisor() {
         raw=
     fi
 
-    # Pass the request body through a temporary file (curl --data-binary @file)
-    # instead of a command-line argument, so a body carrying secrets is not
-    # exposed in the process list (/proc/<pid>/cmdline). The file is created
-    # with restrictive permissions by mktemp and removed right after the call.
-    if ! data_file=$(mktemp); then
-        bashio::log.error "Could not create a temporary file for the API request"
-        return "${__BASHIO_EXIT_NOK}"
+    # Only a POST body can carry secrets, so just that case is routed through a
+    # temporary file (curl --data-binary @file) instead of a command-line
+    # argument, keeping it out of the process list (/proc/<pid>/cmdline). The
+    # file is created with restrictive permissions by mktemp and removed right
+    # after the call. Other methods send their constant, non-sensitive body
+    # inline and therefore do not depend on mktemp.
+    local data_args
+    if [[ "${method}" = "POST" ]]; then
+        if ! data_file=$(mktemp); then
+            bashio::log.error "Could not create a temporary file for the API request"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
+        printf '%s' "${data}" >"${data_file}"
+        data_args=(--data-binary @"${data_file}")
+    else
+        data_args=(--data-binary "${data}")
     fi
-    printf '%s' "${data}" >"${data_file}"
 
     if ! response=$(
         # Pass the authorization header via stdin (curl -H @-) instead of a
@@ -64,15 +72,15 @@ function bashio::api.supervisor() {
             --write-out '\n%{http_code}' --request "${method}" \
             -H @- \
             -H "Content-Type: application/json" \
-            --data-binary @"${data_file}" \
+            "${data_args[@]}" \
             "${__BASHIO_SUPERVISOR_API}${resource}" <<<"${auth_header}"
     ); then
-        rm -f "${data_file}"
+        [[ -n "${data_file}" ]] && rm -f "${data_file}"
         bashio::log.debug "${response}"
         bashio::log.error "Something went wrong contacting the API"
         return "${__BASHIO_EXIT_NOK}"
     fi
-    rm -f "${data_file}"
+    [[ -n "${data_file}" ]] && rm -f "${data_file}"
 
     status=${response##*$'\n'}
     response=${response%"$status"}
