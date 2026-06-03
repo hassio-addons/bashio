@@ -57,7 +57,7 @@ setup() {
 
 @test "api.supervisor keeps the auth token out of the curl arguments" {
     __BASHIO_SUPERVISOR_TOKEN="SUPER_SECRET_TOKEN"
-    # Record curl's arguments and its stdin (the --config input) separately.
+    # Record curl's arguments and its stdin (the -H @- header) separately.
     curl() {
         printf '%s' "$*" >"${BATS_TEST_TMPDIR}/argv"
         cat >"${BATS_TEST_TMPDIR}/stdin"
@@ -67,7 +67,7 @@ setup() {
     # The token must not appear in the process arguments...
     run cat "${BATS_TEST_TMPDIR}/argv"
     [[ "${output}" != *"SUPER_SECRET_TOKEN"* ]]
-    # ...but must be supplied via stdin (the curl config).
+    # ...but must be supplied via stdin (the -H @- header).
     run cat "${BATS_TEST_TMPDIR}/stdin"
     [[ "${output}" == *"SUPER_SECRET_TOKEN"* ]]
 }
