@@ -45,3 +45,27 @@ source "${BATS_TEST_DIRNAME}/test_helper.bash"
     run bashio::jq.has_value '{"items":[]}' '.items'
     [ "${status}" -ne 0 ]
 }
+
+# The filter argument is documented as optional; without it the helpers should
+# operate on the whole document (identity filter).
+
+@test "jq without a filter returns the whole document" {
+    run bashio::jq '{"a":1}'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = '{"a":1}' ]
+}
+
+@test "jq.exists without a filter succeeds for non-empty data" {
+    run bashio::jq.exists '{"a":1}'
+    [ "${status}" -eq 0 ]
+}
+
+@test "jq.has_value without a filter succeeds for a non-empty object" {
+    run bashio::jq.has_value '{"a":1}'
+    [ "${status}" -eq 0 ]
+}
+
+@test "jq.is_object without a filter detects an object" {
+    run bashio::jq.is_object '{"a":1}'
+    [ "${status}" -eq 0 ]
+}

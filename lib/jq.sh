@@ -16,7 +16,7 @@
 # ------------------------------------------------------------------------------
 function bashio::jq() {
     local data=${1}
-    local filter=${2:-}
+    local filter=${2:-.}
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
@@ -36,7 +36,7 @@ function bashio::jq() {
 # ------------------------------------------------------------------------------
 function bashio::jq.exists() {
     local data=${1}
-    local filter=${2:-}
+    local filter=${2:-.}
     local value
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
@@ -58,7 +58,7 @@ function bashio::jq.exists() {
 # ------------------------------------------------------------------------------
 function bashio::jq.has_value() {
     local data=${1}
-    local filter=${2:-}
+    local filter=${2:-.}
     local value
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
@@ -82,7 +82,7 @@ function bashio::jq.has_value() {
 # ------------------------------------------------------------------------------
 function bashio::jq.is() {
     local data=${1}
-    local filter=${2}
+    local filter=${2:-.}
     local type=${3}
     local value
 
