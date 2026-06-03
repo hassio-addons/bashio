@@ -49,7 +49,10 @@ function bashio::api.supervisor() {
     # instead of a command-line argument, so a body carrying secrets is not
     # exposed in the process list (/proc/<pid>/cmdline). The file is created
     # with restrictive permissions by mktemp and removed right after the call.
-    data_file=$(mktemp)
+    if ! data_file=$(mktemp); then
+        bashio::log.error "Could not create a temporary file for the API request"
+        return "${__BASHIO_EXIT_NOK}"
+    fi
     printf '%s' "${data}" >"${data_file}"
 
     if ! response=$(

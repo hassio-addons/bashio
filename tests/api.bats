@@ -100,6 +100,24 @@ setup() {
     [[ "${output}" == *"SUPER_SECRET_BODY"* ]]
 }
 
+@test "api.supervisor fails cleanly when the temp file cannot be created" {
+    mktemp() { return 1; }
+    msg=''
+    bashio::log.error() { msg="$*"; }
+    curl_called=0
+    curl() {
+        curl_called=1
+        printf '%s\n%s' '{"result":"ok"}' '200'
+    }
+    rc=0
+    bashio::api.supervisor POST /test '{}' >/dev/null || rc=$?
+    # It must report the failure...
+    [ "${rc}" -ne 0 ]
+    [ -n "${msg}" ]
+    # ...without ever reaching the network call.
+    [ "${curl_called}" -eq 0 ]
+}
+
 @test "api.supervisor never logs the request body" {
     log_out=''
     bashio::log.debug() { log_out+=" $*"; }
