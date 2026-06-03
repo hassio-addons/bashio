@@ -50,7 +50,7 @@ function bashio::string.replace() {
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
-    printf "%s" "${string//${needle}/${replacement}}"
+    printf "%s" "${string//"${needle}"/${replacement}}"
 }
 
 # ------------------------------------------------------------------------------

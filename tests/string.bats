@@ -46,3 +46,15 @@ source "${BATS_TEST_DIRNAME}/test_helper.bash"
     [ "${status}" -eq 0 ]
     [ "${output}" = "ABC" ]
 }
+
+@test "bashio::string.replace treats an asterisk needle literally" {
+    run bashio::string.replace "a*b*c" "*" "-"
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "a-b-c" ]
+}
+
+@test "bashio::string.replace treats a question-mark needle literally" {
+    run bashio::string.replace "a?b" "?" "-"
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "a-b" ]
+}
