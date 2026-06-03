@@ -13,17 +13,19 @@
 # Arguments:
 #   $1 JSON string or path to a JSON file
 #   $2 jq filter (optional)
+#   $@ Extra jq arguments, e.g. --arg/--argjson to pass values safely (optional)
 # ------------------------------------------------------------------------------
 function bashio::jq() {
     local data=${1}
     local filter=${2:-.}
+    local arguments=("${@:3}")
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if [[ -f "${data}" ]]; then
-        jq --raw-output -c -M "$filter" "${data}"
+        jq --raw-output -c -M "${arguments[@]}" "$filter" "${data}"
     else
-        jq --raw-output -c -M "$filter" <<<"${data}"
+        jq --raw-output -c -M "${arguments[@]}" "$filter" <<<"${data}"
     fi
 }
 
