@@ -46,9 +46,10 @@ setup() {
 
 @test "cache.set fails if a stale entry cannot be removed" {
     # If the existing entry cannot be removed, the value must not be written
-    # into an unknown target (for example a leftover symlink).
-    mkdir -p "${__BASHIO_CACHE_DIR}"
-    rm() { return 1; }
+    # into an unknown target (for example a leftover symlink). A directory in
+    # place of the cache file makes "rm -f" fail without stubbing rm (which
+    # bats itself relies on for cleanup).
+    mkdir -p "${__BASHIO_CACHE_DIR}/key.cache"
     run bashio::cache.set "key" "value"
     [ "${status}" -ne 0 ]
 }
