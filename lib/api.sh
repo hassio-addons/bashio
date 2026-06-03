@@ -26,17 +26,47 @@ function bashio::api.supervisor() {
     local response
     local status
     local data='{}'
+    local data_file=''
     local result
 
-    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    # The request body can carry secrets (for example app options), so it is
+    # deliberately kept out of the trace log.
+    bashio::log.trace "${FUNCNAME[0]}" "${method}" "${resource}"
 
     if [[ -n "${__BASHIO_SUPERVISOR_TOKEN:-}" ]]; then
         auth_header="Authorization: Bearer ${__BASHIO_SUPERVISOR_TOKEN}"
     fi
 
-    if [[ "${method}" = "POST" ]] && bashio::var.has_value "${raw}"; then
+    # Use a plain emptiness test (not bashio::var.has_value) so the request
+    # body, which can carry secrets, is never passed to a helper that traces
+    # its arguments.
+    if [[ "${method}" = "POST" ]] && [[ -n "${raw}" ]]; then
         data="${raw}"
         raw=
+    fi
+
+    # Only a POST body can carry secrets, so just that case is routed through a
+    # temporary file (curl --data-binary @file) instead of a command-line
+    # argument, keeping it out of the process list (/proc/<pid>/cmdline). The
+    # file is created with restrictive permissions by mktemp and removed right
+    # after the call. Other methods send their constant, non-sensitive body
+    # inline and therefore do not depend on mktemp.
+    local data_args
+    if [[ "${method}" = "POST" ]]; then
+        if ! data_file=$(mktemp); then
+            bashio::log.error "Could not create a temporary file for the API request"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
+        # Remove the file (which may hold a secret) if the body cannot be
+        # written, rather than sending a partial body or leaking it on disk.
+        if ! printf '%s' "${data}" >"${data_file}"; then
+            rm -f "${data_file}"
+            bashio::log.error "Could not write the API request body to disk"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
+        data_args=(--data-binary @"${data_file}")
+    else
+        data_args=(--data-binary "${data}")
     fi
 
     if ! response=$(
@@ -48,20 +78,21 @@ function bashio::api.supervisor() {
             --write-out '\n%{http_code}' --request "${method}" \
             -H @- \
             -H "Content-Type: application/json" \
-            -d "${data}" \
+            "${data_args[@]}" \
             "${__BASHIO_SUPERVISOR_API}${resource}" <<<"${auth_header}"
     ); then
+        [[ -n "${data_file}" ]] && rm -f "${data_file}"
         bashio::log.debug "${response}"
         bashio::log.error "Something went wrong contacting the API"
         return "${__BASHIO_EXIT_NOK}"
     fi
+    [[ -n "${data_file}" ]] && rm -f "${data_file}"
 
     status=${response##*$'\n'}
     response=${response%"$status"}
 
     bashio::log.debug "Requested API resource: ${__BASHIO_SUPERVISOR_API}${resource}"
     bashio::log.debug "Request method: ${method}"
-    bashio::log.debug "Request data: ${data}"
     bashio::log.debug "API HTTP Response code: ${status}"
     bashio::log.debug "API Response: ${response}"
 
