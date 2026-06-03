@@ -86,7 +86,10 @@ function bashio::host() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns the hostname of the host system.
+# Returns or sets the hostname of the host system.
+#
+# Arguments:
+#   $1 Hostname to set (optional).
 # ------------------------------------------------------------------------------
 function bashio::host.hostname() {
     local hostname=${1:-}
@@ -167,7 +170,7 @@ function bashio::host.disk_total() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns the available diskspace on the host.
+# Returns the used diskspace on the host.
 # ------------------------------------------------------------------------------
 function bashio::host.disk_used() {
     bashio::log.trace "${FUNCNAME[0]}"

@@ -202,7 +202,7 @@ function bashio::core.boot() {
 # ------------------------------------------------------------------------------
 function bashio::core.port() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::core 'core.port' '.port'
+    bashio::core 'core.info.port' '.port'
 }
 
 # ------------------------------------------------------------------------------
