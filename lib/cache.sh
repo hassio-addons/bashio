@@ -58,7 +58,10 @@ function bashio::cache.set() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if ! bashio::fs.directory_exists "${__BASHIO_CACHE_DIR}"; then
-        mkdir -p "${__BASHIO_CACHE_DIR}" ||
+        # Cached values can contain secrets, so create the directory with an
+        # owner-only umask instead of relying on the (predictable) default
+        # permissions. A subshell keeps the umask change local to this call.
+        (umask 077 && mkdir -p "${__BASHIO_CACHE_DIR}") ||
             bashio::exit.nok "Could not create cache folder"
     fi
 
