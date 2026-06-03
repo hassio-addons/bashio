@@ -71,6 +71,11 @@ function bashio::cache.set() {
     chmod 0700 "${__BASHIO_CACHE_DIR}" ||
         bashio::exit.nok "Could not restrict permissions on the cache folder"
 
+    # Remove any existing entry first, so the value is always written to a
+    # freshly created file instead of inheriting a permissive mode from a file
+    # left behind by an older version.
+    rm -f "${__BASHIO_CACHE_DIR}/${key}.cache"
+
     # Write under a tight umask so the cache file (which can hold secrets) is
     # created owner-only instead of with the ambient umask.
     if ! (umask 077 && printf "%s" "$value" >"${__BASHIO_CACHE_DIR}/${key}.cache"); then
