@@ -23,8 +23,19 @@ setup() {
 
 @test "cache.set creates the cache directory with owner-only permissions" {
     # The cache can hold secrets, so the directory must not be accessible to
-    # other users in the container.
+    # other users in the container. Force a permissive umask first, so the test
+    # proves the result does not depend on the ambient umask.
+    umask 022
     bashio::cache.set "key" "value"
     [ -d "${__BASHIO_CACHE_DIR}" ]
+    [ "$(stat -c '%a' "${__BASHIO_CACHE_DIR}")" = "700" ]
+}
+
+@test "cache.set tightens permissions on an existing cache directory" {
+    # A directory left behind by an older version (or another process) with
+    # broader permissions must be restricted before secrets are written into it.
+    mkdir -p "${__BASHIO_CACHE_DIR}"
+    chmod 0755 "${__BASHIO_CACHE_DIR}"
+    bashio::cache.set "key" "value"
     [ "$(stat -c '%a' "${__BASHIO_CACHE_DIR}")" = "700" ]
 }

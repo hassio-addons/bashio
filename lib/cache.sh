@@ -65,6 +65,12 @@ function bashio::cache.set() {
             bashio::exit.nok "Could not create cache folder"
     fi
 
+    # Enforce owner-only access even if the directory already existed, for
+    # example one left behind by an older version with broader permissions.
+    if ! chmod 0700 "${__BASHIO_CACHE_DIR}"; then
+        bashio::log.warning "Could not restrict permissions on the cache folder"
+    fi
+
     if ! printf "%s" "$value" >"${__BASHIO_CACHE_DIR}/${key}.cache"; then
         bashio::log.warning "An error occurred while storing ${key} to cache"
         return "${__BASHIO_EXIT_NOK}"
