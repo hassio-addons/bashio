@@ -69,3 +69,9 @@ source "${BATS_TEST_DIRNAME}/test_helper.bash"
     run bashio::jq.is_object '{"a":1}'
     [ "${status}" -eq 0 ]
 }
+
+@test "jq forwards extra arguments (--arg) and binds the value literally" {
+    run bashio::jq '{}' '.name = $value' --arg value 'a"b'
+    [ "${status}" -eq 0 ]
+    [ "$(jq -r '.name' <<<"${output}")" = 'a"b' ]
+}

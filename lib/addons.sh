@@ -602,21 +602,24 @@ function bashio::addon.option() {
     local value=${2:-}
     local slug=${3:-'self'}
     local options
-    local item
+    local value_argument
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
     options=$(bashio::addon.options "${slug}")
 
     if bashio::var.has_value "${value}"; then
-        item="\"$value\""
+        # Pass the value through a jq variable so it cannot break out of the
+        # JSON to inject additional keys. A "^" prefix marks a raw JSON value
+        # (number, boolean, object); anything else is treated as a string.
+        value_argument=(--arg value "${value}")
         if [[ "${value:0:1}" == "^" ]]; then
-            item="${value:1}"
+            value_argument=(--argjson value "${value:1}")
         fi
 
         if bashio::jq.exists "${options}" ".${key}"; then
-            options=$(bashio::jq "${options}" ".${key} |= ${item}")
+            options=$(bashio::jq "${options}" ".${key} |= \$value" "${value_argument[@]}")
         else
-            options=$(bashio::jq "${options}" ".${key} = ${item}")
+            options=$(bashio::jq "${options}" ".${key} = \$value" "${value_argument[@]}")
         fi
     else
         options=$(bashio::jq "${options}" "del(.${key})")
