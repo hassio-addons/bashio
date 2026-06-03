@@ -44,3 +44,24 @@ setup() {
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /supervisor/options {"channel":"beta"}' ]
 }
+
+@test "supervisor.restart calls the restart endpoint" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::supervisor.restart
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "POST /supervisor/restart" ]
+}
+
+@test "supervisor.logs_latest fetches the latest logs" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::supervisor.logs_latest
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "GET /supervisor/logs/latest true" ]
+}
+
+@test "supervisor.diagnostics enables diagnostics as JSON options" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::supervisor.diagnostics "true"
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /supervisor/options {"diagnostics":true}' ]
+}
