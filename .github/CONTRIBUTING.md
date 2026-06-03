@@ -63,8 +63,8 @@ Each module has its own `tests/<module>.bats` file; `tests/test_helper.bash`
 loads the library so its functions are available to the tests. When you fix a
 bug or add a function, please add a test that covers it.
 
-In CI the suite runs under [bashcov][bashcov] and coverage is uploaded to
-[Codecov][codecov].
+In CI the suite runs under [bashcov][bashcov] and coverage is uploaded to both
+[Codecov][codecov] and GitHub's native code coverage.
 
 ## Pull request process
 
