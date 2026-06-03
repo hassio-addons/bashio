@@ -86,6 +86,8 @@ source "${__BASHIO_LIB_DIR}/multicast.sh"
 source "${__BASHIO_LIB_DIR}/net.sh"
 # shellcheck source=lib/network.sh
 source "${__BASHIO_LIB_DIR}/network.sh"
+# shellcheck source=lib/observer.sh
+source "${__BASHIO_LIB_DIR}/observer.sh"
 # shellcheck source=lib/os.sh
 source "${__BASHIO_LIB_DIR}/os.sh"
 # shellcheck source=lib/pwned.sh
