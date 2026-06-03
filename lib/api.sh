@@ -40,12 +40,15 @@ function bashio::api.supervisor() {
     fi
 
     if ! response=$(
+        # Pass the authorization header via stdin (curl --config) instead of a
+        # command-line argument, so the Supervisor token is not exposed in the
+        # process list (/proc/<pid>/cmdline).
         curl --silent --show-error \
             --write-out '\n%{http_code}' --request "${method}" \
-            -H "${auth_header}" \
             -H "Content-Type: application/json" \
             -d "${data}" \
-            "${__BASHIO_SUPERVISOR_API}${resource}"
+            --config - \
+            "${__BASHIO_SUPERVISOR_API}${resource}" <<<"header = \"${auth_header}\""
     ); then
         bashio::log.debug "${response}"
         bashio::log.error "Something went wrong contacting the API"
