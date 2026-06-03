@@ -1,0 +1,11 @@
+---
+# Coverage is still growing; keep the checks informational so they never block a
+# pull request while the suite is being expanded.
+coverage:
+  status:
+    project:
+      default:
+        informational: true
+    patch:
+      default:
+        informational: true

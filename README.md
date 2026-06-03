@@ -6,6 +6,7 @@
 
 [![GitHub Actions][github-actions-shield]][github-actions]
 [![OpenSSF Scorecard][scorecard-shield]][scorecard]
+[![Coverage on codecov][codecov-shield]][codecov]
 ![Project Maintenance][maintenance-shield]
 [![GitHub Activity][commits-shield]][commits]
 
@@ -171,6 +172,8 @@ SOFTWARE.
 [base-alpine]: https://github.com/hassio-addons/addon-base
 [base-debian]: https://github.com/hassio-addons/addon-debian-base
 [base-ubuntu]: https://github.com/hassio-addons/addon-ubuntu-base
+[codecov-shield]: https://codecov.io/gh/hassio-addons/bashio/branch/main/graph/badge.svg
+[codecov]: https://codecov.io/gh/hassio-addons/bashio
 [commits-shield]: https://img.shields.io/github/commit-activity/y/hassio-addons/bashio.svg
 [commits]: https://github.com/hassio-addons/bashio/commits/main
 [contributors]: https://github.com/hassio-addons/bashio/graphs/contributors

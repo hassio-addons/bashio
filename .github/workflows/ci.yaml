@@ -106,3 +106,27 @@ jobs:
         run: zizmor .github/workflows/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: 🏗 Set up bats
+        uses: bats-core/bats-action@77d6fb60505b4d0d1d73e48bd035b55074bbfb43 # 4.0.0
+      - name: 🏗 Set up Ruby
+        uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
+        with:
+          ruby-version: "3.4"
+      - name: 🏗 Install coverage tooling
+        run: gem install --no-document bashcov simplecov-cobertura
+      - name: 🚀 Run tests with coverage
+        run: bashcov -- bats tests/
+      - name: 📤 Upload coverage to Codecov
+        uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6.0.1
+        with:
+          files: ./coverage/coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}

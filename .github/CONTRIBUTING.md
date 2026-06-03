@@ -50,6 +50,22 @@ The following tools run on every pull request and must pass:
 - [codespell][codespell]: checks for common misspellings.
 - [zizmor][zizmor]: security auditing of the GitHub Actions workflows.
 
+## Tests
+
+The test suite lives in the [`tests`](../tests) folder and uses
+[Bats][bats-core]. After installing Bats, run it from the repository root:
+
+```bash
+bats tests/
+```
+
+Each module has its own `tests/<module>.bats` file; `tests/test_helper.bash`
+loads the library so its functions are available to the tests. When you fix a
+bug or add a function, please add a test that covers it.
+
+In CI the suite runs under [bashcov][bashcov] and coverage is uploaded to
+[Codecov][codecov].
+
 ## Pull request process
 
 1. Search the repository for open or closed [pull requests][prs] that relate to
@@ -64,7 +80,10 @@ The following tools run on every pull request and must pass:
    issues before you push.
 5. A maintainer will review your pull request and merge it once it is ready.
 
+[bashcov]: https://github.com/infertux/bashcov
+[bats-core]: https://github.com/bats-core/bats-core
 [bug-report]: https://github.com/hassio-addons/bashio/issues/new?template=bug_report.yml
+[codecov]: https://codecov.io/gh/hassio-addons/bashio
 [coc]: CODE_OF_CONDUCT.md
 [codespell]: https://github.com/codespell-project/codespell
 [discussions]: https://github.com/hassio-addons/bashio/discussions
