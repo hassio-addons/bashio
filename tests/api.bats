@@ -118,6 +118,26 @@ setup() {
     [ "${curl_called}" -eq 0 ]
 }
 
+@test "api.supervisor cleans up and fails if the body cannot be written" {
+    # Point mktemp at an unwritable path so the body write fails.
+    mktemp() { printf '%s' "/nonexistent-dir/bashio-body"; }
+    msg=''
+    bashio::log.error() { msg="$*"; }
+    curl_called=0
+    curl() {
+        curl_called=1
+        printf '%s\n%s' '{"result":"ok"}' '200'
+    }
+    rc=0
+    bashio::api.supervisor POST /test '{"password":"x"}' >/dev/null || rc=$?
+    # It must report the failure without sending the request...
+    [ "${rc}" -ne 0 ]
+    [ -n "${msg}" ]
+    [ "${curl_called}" -eq 0 ]
+    # ...and must not leave the body file behind.
+    [ ! -e "/nonexistent-dir/bashio-body" ]
+}
+
 @test "api.supervisor GET does not depend on mktemp" {
     # A GET has no secret body, so it must not fail when mktemp is unavailable.
     mktemp() { return 1; }

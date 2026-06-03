@@ -57,7 +57,13 @@ function bashio::api.supervisor() {
             bashio::log.error "Could not create a temporary file for the API request"
             return "${__BASHIO_EXIT_NOK}"
         fi
-        printf '%s' "${data}" >"${data_file}"
+        # Remove the file (which may hold a secret) if the body cannot be
+        # written, rather than sending a partial body or leaking it on disk.
+        if ! printf '%s' "${data}" >"${data_file}"; then
+            rm -f "${data_file}"
+            bashio::log.error "Could not write the API request body to disk"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
         data_args=(--data-binary @"${data_file}")
     else
         data_args=(--data-binary "${data}")
