@@ -119,8 +119,10 @@ setup() {
 }
 
 @test "api.supervisor cleans up and fails if the body cannot be written" {
-    # Point mktemp at an unwritable path so the body write fails.
-    mktemp() { printf '%s' "/nonexistent-dir/bashio-body"; }
+    # Point mktemp at a path whose parent directories do not exist (and are not
+    # created), so the body write deterministically fails.
+    local target="${BATS_TEST_TMPDIR}/missing/subdir/bashio-body"
+    mktemp() { printf '%s' "${target}"; }
     msg=''
     bashio::log.error() { msg="$*"; }
     curl_called=0
@@ -135,7 +137,7 @@ setup() {
     [ -n "${msg}" ]
     [ "${curl_called}" -eq 0 ]
     # ...and must not leave the body file behind.
-    [ ! -e "/nonexistent-dir/bashio-body" ]
+    [ ! -e "${target}" ]
 }
 
 @test "api.supervisor GET does not depend on mktemp" {
