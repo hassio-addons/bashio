@@ -204,7 +204,7 @@ function bashio::supervisor.timezone() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${timezone}"; then
-        channel=$(bashio::var.json timezone "${timezone}")
+        timezone=$(bashio::var.json timezone "${timezone}")
         bashio::api.supervisor POST /supervisor/options "${timezone}"
         bashio::cache.flush_all
     else
@@ -224,7 +224,7 @@ function bashio::supervisor.country() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${country}"; then
-        channel=$(bashio::var.json country "${country}")
+        country=$(bashio::var.json country "${country}")
         bashio::api.supervisor POST /supervisor/options "${country}"
         bashio::cache.flush_all
     else

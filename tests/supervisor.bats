@@ -65,3 +65,17 @@ setup() {
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /supervisor/options {"diagnostics":true}' ]
 }
+
+@test "supervisor.timezone sets the timezone as JSON options" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::supervisor.timezone "Europe/Amsterdam"
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /supervisor/options {"timezone":"Europe/Amsterdam"}' ]
+}
+
+@test "supervisor.country sets the country as JSON options" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::supervisor.country "NL"
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /supervisor/options {"country":"NL"}' ]
+}
