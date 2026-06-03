@@ -88,7 +88,6 @@ function bashio::pwned() {
             tr '[:lower:]' '[:upper:]' |
             awk -F' ' '{ print $1 }'
     )
-    bashio::log.debug "Password SHA1: ${password}"
 
     # Check with have I Been Pwned, only send the first 5 chars of the hash
     if ! response=$(
