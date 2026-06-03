@@ -79,3 +79,23 @@ setup() {
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /supervisor/options {"country":"NL"}' ]
 }
+
+# A failing API call must propagate, even when the setter is invoked in a
+# conditional context (where errexit is suppressed). The trailing cache flush
+# must not mask the failure. This covers the "POST then flush" setters...
+
+@test "supervisor.restart reports failure when the API call fails" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::supervisor.restart || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+# ...and the update if/else setters.
+
+@test "supervisor.update reports failure when the API call fails" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::supervisor.update "2024.1.0" || rc=$?
+    [ "${rc}" -ne 0 ]
+}

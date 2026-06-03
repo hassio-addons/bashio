@@ -12,7 +12,7 @@
 # ------------------------------------------------------------------------------
 function bashio::addons.reload() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.supervisor POST /addons/reload
+    bashio::api.supervisor POST /addons/reload || return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 
@@ -61,7 +61,7 @@ function bashio::addon.stop() {
 function bashio::addon.install() {
     local slug=${1}
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.supervisor POST "/store/addons/${slug}/install"
+    bashio::api.supervisor POST "/store/addons/${slug}/install" || return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 
@@ -86,7 +86,7 @@ function bashio::addon.rebuild() {
 function bashio::addon.uninstall() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.supervisor POST "/addons/${slug}/uninstall"
+    bashio::api.supervisor POST "/addons/${slug}/uninstall" || return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 
@@ -103,7 +103,7 @@ function bashio::addon.update() {
         slug=$(bashio::addon.slug)
     fi
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.supervisor POST "/store/addons/${slug}/update"
+    bashio::api.supervisor POST "/store/addons/${slug}/update" || return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 
@@ -364,7 +364,7 @@ function bashio::addon.auto_update() {
 
     if bashio::var.has_value "${auto_update}"; then
         auto_update=$(bashio::var.json auto_update "^${auto_update}")
-        bashio::api.supervisor POST "/addons/${slug}/options" "${auto_update}"
+        bashio::api.supervisor POST "/addons/${slug}/options" "${auto_update}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::addons \
@@ -548,7 +548,7 @@ function bashio::addon.boot() {
 
     if bashio::var.has_value "${boot}"; then
         boot=$(bashio::var.json boot "${boot}")
-        bashio::api.supervisor POST "/addons/${slug}/options" "${boot}"
+        bashio::api.supervisor POST "/addons/${slug}/options" "${boot}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::addons "${slug}" "addons.${slug}.boot" '.boot'
@@ -582,7 +582,7 @@ function bashio::addon.options() {
 
     if bashio::var.equals "$#" 2; then
         options=$(bashio::var.json options "^${options}")
-        bashio::api.supervisor POST "/addons/${slug}/options" "${options}"
+        bashio::api.supervisor POST "/addons/${slug}/options" "${options}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::addons "${slug}" "addons.${slug}.options" '.options'
@@ -675,7 +675,7 @@ function bashio::addon.network() {
 
     if bashio::var.equals "$#" 2; then
         network=$(bashio::var.json network "^${network}")
-        bashio::api.supervisor POST "/addons/${slug}/options" "${network}"
+        bashio::api.supervisor POST "/addons/${slug}/options" "${network}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::addons "${slug}" \
@@ -1154,7 +1154,7 @@ function bashio::addon.audio_input() {
 
     if bashio::var.equals "$#" 2; then
         audio_input=$(bashio::var.json audio_input "${audio_input}")
-        bashio::api.supervisor POST "/addons/${slug}/options" "${audio_input}"
+        bashio::api.supervisor POST "/addons/${slug}/options" "${audio_input}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::addons \
@@ -1179,7 +1179,7 @@ function bashio::addon.audio_output() {
 
     if bashio::var.equals "$#" 2; then
         audio_output=$(bashio::var.json audio_output "${audio_output}")
-        bashio::api.supervisor POST "/addons/${slug}/options" "${audio_output}"
+        bashio::api.supervisor POST "/addons/${slug}/options" "${audio_output}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::addons \
@@ -1273,7 +1273,7 @@ function bashio::addon.ingress_panel() {
 
     if bashio::var.has_value "${ingress_panel}"; then
         ingress_panel=$(bashio::var.json ingress_panel "^${ingress_panel}")
-        bashio::api.supervisor POST "/addons/${slug}/options" "${ingress_panel}"
+        bashio::api.supervisor POST "/addons/${slug}/options" "${ingress_panel}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::addons \
@@ -1298,7 +1298,7 @@ function bashio::addon.watchdog() {
 
     if bashio::var.has_value "${watchdog}"; then
         watchdog=$(bashio::var.json watchdog "^${watchdog}")
-        bashio::api.supervisor POST "/addons/${slug}/options" "${watchdog}"
+        bashio::api.supervisor POST "/addons/${slug}/options" "${watchdog}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::addons \

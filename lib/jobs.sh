@@ -12,7 +12,7 @@
 # ------------------------------------------------------------------------------
 function bashio::jobs.reset() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.supervisor POST /jobs/reset
+    bashio::api.supervisor POST /jobs/reset || return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 

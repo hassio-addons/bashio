@@ -95,7 +95,7 @@ function bashio::host.hostname() {
 
     if bashio::var.has_value "${hostname}"; then
         hostname=$(bashio::var.json hostname "${hostname}")
-        bashio::api.supervisor POST /host/options "${hostname}"
+        bashio::api.supervisor POST /host/options "${hostname}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::host 'host.info.hostname' '.hostname'

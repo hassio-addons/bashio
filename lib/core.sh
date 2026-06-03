@@ -52,9 +52,9 @@ function bashio::core.update() {
 
     if bashio::var.has_value "${version}"; then
         version=$(bashio::var.json version "${version}")
-        bashio::api.supervisor POST /core/update "${version}"
+        bashio::api.supervisor POST /core/update "${version}" || return "${__BASHIO_EXIT_NOK}"
     else
-        bashio::api.supervisor POST /core/update
+        bashio::api.supervisor POST /core/update || return "${__BASHIO_EXIT_NOK}"
     fi
     bashio::cache.flush_all
 }
@@ -174,7 +174,7 @@ function bashio::core.image() {
 
     if bashio::var.has_value "${image}"; then
         image=$(bashio::var.json image "${image}")
-        bashio::api.supervisor POST /core/options "${image}"
+        bashio::api.supervisor POST /core/options "${image}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::core 'core.info.image' '.image'
@@ -226,7 +226,7 @@ function bashio::core.watchdog() {
 
     if bashio::var.has_value "${watchdog}"; then
         watchdog=$(bashio::var.json watchdog "^${watchdog}")
-        bashio::api.supervisor POST /core/options "${watchdog}"
+        bashio::api.supervisor POST /core/options "${watchdog}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::core 'core.info.watchdog' '.watchdog // false'

@@ -12,7 +12,7 @@
 # ------------------------------------------------------------------------------
 function bashio::backups.reload() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.supervisor POST /backups/reload
+    bashio::api.supervisor POST /backups/reload || return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 
@@ -31,7 +31,7 @@ function bashio::backups.freeze() {
     if bashio::var.has_value "${timeout}"; then
         options=$(bashio::var.json timeout "^${timeout}")
     fi
-    bashio::api.supervisor POST /backups/freeze "${options}"
+    bashio::api.supervisor POST /backups/freeze "${options}" || return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 
@@ -40,7 +40,7 @@ function bashio::backups.freeze() {
 # ------------------------------------------------------------------------------
 function bashio::backups.thaw() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.supervisor POST /backups/thaw
+    bashio::api.supervisor POST /backups/thaw || return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 
@@ -57,7 +57,7 @@ function bashio::backups.days_until_stale() {
 
     if bashio::var.has_value "${days_until_stale}"; then
         days_until_stale=$(bashio::var.json days_until_stale "^${days_until_stale}")
-        bashio::api.supervisor POST "/backups/options" "${days_until_stale}"
+        bashio::api.supervisor POST "/backups/options" "${days_until_stale}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::backups \

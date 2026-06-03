@@ -20,9 +20,9 @@ function bashio::observer.update() {
 
     if bashio::var.has_value "${version}"; then
         version=$(bashio::var.json version "${version}")
-        bashio::api.supervisor POST /observer/update "${version}"
+        bashio::api.supervisor POST /observer/update "${version}" || return "${__BASHIO_EXIT_NOK}"
     else
-        bashio::api.supervisor POST /observer/update
+        bashio::api.supervisor POST /observer/update || return "${__BASHIO_EXIT_NOK}"
     fi
     bashio::cache.flush_all
 }

@@ -145,7 +145,7 @@ function bashio::repository.add() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     repository=$(bashio::var.json repository "${repository}")
-    bashio::api.supervisor POST "/store/repositories" "${repository}"
+    bashio::api.supervisor POST "/store/repositories" "${repository}" || return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 

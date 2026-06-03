@@ -20,9 +20,9 @@ function bashio::multicast.update() {
 
     if bashio::var.has_value "${version}"; then
         version=$(bashio::var.json version "${version}")
-        bashio::api.supervisor POST /multicast/update "${version}"
+        bashio::api.supervisor POST /multicast/update "${version}" || return "${__BASHIO_EXIT_NOK}"
     else
-        bashio::api.supervisor POST /multicast/update
+        bashio::api.supervisor POST /multicast/update || return "${__BASHIO_EXIT_NOK}"
     fi
     bashio::cache.flush_all
 }
@@ -32,7 +32,7 @@ function bashio::multicast.update() {
 # ------------------------------------------------------------------------------
 function bashio::multicast.restart() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.supervisor POST /multicast/restart
+    bashio::api.supervisor POST /multicast/restart || return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 

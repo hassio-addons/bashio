@@ -13,7 +13,7 @@
 # ------------------------------------------------------------------------------
 function bashio::network.reload() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.supervisor POST /network/reload
+    bashio::api.supervisor POST /network/reload || return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 
@@ -176,7 +176,7 @@ function bashio::network.enabled() {
 
     if bashio::var.has_value "${enabled}"; then
         enabled=$(bashio::var.json enabled "^${enabled}")
-        bashio::api.supervisor POST "/network/interface/${interface}/update" "${enabled}"
+        bashio::api.supervisor POST "/network/interface/${interface}/update" "${enabled}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::network.interface "network.interface.${interface}.info.enabled" "${interface}" '.enabled'
@@ -315,7 +315,7 @@ function bashio::network.ipv4() {
 
     if bashio::var.has_value "${ipv4}"; then
         ipv4=$(bashio::var.json ipv4 "^${ipv4}")
-        bashio::api.supervisor POST "/network/interface/${interface}/update" "${ipv4}"
+        bashio::api.supervisor POST "/network/interface/${interface}/update" "${ipv4}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::network.interface "network.interface.${interface}.info.ipv4" "${interface}" '.ipv4'
@@ -337,7 +337,7 @@ function bashio::network.ipv6() {
 
     if bashio::var.has_value "${ipv6}"; then
         ipv6=$(bashio::var.json ipv6 "^${ipv6}")
-        bashio::api.supervisor POST "/network/interface/${interface}/update" "${ipv6}"
+        bashio::api.supervisor POST "/network/interface/${interface}/update" "${ipv6}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
         bashio::network.interface "network.interface.${interface}.info.ipv6" "${interface}" '.ipv6'
