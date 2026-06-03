@@ -379,7 +379,7 @@ function bashio::config.require.username() {
 #   $1 Key of the config option (optional: defaults to 'username')
 # ------------------------------------------------------------------------------
 function bashio::config.suggest.username() {
-    local key=${1}
+    local key=${1:-"username"}
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 

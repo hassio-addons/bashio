@@ -43,7 +43,6 @@ version-resolver:
   patch:
     labels:
       - "bugfix"
-      - "chore"
       - "ci"
       - "dependencies"
       - "documentation"

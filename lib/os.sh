@@ -98,7 +98,7 @@ function bashio::os.version_latest() {
 }
 
 # ------------------------------------------------------------------------------
-# Checks if there is an update available for the Supervisor.
+# Checks if there is an update available for the OS.
 # ------------------------------------------------------------------------------
 function bashio::os.update_available() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"

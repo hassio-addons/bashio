@@ -162,5 +162,5 @@ function bashio::info.operating_system() {
 # ------------------------------------------------------------------------------
 function bashio::info.state() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::info 'supervisor.info.running' '.state'
+    bashio::info 'supervisor.info.state' '.state'
 }
