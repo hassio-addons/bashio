@@ -253,3 +253,10 @@ setup() {
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "DELETE /jobs/111" ]
 }
+
+@test "job.delete propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::job.delete "111" || rc=$?
+    [ "${rc}" -ne 0 ]
+}

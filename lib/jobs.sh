@@ -201,6 +201,7 @@ function bashio::job.delete() {
     local uuid=${1}
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::api.supervisor "DELETE" "/jobs/${uuid}"
+    bashio::api.supervisor "DELETE" "/jobs/${uuid}" ||
+        return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }

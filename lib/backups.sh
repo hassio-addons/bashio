@@ -376,7 +376,8 @@ function bashio::backup.new_partial() {
 function bashio::backup.delete() {
     local slug=${1}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::api.supervisor DELETE "/backups/${slug}"
+    bashio::api.supervisor DELETE "/backups/${slug}" ||
+        return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 

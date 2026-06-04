@@ -159,7 +159,8 @@ function bashio::repository.delete() {
     local slug=${1}
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::api.supervisor "DELETE" "/store/repositories/${slug}"
+    bashio::api.supervisor "DELETE" "/store/repositories/${slug}" ||
+        return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 
@@ -173,6 +174,7 @@ function bashio::repository.repair() {
     local slug=${1}
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::api.supervisor "POST" "/store/repositories/${slug}/repair"
+    bashio::api.supervisor "POST" "/store/repositories/${slug}/repair" ||
+        return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }

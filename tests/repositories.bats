@@ -253,6 +253,13 @@ setup() {
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "DELETE /store/repositories/core" ]
 }
 
+@test "repository.delete propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::repository.delete "core" || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
 # ------------------------------------------------------------------------------
 # bashio::repository.repair
 # ------------------------------------------------------------------------------
@@ -262,4 +269,11 @@ setup() {
     run bashio::repository.repair "core"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "POST /store/repositories/core/repair" ]
+}
+
+@test "repository.repair propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::repository.repair "core" || rc=$?
+    [ "${rc}" -ne 0 ]
 }

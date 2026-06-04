@@ -27,7 +27,8 @@ function bashio::discovery() {
             config "^${config}"
     )
 
-    bashio::api.supervisor "POST" "/discovery" "${payload}" ".uuid"
+    bashio::api.supervisor "POST" "/discovery" "${payload}" ".uuid" ||
+        return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 
@@ -41,6 +42,7 @@ function bashio::discovery.delete() {
     local uuid=${1}
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::api.supervisor "DELETE" "/discovery/${uuid}"
+    bashio::api.supervisor "DELETE" "/discovery/${uuid}" ||
+        return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
