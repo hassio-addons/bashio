@@ -25,6 +25,8 @@ setup() {
 @test "exit.nok terminates with the failure code" {
     run bashio::exit.nok
     [ "${status}" -eq "${__BASHIO_EXIT_NOK}" ]
+    # Without a message it must not emit a fatal line.
+    [ -z "${output}" ]
 }
 
 @test "exit.nok logs the message at fatal level before exiting" {
@@ -65,9 +67,17 @@ setup() {
 }
 
 @test "the die_if_* helpers forward their message to the fatal log" {
+    run bashio::exit.die_if_false "false" "boom from die_if_false"
+    [ "${status}" -eq "${__BASHIO_EXIT_NOK}" ]
+    [[ "${output}" == *"boom from die_if_false"* ]]
+
     run bashio::exit.die_if_true "true" "boom from die_if_true"
     [ "${status}" -eq "${__BASHIO_EXIT_NOK}" ]
     [[ "${output}" == *"boom from die_if_true"* ]]
+
+    run bashio::exit.die_if_empty "" "boom from die_if_empty"
+    [ "${status}" -eq "${__BASHIO_EXIT_NOK}" ]
+    [[ "${output}" == *"boom from die_if_empty"* ]]
 }
 
 @test "the deprecated die_if_true alias warns and still delegates" {
