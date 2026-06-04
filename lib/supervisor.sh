@@ -384,7 +384,7 @@ function bashio::supervisor.detect_blocking_io() {
 function bashio::supervisor.addons() {
     # this is for backward compatibility
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::addons.installed
+    bashio::apps.installed
 }
 
 # ------------------------------------------------------------------------------

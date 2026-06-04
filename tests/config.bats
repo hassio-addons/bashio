@@ -2,7 +2,7 @@
 # ==============================================================================
 # Tests for lib/config.sh.
 #
-# `bashio::config` reads the add-on options through `bashio::addon.config`
+# `bashio::config` reads the add-on options through `bashio::app.config`
 # (which normally calls the Supervisor API). That boundary is stubbed here with
 # a fixed options document, so the real jq-based parsing logic is exercised.
 #
@@ -25,7 +25,7 @@ setup() {
     bashio::log.fatal() { printf '%s\n' "$*" >>"${BATS_TEST_TMPDIR}/log"; }
     bashio::log.warning() { printf '%s\n' "$*" >>"${BATS_TEST_TMPDIR}/log"; }
 
-    bashio::addon.config() {
+    bashio::app.config() {
         printf '%s' '{
             "username": "frenck",
             "port": 1234,
@@ -254,7 +254,7 @@ setup() {
 }
 
 @test "config.is_safe_password succeeds for an unsafe password when bypass is enabled" {
-    bashio::addon.config() {
+    bashio::app.config() {
         printf '%s' '{"password":"secret","i_like_to_be_pwned":true}'
     }
     bashio::pwned.is_safe_password() { return 1; }
@@ -366,7 +366,7 @@ setup() {
 }
 
 @test "config.require.username fails with the default key when not set" {
-    bashio::addon.config() { printf '%s' '{}'; }
+    bashio::app.config() { printf '%s' '{}'; }
     run bashio::config.require.username
     [ "${status}" -ne 0 ]
 }
@@ -385,7 +385,7 @@ setup() {
 }
 
 @test "config.suggest.username warns when no username is set" {
-    bashio::addon.config() { printf '%s' '{}'; }
+    bashio::app.config() { printf '%s' '{}'; }
     run bashio::config.suggest.username
     [ "${status}" -eq 0 ]
     run cat "${BATS_TEST_TMPDIR}/log"
@@ -397,19 +397,19 @@ setup() {
 # ------------------------------------------------------------------------------
 
 @test "config.require.password succeeds when a password is set" {
-    bashio::addon.config() { printf '%s' '{"password":"secret"}'; }
+    bashio::app.config() { printf '%s' '{"password":"secret"}'; }
     run bashio::config.require.password
     [ "${status}" -eq 0 ]
 }
 
 @test "config.require.password fails when no password is set" {
-    bashio::addon.config() { printf '%s' '{}'; }
+    bashio::app.config() { printf '%s' '{}'; }
     run bashio::config.require.password
     [ "${status}" -ne 0 ]
 }
 
 @test "config.require.password reports the custom key when not set" {
-    bashio::addon.config() { printf '%s' '{}'; }
+    bashio::app.config() { printf '%s' '{}'; }
     run bashio::config.require.password "secret_key"
     [ "${status}" -ne 0 ]
     run cat "${BATS_TEST_TMPDIR}/log"
@@ -417,14 +417,14 @@ setup() {
 }
 
 @test "config.suggest.password stays silent when a password is set" {
-    bashio::addon.config() { printf '%s' '{"password":"secret"}'; }
+    bashio::app.config() { printf '%s' '{"password":"secret"}'; }
     run bashio::config.suggest.password
     [ "${status}" -eq 0 ]
     [ ! -e "${BATS_TEST_TMPDIR}/log" ]
 }
 
 @test "config.suggest.password warns when no password is set" {
-    bashio::addon.config() { printf '%s' '{}'; }
+    bashio::app.config() { printf '%s' '{}'; }
     run bashio::config.suggest.password
     [ "${status}" -eq 0 ]
     run cat "${BATS_TEST_TMPDIR}/log"
@@ -436,7 +436,7 @@ setup() {
 # ------------------------------------------------------------------------------
 
 @test "config.require.safe_password succeeds for a set and safe password" {
-    bashio::addon.config() { printf '%s' '{"password":"secret"}'; }
+    bashio::app.config() { printf '%s' '{"password":"secret"}'; }
     bashio::pwned.is_safe_password() {
         printf '%s' "$*" >"${BATS_TEST_TMPDIR}/pwned"
         return 0
@@ -447,7 +447,7 @@ setup() {
 }
 
 @test "config.require.safe_password fails when no password is set" {
-    bashio::addon.config() { printf '%s' '{}'; }
+    bashio::app.config() { printf '%s' '{}'; }
     # The pwned check must never run when the password is missing; record a
     # marker file (which survives the subshell) if it ever does.
     bashio::pwned.is_safe_password() {
@@ -460,7 +460,7 @@ setup() {
 }
 
 @test "config.require.safe_password fails for a set but unsafe password" {
-    bashio::addon.config() { printf '%s' '{"password":"secret"}'; }
+    bashio::app.config() { printf '%s' '{"password":"secret"}'; }
     bashio::pwned.is_safe_password() { return 1; }
     run bashio::config.require.safe_password
     [ "${status}" -ne 0 ]
@@ -473,7 +473,7 @@ setup() {
 # ------------------------------------------------------------------------------
 
 @test "config.suggest.safe_password stays silent for a set and safe password" {
-    bashio::addon.config() { printf '%s' '{"password":"secret"}'; }
+    bashio::app.config() { printf '%s' '{"password":"secret"}'; }
     bashio::pwned.is_safe_password() { return 0; }
     run bashio::config.suggest.safe_password
     [ "${status}" -eq 0 ]
@@ -481,7 +481,7 @@ setup() {
 }
 
 @test "config.suggest.safe_password suggests setting a password when none is set" {
-    bashio::addon.config() { printf '%s' '{}'; }
+    bashio::app.config() { printf '%s' '{}'; }
     # When no password is set, it falls through to suggest.password (which
     # warns) and must not consult the pwned database.
     bashio::pwned.is_safe_password() {
@@ -496,7 +496,7 @@ setup() {
 }
 
 @test "config.suggest.safe_password warns for a set but unsafe password" {
-    bashio::addon.config() { printf '%s' '{"password":"secret"}'; }
+    bashio::app.config() { printf '%s' '{"password":"secret"}'; }
     bashio::pwned.is_safe_password() { return 1; }
     run bashio::config.suggest.safe_password
     [ "${status}" -eq 0 ]
@@ -509,7 +509,7 @@ setup() {
 # ------------------------------------------------------------------------------
 
 @test "config.require.ssl succeeds without checks when SSL is disabled" {
-    bashio::addon.config() { printf '%s' '{"ssl":false}'; }
+    bashio::app.config() { printf '%s' '{"ssl":false}'; }
     # No certificate files should be probed when SSL is off. Use a marker file
     # because the stub runs in run's subshell, where a shell variable would not
     # propagate back to this test.
@@ -523,7 +523,7 @@ setup() {
 }
 
 @test "config.require.ssl succeeds when SSL is enabled and both files exist" {
-    bashio::addon.config() {
+    bashio::app.config() {
         printf '%s' '{"ssl":true,"certfile":"cert.pem","keyfile":"key.pem"}'
     }
     bashio::fs.file_exists() { return 0; }
@@ -532,7 +532,7 @@ setup() {
 }
 
 @test "config.require.ssl fails when the certificate option is empty" {
-    bashio::addon.config() {
+    bashio::app.config() {
         printf '%s' '{"ssl":true,"certfile":"","keyfile":"key.pem"}'
     }
     bashio::fs.file_exists() { return 0; }
@@ -543,7 +543,7 @@ setup() {
 }
 
 @test "config.require.ssl fails when the key file option is empty" {
-    bashio::addon.config() {
+    bashio::app.config() {
         printf '%s' '{"ssl":true,"certfile":"cert.pem","keyfile":""}'
     }
     bashio::fs.file_exists() { return 0; }
@@ -554,7 +554,7 @@ setup() {
 }
 
 @test "config.require.ssl fails when the certificate file is missing on disk" {
-    bashio::addon.config() {
+    bashio::app.config() {
         printf '%s' '{"ssl":true,"certfile":"cert.pem","keyfile":"key.pem"}'
     }
     # Only the key file exists; the certificate file does not.
@@ -569,7 +569,7 @@ setup() {
 }
 
 @test "config.require.ssl fails when the key file is missing on disk" {
-    bashio::addon.config() {
+    bashio::app.config() {
         printf '%s' '{"ssl":true,"certfile":"cert.pem","keyfile":"key.pem"}'
     }
     # Only the certificate file exists; the key file does not.
@@ -584,7 +584,7 @@ setup() {
 }
 
 @test "config.require.ssl honours custom option keys" {
-    bashio::addon.config() {
+    bashio::app.config() {
         printf '%s' '{"tls":true,"crt":"my.crt","ky":"my.key"}'
     }
     bashio::fs.file_exists() {
