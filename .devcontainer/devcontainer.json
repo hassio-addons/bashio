@@ -1,0 +1,34 @@
+{
+  "name": "bashio",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.13"
+    }
+  },
+  "onCreateCommand": "bash .devcontainer/setup.sh",
+  "postCreateCommand": "prek install",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "timonwong.shellcheck",
+        "foxundermoon.shell-format",
+        "esbenp.prettier-vscode",
+        "redhat.vscode-yaml",
+        "github.vscode-pull-request-github",
+        "github.vscode-github-actions"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "shellformat.flag": "-i 4 -ci"
+      }
+    }
+  },
+  "remoteUser": "vscode"
+}
