@@ -29,12 +29,15 @@ setup() {
 # ---------------------------------------------------------------------------
 
 @test "hardware calls GET /hardware/info" {
+    local args_file="${BATS_TEST_TMPDIR}/api_args"
     bashio::api.supervisor() {
+        printf '%s' "$*" >"${args_file}"
         printf '%s' "${HARDWARE_JSON}"
     }
     run bashio::hardware
     [ "${status}" -eq 0 ]
     [ "${output}" = "${HARDWARE_JSON}" ]
+    [ "$(cat "${args_file}")" = "GET /hardware/info false" ]
 }
 
 @test "hardware applies an optional jq filter" {
@@ -92,8 +95,9 @@ setup() {
 @test "hardware.serial returns empty output when the list is empty" {
     bashio::api.supervisor() { printf '%s' '{"serial":[],"input":[],"disk":[],"gpio":[],"usb":[]}'; }
     run bashio::hardware.serial
-    # An empty jq array expansion produces no output; the command may return
-    # non-zero because jq emits nothing for an empty array iteration.
+    # bashio::jq runs jq without -e, so iterating an empty array exits 0 with
+    # no output.
+    [ "${status}" -eq 0 ]
     [ "${output}" = "" ]
 }
 
