@@ -22,7 +22,7 @@ setup() {
     # are all validated in their correct positions, not as loose substrings.
     bashio::api.supervisor() {
         printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call"
-        printf '%s' '"abc-uuid"'
+        printf '%s' 'abc-uuid'
     }
     # Build the exact payload the function is expected to send, using the same
     # helper, so the comparison stays robust to JSON key ordering.
@@ -41,7 +41,7 @@ setup() {
     bashio::api.supervisor() {
         # Write the payload argument (3rd positional) to a file for inspection.
         printf '%s' "$3" >"${BATS_TEST_TMPDIR}/payload"
-        printf '%s' '"test-uuid"'
+        printf '%s' 'test-uuid'
     }
     bashio::discovery "myservice" '{"key":"value"}' >/dev/null
     payload="$(cat "${BATS_TEST_TMPDIR}/payload")"
@@ -51,7 +51,7 @@ setup() {
 @test "discovery payload embeds the config object" {
     bashio::api.supervisor() {
         printf '%s' "$3" >"${BATS_TEST_TMPDIR}/payload"
-        printf '%s' '"test-uuid"'
+        printf '%s' 'test-uuid'
     }
     bashio::discovery "myservice" '{"host":"broker.local","port":1883}' >/dev/null
     payload="$(cat "${BATS_TEST_TMPDIR}/payload")"
@@ -71,7 +71,7 @@ setup() {
     bashio::cache.set "some.key" "some.value"
     [ -f "${BATS_TEST_TMPDIR}/cache/some.key.cache" ]
 
-    bashio::api.supervisor() { printf '%s' '"new-uuid"'; }
+    bashio::api.supervisor() { printf '%s' 'new-uuid'; }
     bashio::discovery "mqtt" '{"host":"x"}' >/dev/null
     # Cache directory must be gone after publish.
     [ ! -d "${BATS_TEST_TMPDIR}/cache" ]
