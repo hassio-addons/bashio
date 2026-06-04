@@ -66,3 +66,44 @@ setup() {
     run bashio::cache.get "key"
     [ "${output}" = "value" ]
 }
+
+@test "cache.set rejects a key containing a slash and writes nothing" {
+    run bashio::cache.set "sub/dir" "value"
+    [ "${status}" -ne 0 ]
+    [ ! -e "${__BASHIO_CACHE_DIR}/sub" ]
+}
+
+@test "cache.set rejects a path-traversal key without escaping the cache dir" {
+    run bashio::cache.set "../escaped" "secret"
+    [ "${status}" -ne 0 ]
+    # Nothing must be written outside the cache directory.
+    [ ! -e "${BATS_TEST_TMPDIR}/escaped.cache" ]
+}
+
+@test "cache.exists rejects an invalid key" {
+    run bashio::cache.exists "../escaped"
+    [ "${status}" -ne 0 ]
+}
+
+@test "cache.get rejects an invalid key" {
+    run bashio::cache.get "bad/key"
+    [ "${status}" -ne 0 ]
+}
+
+@test "cache.flush rejects an invalid key" {
+    run bashio::cache.flush "../../etc/passwd"
+    [ "${status}" -ne 0 ]
+}
+
+@test "cache.set rejects an empty key" {
+    run bashio::cache.set "" "value"
+    [ "${status}" -ne 0 ]
+}
+
+@test "cache.set accepts dotted, hyphen and underscore keys" {
+    # The keys bashio itself uses (e.g. addons.<slug>.info, eth0 interfaces).
+    bashio::cache.set "apps.core_ssh-2.info" "value"
+    run bashio::cache.get "apps.core_ssh-2.info"
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "value" ]
+}
