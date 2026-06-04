@@ -94,6 +94,8 @@ source "${__BASHIO_LIB_DIR}/os.sh"
 source "${__BASHIO_LIB_DIR}/pwned.sh"
 # shellcheck source=lib/repositories.sh
 source "${__BASHIO_LIB_DIR}/repositories.sh"
+# shellcheck source=lib/security.sh
+source "${__BASHIO_LIB_DIR}/security.sh"
 # shellcheck source=lib/services.sh
 source "${__BASHIO_LIB_DIR}/services.sh"
 # shellcheck source=lib/string.sh
