@@ -86,9 +86,10 @@ setup() {
     }
     run bashio::services "mqtt" "tags"
     [ "${status}" -eq 0 ]
-    [[ "${output}" == *"a"* ]]
-    [[ "${output}" == *"b"* ]]
-    [[ "${output}" == *"c"* ]]
+    [ "${#lines[@]}" -eq 3 ]
+    [ "${lines[0]}" = "a" ]
+    [ "${lines[1]}" = "b" ]
+    [ "${lines[2]}" = "c" ]
 }
 
 @test "services returns empty output for an empty array field" {
@@ -122,7 +123,9 @@ setup() {
     local call_file="${BATS_TEST_TMPDIR}/calls"
     printf '0' >"${call_file}"
     bashio::api.supervisor() {
-        printf '%d' $(($(cat "${call_file}") + 1)) >"${call_file}"
+        local count
+        count=$(cat "${call_file}")
+        printf '%d' "$((count + 1))" >"${call_file}"
         printf '%s' "${SERVICE_JSON}"
     }
     # Call both without `run` so the cache state is shared.
