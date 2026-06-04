@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 # ==============================================================================
-# Tests for lib/addons.sh.
+# Tests for lib/apps.sh.
 #
 # These tests stub the API boundary (`bashio::api.supervisor`) and let the real
 # `bashio::apps` fetcher, jq filtering, and caching run. The cache is pointed
