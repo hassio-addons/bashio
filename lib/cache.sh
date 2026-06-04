@@ -8,6 +8,35 @@
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
+# Checks that a cache key is a safe filename, to prevent path traversal.
+#
+# The key is interpolated into the path "${__BASHIO_CACHE_DIR}/<key>.cache", so
+# it must be a single path component: a slash or other unexpected character
+# could read from or write to a location outside the cache directory. Keys are
+# restricted to letters, digits, dots, underscores and hyphens; every key
+# bashio itself uses fits this.
+#
+# Arguments:
+#   $1 Cache key
+# ------------------------------------------------------------------------------
+function bashio::cache.__valid_key() {
+    local key=${1:-}
+    local display
+
+    if [[ "${key}" =~ ^[A-Za-z0-9._-]+$ ]]; then
+        return "${__BASHIO_EXIT_OK}"
+    fi
+
+    # Sanitize the rejected (untrusted) key before logging it: strip control
+    # characters and backslashes so it cannot inject newlines or escape
+    # sequences through the log formatter's printf '%b'.
+    display=${key//[[:cntrl:]]/?}
+    display=${display//\\/?}
+    bashio::log.error "Invalid cache key: '${display}'"
+    return "${__BASHIO_EXIT_NOK}"
+}
+
+# ------------------------------------------------------------------------------
 # Check if a cache key exists in the cache
 #
 # Arguments:
@@ -17,6 +46,8 @@ function bashio::cache.exists() {
     local key=${1}
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    bashio::cache.__valid_key "${key}" || return "${__BASHIO_EXIT_NOK}"
 
     if bashio::fs.file_exists "${__BASHIO_CACHE_DIR}/${key}.cache"; then
         return "${__BASHIO_EXIT_OK}"
@@ -56,6 +87,8 @@ function bashio::cache.set() {
     local value=${2}
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    bashio::cache.__valid_key "${key}" || return "${__BASHIO_EXIT_NOK}"
 
     if ! bashio::fs.directory_exists "${__BASHIO_CACHE_DIR}"; then
         # Cached values can contain secrets, so create the directory with an
@@ -100,6 +133,8 @@ function bashio::cache.flush() {
     local key=${1}
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    bashio::cache.__valid_key "${key}" || return "${__BASHIO_EXIT_NOK}"
 
     if ! rm -f "${__BASHIO_CACHE_DIR}/${key}.cache"; then
         bashio::exit.nok "An error occurred while flushing ${key} from cache"
