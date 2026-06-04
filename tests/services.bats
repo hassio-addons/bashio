@@ -32,11 +32,13 @@ setup() {
 
 @test "services calls GET /services/<name>" {
     bashio::api.supervisor() {
+        printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call"
         printf '%s' "${SERVICE_JSON}"
     }
     run bashio::services "mqtt"
     [ "${status}" -eq 0 ]
     [ "${output}" = "${SERVICE_JSON}" ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "GET /services/mqtt false" ]
 }
 
 @test "services extracts a string field by key" {
@@ -60,7 +62,7 @@ setup() {
     [ "${output}" = "false" ]
 }
 
-@test "services returns empty for a null field" {
+@test "services returns the literal null for a null field" {
     bashio::api.supervisor() {
         printf '%s' '{"host":null}'
     }
@@ -126,8 +128,15 @@ setup() {
     # Call both without `run` so the cache state is shared.
     bashio::services "mqtt" >/dev/null
     bashio::services "mqtt" "host" >/dev/null
-    # Second call must be served from cache.
+    # Second call for the same service must be served from cache.
     [ "$(cat "${call_file}")" -eq 1 ]
+
+    # A different service must not collide with the first cache entry, so it
+    # triggers a fresh API call and gets its own cache file.
+    bashio::services "mysql" >/dev/null
+    [ "$(cat "${call_file}")" -eq 2 ]
+    [ -f "${__BASHIO_CACHE_DIR}/service.info.mqtt.cache" ]
+    [ -f "${__BASHIO_CACHE_DIR}/service.info.mysql.cache" ]
 }
 
 @test "services propagates an API failure" {
@@ -180,13 +189,21 @@ setup() {
     [ ! -d "${BATS_TEST_TMPDIR}/cache" ]
 }
 
-@test "services.publish returns success even when the API call fails" {
-    # bashio::services.publish does not check the API return code; it always
-    # flushes the cache and returns whatever the flush returns (success by
-    # default). The test documents this existing behaviour.
+@test "services.publish flushes the cache even when the API call fails" {
+    # bashio::services.publish does not check the API return code; it calls
+    # bashio::cache.flush_all after the API call regardless of its outcome.
+    # When errexit is suppressed (as it is under `run`), the failing API call
+    # does not abort the function, so the flush is still observed.
+    # Prime the cache first.
+    bashio::api.supervisor() { printf '%s' "${SERVICE_JSON}"; }
+    bashio::services "mqtt" >/dev/null
+    [ -f "${__BASHIO_CACHE_DIR}/service.info.mqtt.cache" ]
+
+    # Now publish with a failing API stub; the cache must still be flushed.
     bashio::api.supervisor() { return 1; }
     run bashio::services.publish "mqtt" '{"host":"x"}'
-    [ "${status}" -eq 0 ]
+    [ ! -e "${__BASHIO_CACHE_DIR}/service.info.mqtt.cache" ]
+    [ ! -d "${__BASHIO_CACHE_DIR}" ]
 }
 
 # ---------------------------------------------------------------------------
@@ -214,11 +231,19 @@ setup() {
     [ ! -d "${BATS_TEST_TMPDIR}/cache" ]
 }
 
-@test "services.delete returns success even when the API call fails" {
-    # bashio::services.delete does not check the API return code; it always
-    # flushes the cache and returns whatever the flush returns (success by
-    # default). The test documents this existing behaviour.
+@test "services.delete flushes the cache even when the API call fails" {
+    # bashio::services.delete does not check the API return code; it calls
+    # bashio::cache.flush_all after the API call regardless of its outcome.
+    # When errexit is suppressed (as it is under `run`), the failing API call
+    # does not abort the function, so the flush is still observed.
+    # Prime the cache first.
+    bashio::api.supervisor() { printf '%s' "${SERVICE_JSON}"; }
+    bashio::services "mqtt" >/dev/null
+    [ -f "${__BASHIO_CACHE_DIR}/service.info.mqtt.cache" ]
+
+    # Now delete with a failing API stub; the cache must still be flushed.
     bashio::api.supervisor() { return 1; }
     run bashio::services.delete "mqtt"
-    [ "${status}" -eq 0 ]
+    [ ! -e "${__BASHIO_CACHE_DIR}/service.info.mqtt.cache" ]
+    [ ! -d "${__BASHIO_CACHE_DIR}" ]
 }
