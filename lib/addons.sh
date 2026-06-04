@@ -10,7 +10,7 @@
 # ------------------------------------------------------------------------------
 # Reloads the apps.
 # ------------------------------------------------------------------------------
-function bashio::addons.reload() {
+function bashio::apps.reload() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor POST /addons/reload || return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
@@ -22,7 +22,7 @@ function bashio::addons.reload() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.start() {
+function bashio::app.start() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor POST "/addons/${slug}/start"
@@ -34,7 +34,7 @@ function bashio::addon.start() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.restart() {
+function bashio::app.restart() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor POST "/addons/${slug}/restart"
@@ -46,7 +46,7 @@ function bashio::addon.restart() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.stop() {
+function bashio::app.stop() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor POST "/addons/${slug}/stop"
@@ -58,7 +58,7 @@ function bashio::addon.stop() {
 # Arguments:
 #   $1 App slug
 # ------------------------------------------------------------------------------
-function bashio::addon.install() {
+function bashio::app.install() {
     local slug=${1}
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor POST "/store/addons/${slug}/install" || return "${__BASHIO_EXIT_NOK}"
@@ -71,7 +71,7 @@ function bashio::addon.install() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.rebuild() {
+function bashio::app.rebuild() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor POST "/addons/${slug}/rebuild"
@@ -83,7 +83,7 @@ function bashio::addon.rebuild() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.uninstall() {
+function bashio::app.uninstall() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor POST "/addons/${slug}/uninstall" || return "${__BASHIO_EXIT_NOK}"
@@ -96,11 +96,11 @@ function bashio::addon.uninstall() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.update() {
+function bashio::app.update() {
     local slug=${1:-'self'}
     # This call is redirected to the store, and store doesn't support 'self'
     if bashio::var.equals "${slug}" 'self'; then
-        slug=$(bashio::addon.slug)
+        slug=$(bashio::app.slug)
     fi
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor POST "/store/addons/${slug}/update" || return "${__BASHIO_EXIT_NOK}"
@@ -113,7 +113,7 @@ function bashio::addon.update() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.logs() {
+function bashio::app.logs() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor GET "/addons/${slug}/logs" true
@@ -125,11 +125,11 @@ function bashio::addon.logs() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.documentation() {
+function bashio::app.documentation() {
     local slug=${1:-'self'}
     # This call is redirected to the store, and store doesn't support 'self'
     if bashio::var.equals "${slug}" 'self'; then
-        slug=$(bashio::addon.slug)
+        slug=$(bashio::app.slug)
     fi
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor GET "/addons/${slug}/documentation" true
@@ -141,11 +141,11 @@ function bashio::addon.documentation() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.changelog() {
+function bashio::app.changelog() {
     local slug=${1:-'self'}
     # This call is redirected to the store, and store doesn't support 'self'
     if bashio::var.equals "${slug}" 'self'; then
-        slug=$(bashio::addon.slug)
+        slug=$(bashio::app.slug)
     fi
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::api.supervisor GET "/addons/${slug}/changelog" true
@@ -163,7 +163,7 @@ function bashio::addon.changelog() {
 #     (default/empty is '.addons[].slug' with no slug or '.slug' with slug)
 #     ('false' for no filtering)
 # ------------------------------------------------------------------------------
-function bashio::addons() {
+function bashio::apps() {
     local slug=${1:-false}
     local cache_key=${2:-false}
     local filter=${3:-}
@@ -249,19 +249,19 @@ function bashio::addons() {
 # Arguments:
 #   $1 App slug (optional)
 # ------------------------------------------------------------------------------
-function bashio::addons.installed() {
+function bashio::apps.installed() {
     local slug=${1:-false}
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.false "${slug}"; then
-        bashio::addons \
+        bashio::apps \
             false \
             'addons.info.installed' \
             '.addons[] | select(.installed) | .slug'
     else
         # this is for backward compatibility
-        bashio::addon.installed "${slug}"
+        bashio::app.installed "${slug}"
     fi
 }
 
@@ -271,19 +271,19 @@ function bashio::addons.installed() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.installed() {
+function bashio::app.installed() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
     # when info is coming from store API, .installed is always false, when data is coming from addons API, .installed is null
-    bashio::addons "${slug}" "addons.${slug}.installed" "if (.installed != null) then .installed else true end"
+    bashio::apps "${slug}" "addons.${slug}.installed" "if (.installed != null) then .installed else true end"
 }
 
 # ------------------------------------------------------------------------------
 # Returns the slug of the current (self) app.
 # ------------------------------------------------------------------------------
-function bashio::addon.slug() {
+function bashio::app.slug() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::addons 'self' 'addons.self.slug' '.slug'
+    bashio::apps 'self' 'addons.self.slug' '.slug'
 }
 
 # ------------------------------------------------------------------------------
@@ -292,10 +292,10 @@ function bashio::addon.slug() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.name() {
+function bashio::app.name() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.name" '.name'
+    bashio::apps "${slug}" "addons.${slug}.name" '.name'
 }
 
 # ------------------------------------------------------------------------------
@@ -304,10 +304,10 @@ function bashio::addon.name() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.hostname() {
+function bashio::app.hostname() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.hostname" '.hostname'
+    bashio::apps "${slug}" "addons.${slug}.hostname" '.hostname'
 }
 
 # ------------------------------------------------------------------------------
@@ -316,10 +316,10 @@ function bashio::addon.hostname() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.dns() {
+function bashio::app.dns() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.dns" '.dns // empty | .[]'
+    bashio::apps "${slug}" "addons.${slug}.dns" '.dns // empty | .[]'
 }
 
 # ------------------------------------------------------------------------------
@@ -328,10 +328,10 @@ function bashio::addon.dns() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.description() {
+function bashio::app.description() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.description" '.description'
+    bashio::apps "${slug}" "addons.${slug}.description" '.description'
 }
 
 # ------------------------------------------------------------------------------
@@ -340,10 +340,10 @@ function bashio::addon.description() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.long_description() {
+function bashio::app.long_description() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons \
+    bashio::apps \
         "${slug}" \
         "addons.${slug}.long_description" \
         '.long_description'
@@ -356,7 +356,7 @@ function bashio::addon.long_description() {
 #   $1 App slug (optional, default: self)
 #   $2 Set current auto update state (optional)
 # ------------------------------------------------------------------------------
-function bashio::addon.auto_update() {
+function bashio::app.auto_update() {
     local slug=${1:-'self'}
     local auto_update=${2:-}
 
@@ -367,7 +367,7 @@ function bashio::addon.auto_update() {
         bashio::api.supervisor POST "/addons/${slug}/options" "${auto_update}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
-        bashio::addons \
+        bashio::apps \
             "${slug}" \
             "addons.${slug}.auto_update" \
             '.auto_update // false'
@@ -380,10 +380,10 @@ function bashio::addon.auto_update() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.url() {
+function bashio::app.url() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.url" '.url'
+    bashio::apps "${slug}" "addons.${slug}.url" '.url'
 }
 
 # ------------------------------------------------------------------------------
@@ -392,10 +392,10 @@ function bashio::addon.url() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.detached() {
+function bashio::app.detached() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.detached" '.detached // false'
+    bashio::apps "${slug}" "addons.${slug}.detached" '.detached // false'
 }
 
 # ------------------------------------------------------------------------------
@@ -404,10 +404,10 @@ function bashio::addon.detached() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.available() {
+function bashio::app.available() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.available" '.available // false'
+    bashio::apps "${slug}" "addons.${slug}.available" '.available // false'
 }
 
 # ------------------------------------------------------------------------------
@@ -416,10 +416,10 @@ function bashio::addon.available() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.advanced() {
+function bashio::app.advanced() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.advanced" '.advanced // false'
+    bashio::apps "${slug}" "addons.${slug}.advanced" '.advanced // false'
 }
 
 # ------------------------------------------------------------------------------
@@ -428,10 +428,10 @@ function bashio::addon.advanced() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.stage() {
+function bashio::app.stage() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.stage" '.stage'
+    bashio::apps "${slug}" "addons.${slug}.stage" '.stage'
 }
 
 # ------------------------------------------------------------------------------
@@ -440,10 +440,10 @@ function bashio::addon.stage() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.startup() {
+function bashio::app.startup() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.startup" '.startup'
+    bashio::apps "${slug}" "addons.${slug}.startup" '.startup'
 }
 
 # ------------------------------------------------------------------------------
@@ -452,10 +452,10 @@ function bashio::addon.startup() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.arch() {
+function bashio::app.arch() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.arch" '.arch[]'
+    bashio::apps "${slug}" "addons.${slug}.arch" '.arch[]'
 }
 
 # ------------------------------------------------------------------------------
@@ -464,10 +464,10 @@ function bashio::addon.arch() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.machine() {
+function bashio::app.machine() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.machine" '.machine[]'
+    bashio::apps "${slug}" "addons.${slug}.machine" '.machine[]'
 }
 
 # ------------------------------------------------------------------------------
@@ -476,10 +476,10 @@ function bashio::addon.machine() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.repository() {
+function bashio::app.repository() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.repository" '.repository'
+    bashio::apps "${slug}" "addons.${slug}.repository" '.repository'
 }
 
 # ------------------------------------------------------------------------------
@@ -488,10 +488,10 @@ function bashio::addon.repository() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.version() {
+function bashio::app.version() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.version" '.version'
+    bashio::apps "${slug}" "addons.${slug}.version" '.version'
 }
 
 # ------------------------------------------------------------------------------
@@ -500,10 +500,10 @@ function bashio::addon.version() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.version_latest() {
+function bashio::app.version_latest() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.version_latest" '.version_latest'
+    bashio::apps "${slug}" "addons.${slug}.version_latest" '.version_latest'
 }
 
 # ------------------------------------------------------------------------------
@@ -512,10 +512,10 @@ function bashio::addon.version_latest() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.update_available() {
+function bashio::app.update_available() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons \
+    bashio::apps \
         "${slug}" \
         "addons.${slug}.update_available" \
         '.update_available // false'
@@ -527,10 +527,10 @@ function bashio::addon.update_available() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.state() {
+function bashio::app.state() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.state" '.state'
+    bashio::apps "${slug}" "addons.${slug}.state" '.state'
 }
 
 # ------------------------------------------------------------------------------
@@ -540,7 +540,7 @@ function bashio::addon.state() {
 #   $1 App slug (optional, default: self)
 #   $2 Sets boot setting (optional).
 # ------------------------------------------------------------------------------
-function bashio::addon.boot() {
+function bashio::app.boot() {
     local slug=${1:-'self'}
     local boot=${2:-}
 
@@ -551,7 +551,7 @@ function bashio::addon.boot() {
         bashio::api.supervisor POST "/addons/${slug}/options" "${boot}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
-        bashio::addons "${slug}" "addons.${slug}.boot" '.boot'
+        bashio::apps "${slug}" "addons.${slug}.boot" '.boot'
     fi
 }
 
@@ -561,10 +561,10 @@ function bashio::addon.boot() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.build() {
+function bashio::app.build() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.build" '.build // false'
+    bashio::apps "${slug}" "addons.${slug}.build" '.build // false'
 }
 
 # ------------------------------------------------------------------------------
@@ -574,7 +574,7 @@ function bashio::addon.build() {
 #   $1 App slug (optional, default: self)
 #   $2 The app configuration (optional)
 # ------------------------------------------------------------------------------
-function bashio::addon.options() {
+function bashio::app.options() {
     local slug=${1:-'self'}
     local options=${2:-'{}'}
 
@@ -585,7 +585,7 @@ function bashio::addon.options() {
         bashio::api.supervisor POST "/addons/${slug}/options" "${options}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
-        bashio::addons "${slug}" "addons.${slug}.options" '.options'
+        bashio::apps "${slug}" "addons.${slug}.options" '.options'
     fi
 }
 
@@ -597,7 +597,7 @@ function bashio::addon.options() {
 #   $2 Value to set (optional, default:null, if null will remove the key pair)
 #   $3 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.option() {
+function bashio::app.option() {
     local key=${1}
     local value=${2:-}
     local slug=${3:-'self'}
@@ -605,7 +605,7 @@ function bashio::addon.option() {
     local value_argument
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    options=$(bashio::addon.options "${slug}")
+    options=$(bashio::app.options "${slug}")
 
     if bashio::var.has_value "${value}"; then
         # Pass the value through a jq variable so it cannot break out of the
@@ -625,7 +625,7 @@ function bashio::addon.option() {
         options=$(bashio::jq "${options}" "del(.${key})")
     fi
 
-    bashio::addon.options "${slug}" "${options}"
+    bashio::app.options "${slug}" "${options}"
 }
 
 # ------------------------------------------------------------------------------
@@ -633,7 +633,7 @@ function bashio::addon.option() {
 #
 # This can be only used by self.
 # ------------------------------------------------------------------------------
-function bashio::addon.config() {
+function bashio::app.config() {
     local cache_key="addons.self.options.config"
     local response
 
@@ -670,7 +670,7 @@ function bashio::addon.config() {
 #   $1 App slug (optional, default: self)
 #   $2 A map of network configuration (optional)
 # ------------------------------------------------------------------------------
-function bashio::addon.network() {
+function bashio::app.network() {
     local slug=${1:-'self'}
     local network=${2:-'null'}
 
@@ -681,7 +681,7 @@ function bashio::addon.network() {
         bashio::api.supervisor POST "/addons/${slug}/options" "${network}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
-        bashio::addons "${slug}" \
+        bashio::apps "${slug}" \
             "addons.${slug}.network" \
             '.network // empty | if . == {} then empty else . end'
     fi
@@ -693,10 +693,10 @@ function bashio::addon.network() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.network_description() {
+function bashio::app.network_description() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" \
+    bashio::apps "${slug}" \
         "addons.${slug}.network_description" \
         '.network_description // empty'
 }
@@ -709,7 +709,7 @@ function bashio::addon.network_description() {
 #   $2 App slug (optional, default: self)
 #   $3 User configured port number (optional)
 # ------------------------------------------------------------------------------
-function bashio::addon.port() {
+function bashio::app.port() {
     local port=${1:-}
     local slug=${2:-'self'}
     local value=${3:-'null'}
@@ -723,12 +723,12 @@ function bashio::addon.port() {
     fi
 
     if bashio::var.equals "$#" 3; then
-        network=$(bashio::addon.network "${slug}")
+        network=$(bashio::app.network "${slug}")
         network=${network:-'{}'}
         network=$(bashio::jq "${network}" ".\"${port}\" |= ${value}")
-        bashio::addon.network "${slug}" "${network}"
+        bashio::app.network "${slug}" "${network}"
     else
-        bashio::addons \
+        bashio::apps \
             "${slug}" \
             "addons.${slug}.network.${port//\//-}" \
             ".network[\"${port}\"] // empty"
@@ -742,7 +742,7 @@ function bashio::addon.port() {
 #   $1 Original port number
 #   $2 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.port_description() {
+function bashio::app.port_description() {
     local port=${1:-}
     local slug=${2:-'self'}
 
@@ -753,7 +753,7 @@ function bashio::addon.port_description() {
         port="${port}/tcp"
     fi
 
-    bashio::addons \
+    bashio::apps \
         "${slug}" \
         "addons.${slug}.network_description.${port//\//-}" \
         ".network_description[\"${port}\"] // empty"
@@ -765,10 +765,10 @@ function bashio::addon.port_description() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.host_network() {
+function bashio::app.host_network() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons \
+    bashio::apps \
         "${slug}" \
         "addons.${slug}.host_network" \
         '.host_network // false'
@@ -780,10 +780,10 @@ function bashio::addon.host_network() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.host_pid() {
+function bashio::app.host_pid() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons \
+    bashio::apps \
         "${slug}" \
         "addons.${slug}.host_pid" \
         '.host_pid // false'
@@ -795,10 +795,10 @@ function bashio::addon.host_pid() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.host_ipc() {
+function bashio::app.host_ipc() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons \
+    bashio::apps \
         "${slug}" \
         "addons.${slug}.host_ipc" \
         '.host_ipc // false'
@@ -810,10 +810,10 @@ function bashio::addon.host_ipc() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.host_dbus() {
+function bashio::app.host_dbus() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons \
+    bashio::apps \
         "${slug}" \
         "addons.${slug}.host_dbus" \
         '.host_dbus // false'
@@ -825,10 +825,10 @@ function bashio::addon.host_dbus() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.privileged() {
+function bashio::app.privileged() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.privileged" '.privileged[]'
+    bashio::apps "${slug}" "addons.${slug}.privileged" '.privileged[]'
 }
 
 # ------------------------------------------------------------------------------
@@ -837,10 +837,10 @@ function bashio::addon.privileged() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.apparmor() {
+function bashio::app.apparmor() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.apparmor" '.apparmor'
+    bashio::apps "${slug}" "addons.${slug}.apparmor" '.apparmor'
 }
 
 # ------------------------------------------------------------------------------
@@ -849,10 +849,10 @@ function bashio::addon.apparmor() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.devices() {
+function bashio::app.devices() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.devices" '.devices // empty | .[]'
+    bashio::apps "${slug}" "addons.${slug}.devices" '.devices // empty | .[]'
 }
 
 # ------------------------------------------------------------------------------
@@ -861,10 +861,10 @@ function bashio::addon.devices() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.udev() {
+function bashio::app.udev() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.udev" '.udev // false'
+    bashio::apps "${slug}" "addons.${slug}.udev" '.udev // false'
 }
 
 # ------------------------------------------------------------------------------
@@ -873,10 +873,10 @@ function bashio::addon.udev() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.uart() {
+function bashio::app.uart() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.uart" '.uart // false'
+    bashio::apps "${slug}" "addons.${slug}.uart" '.uart // false'
 }
 
 # ------------------------------------------------------------------------------
@@ -885,10 +885,10 @@ function bashio::addon.uart() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.usb() {
+function bashio::app.usb() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.usb" '.usb // false'
+    bashio::apps "${slug}" "addons.${slug}.usb" '.usb // false'
 }
 
 # ------------------------------------------------------------------------------
@@ -897,10 +897,10 @@ function bashio::addon.usb() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.icon() {
+function bashio::app.icon() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.icon" '.icon // false'
+    bashio::apps "${slug}" "addons.${slug}.icon" '.icon // false'
 }
 
 # ------------------------------------------------------------------------------
@@ -909,10 +909,10 @@ function bashio::addon.icon() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.logo() {
+function bashio::app.logo() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.logo" '.logo // false'
+    bashio::apps "${slug}" "addons.${slug}.logo" '.logo // false'
 }
 
 # ------------------------------------------------------------------------------
@@ -921,10 +921,10 @@ function bashio::addon.logo() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.has_documentation() {
+function bashio::app.has_documentation() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons \
+    bashio::apps \
         "${slug}" \
         "addons.${slug}.documentation" '.documentation // false'
 }
@@ -935,10 +935,10 @@ function bashio::addon.has_documentation() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.has_changelog() {
+function bashio::app.has_changelog() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.changelog" '.changelog // false'
+    bashio::apps "${slug}" "addons.${slug}.changelog" '.changelog // false'
 }
 
 # ------------------------------------------------------------------------------
@@ -947,10 +947,10 @@ function bashio::addon.has_changelog() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.hassio_api() {
+function bashio::app.hassio_api() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.hassio_api" '.hassio_api // false'
+    bashio::apps "${slug}" "addons.${slug}.hassio_api" '.hassio_api // false'
 }
 
 # ------------------------------------------------------------------------------
@@ -959,10 +959,10 @@ function bashio::addon.hassio_api() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.hassio_role() {
+function bashio::app.hassio_role() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.hassio_role" '.hassio_role'
+    bashio::apps "${slug}" "addons.${slug}.hassio_role" '.hassio_role'
 }
 
 # ------------------------------------------------------------------------------
@@ -971,10 +971,10 @@ function bashio::addon.hassio_role() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.homeassistant() {
+function bashio::app.homeassistant() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.homeassistant" '.homeassistant'
+    bashio::apps "${slug}" "addons.${slug}.homeassistant" '.homeassistant'
 }
 
 # ------------------------------------------------------------------------------
@@ -983,10 +983,10 @@ function bashio::addon.homeassistant() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.homeassistant_api() {
+function bashio::app.homeassistant_api() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons \
+    bashio::apps \
         "${slug}" \
         "addons.${slug}.homeassistant_api" \
         '.homeassistant_api // false'
@@ -998,10 +998,10 @@ function bashio::addon.homeassistant_api() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.auth_api() {
+function bashio::app.auth_api() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.auth_api" '.auth_api // false'
+    bashio::apps "${slug}" "addons.${slug}.auth_api" '.auth_api // false'
 }
 
 # ------------------------------------------------------------------------------
@@ -1010,10 +1010,10 @@ function bashio::addon.auth_api() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.protected() {
+function bashio::app.protected() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.protected" '.protected // false'
+    bashio::apps "${slug}" "addons.${slug}.protected" '.protected // false'
 }
 
 # ------------------------------------------------------------------------------
@@ -1022,10 +1022,10 @@ function bashio::addon.protected() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.rating() {
+function bashio::app.rating() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.rating" '.rating'
+    bashio::apps "${slug}" "addons.${slug}.rating" '.rating'
 }
 
 # ------------------------------------------------------------------------------
@@ -1034,10 +1034,10 @@ function bashio::addon.rating() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.stdin() {
+function bashio::app.stdin() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.stdin" '.stdin // false'
+    bashio::apps "${slug}" "addons.${slug}.stdin" '.stdin // false'
 }
 
 # ------------------------------------------------------------------------------
@@ -1046,10 +1046,10 @@ function bashio::addon.stdin() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.full_access() {
+function bashio::app.full_access() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons \
+    bashio::apps \
         "${slug}" \
         "addons.${slug}.full_access" \
         '.full_access // false'
@@ -1061,10 +1061,10 @@ function bashio::addon.full_access() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.webui() {
+function bashio::app.webui() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.webui" '.webui // empty'
+    bashio::apps "${slug}" "addons.${slug}.webui" '.webui // empty'
 }
 
 # ------------------------------------------------------------------------------
@@ -1073,10 +1073,10 @@ function bashio::addon.webui() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.gpio() {
+function bashio::app.gpio() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.gpio" '.gpio // false'
+    bashio::apps "${slug}" "addons.${slug}.gpio" '.gpio // false'
 }
 
 # ------------------------------------------------------------------------------
@@ -1085,10 +1085,10 @@ function bashio::addon.gpio() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.kernel_modules() {
+function bashio::app.kernel_modules() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons \
+    bashio::apps \
         "${slug}" \
         "addons.${slug}.kernel_modules" \
         '.kernel_modules // false'
@@ -1100,10 +1100,10 @@ function bashio::addon.kernel_modules() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.devicetree() {
+function bashio::app.devicetree() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.devicetree" '.devicetree // false'
+    bashio::apps "${slug}" "addons.${slug}.devicetree" '.devicetree // false'
 }
 
 # ------------------------------------------------------------------------------
@@ -1112,10 +1112,10 @@ function bashio::addon.devicetree() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.docker_api() {
+function bashio::app.docker_api() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.docker_api" '.docker_api // false'
+    bashio::apps "${slug}" "addons.${slug}.docker_api" '.docker_api // false'
 }
 
 # ------------------------------------------------------------------------------
@@ -1124,10 +1124,10 @@ function bashio::addon.docker_api() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.video() {
+function bashio::app.video() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.video" '.video // false'
+    bashio::apps "${slug}" "addons.${slug}.video" '.video // false'
 }
 
 # ------------------------------------------------------------------------------
@@ -1136,10 +1136,10 @@ function bashio::addon.video() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.audio() {
+function bashio::app.audio() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.audio" '.audio // false'
+    bashio::apps "${slug}" "addons.${slug}.audio" '.audio // false'
 }
 
 # ------------------------------------------------------------------------------
@@ -1149,7 +1149,7 @@ function bashio::addon.audio() {
 #   $1 App slug (optional, default: self)
 #   $2 Audio input device to set (optional)
 # ------------------------------------------------------------------------------
-function bashio::addon.audio_input() {
+function bashio::app.audio_input() {
     local slug=${1:-'self'}
     local audio_input=${2:-'^null'}
 
@@ -1160,7 +1160,7 @@ function bashio::addon.audio_input() {
         bashio::api.supervisor POST "/addons/${slug}/options" "${audio_input}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
-        bashio::addons \
+        bashio::apps \
             "${slug}" \
             "addons.${slug}.audio_input" \
             '.audio_input // empty'
@@ -1174,7 +1174,7 @@ function bashio::addon.audio_input() {
 #   $1 App slug (optional, default: self)
 #   $2 Audio output device to set (optional)
 # ------------------------------------------------------------------------------
-function bashio::addon.audio_output() {
+function bashio::app.audio_output() {
     local slug=${1:-'self'}
     local audio_output=${2:-'^null'}
 
@@ -1185,7 +1185,7 @@ function bashio::addon.audio_output() {
         bashio::api.supervisor POST "/addons/${slug}/options" "${audio_output}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
-        bashio::addons \
+        bashio::apps \
             "${slug}" \
             "addons.${slug}.audio_output" \
             '.audio_output // empty'
@@ -1198,10 +1198,10 @@ function bashio::addon.audio_output() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.ip_address() {
+function bashio::app.ip_address() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.ip_address" '.ip_address // empty'
+    bashio::apps "${slug}" "addons.${slug}.ip_address" '.ip_address // empty'
 }
 
 # ------------------------------------------------------------------------------
@@ -1210,10 +1210,10 @@ function bashio::addon.ip_address() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.ingress() {
+function bashio::app.ingress() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons "${slug}" "addons.${slug}.ingress" '.ingress // false'
+    bashio::apps "${slug}" "addons.${slug}.ingress" '.ingress // false'
 }
 
 # ------------------------------------------------------------------------------
@@ -1222,10 +1222,10 @@ function bashio::addon.ingress() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.ingress_entry() {
+function bashio::app.ingress_entry() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons \
+    bashio::apps \
         "${slug}" \
         "addons.${slug}.ingress_entry" \
         '.ingress_entry // empty'
@@ -1237,10 +1237,10 @@ function bashio::addon.ingress_entry() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.ingress_url() {
+function bashio::app.ingress_url() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons \
+    bashio::apps \
         "${slug}" \
         "addons.${slug}.ingress_url" \
         '.ingress_url // empty'
@@ -1252,10 +1252,10 @@ function bashio::addon.ingress_url() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.ingress_port() {
+function bashio::app.ingress_port() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons \
+    bashio::apps \
         "${slug}" \
         "addons.${slug}.ingress_port" \
         '.ingress_port // empty'
@@ -1268,7 +1268,7 @@ function bashio::addon.ingress_port() {
 #   $1 App slug (optional, default: self)
 #   $2 Set current ingress_panel state (optional)
 # ------------------------------------------------------------------------------
-function bashio::addon.ingress_panel() {
+function bashio::app.ingress_panel() {
     local slug=${1:-'self'}
     local ingress_panel=${2:-}
 
@@ -1279,7 +1279,7 @@ function bashio::addon.ingress_panel() {
         bashio::api.supervisor POST "/addons/${slug}/options" "${ingress_panel}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
-        bashio::addons \
+        bashio::apps \
             "${slug}" \
             "addons.${slug}.ingress_panel" \
             '.ingress_panel // false'
@@ -1293,7 +1293,7 @@ function bashio::addon.ingress_panel() {
 #   $1 App slug (optional, default: self)
 #   $2 Set current watchdog state (optional)
 # ------------------------------------------------------------------------------
-function bashio::addon.watchdog() {
+function bashio::app.watchdog() {
     local slug=${1:-'self'}
     local watchdog=${2:-}
 
@@ -1304,7 +1304,7 @@ function bashio::addon.watchdog() {
         bashio::api.supervisor POST "/addons/${slug}/options" "${watchdog}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
-        bashio::addons \
+        bashio::apps \
             "${slug}" \
             "addons.${slug}.watchdog" \
             '.watchdog // false'
@@ -1319,7 +1319,7 @@ function bashio::addon.watchdog() {
 #   $2 Cache key to store results in (optional)
 #   $3 jq Filter to apply on the result (optional)
 # ------------------------------------------------------------------------------
-function bashio::addon.stats() {
+function bashio::app.stats() {
     local slug=${1:-'self'}
     local cache_key=${2:-"addons.${slug}.stats"}
     local filter=${3:-}
@@ -1365,10 +1365,10 @@ function bashio::addon.stats() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.cpu_percent() {
+function bashio::app.cpu_percent() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addon.stats \
+    bashio::app.stats \
         "${slug}" \
         "addons.${slug}.stats.cpu_percent" \
         '.cpu_percent'
@@ -1380,10 +1380,10 @@ function bashio::addon.cpu_percent() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.memory_usage() {
+function bashio::app.memory_usage() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addon.stats \
+    bashio::app.stats \
         "${slug}" \
         "addons.${slug}.stats.memory_usage" \
         '.memory_usage'
@@ -1395,10 +1395,10 @@ function bashio::addon.memory_usage() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.memory_limit() {
+function bashio::app.memory_limit() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addon.stats \
+    bashio::app.stats \
         "${slug}" \
         "addons.${slug}.stats.memory_limit" \
         '.memory_limit'
@@ -1410,10 +1410,10 @@ function bashio::addon.memory_limit() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.memory_percent() {
+function bashio::app.memory_percent() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addon.stats \
+    bashio::app.stats \
         "${slug}" \
         "addons.${slug}.stats.memory_percent" \
         '.memory_percent'
@@ -1425,10 +1425,10 @@ function bashio::addon.memory_percent() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.network_tx() {
+function bashio::app.network_tx() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addon.stats \
+    bashio::app.stats \
         "${slug}" \
         "addons.${slug}.stats.network_tx" \
         '.network_tx'
@@ -1440,10 +1440,10 @@ function bashio::addon.network_tx() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.network_rx() {
+function bashio::app.network_rx() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addon.stats \
+    bashio::app.stats \
         "${slug}" \
         "addons.${slug}.stats.network_rx" \
         '.network_rx'
@@ -1455,10 +1455,10 @@ function bashio::addon.network_rx() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.blk_read() {
+function bashio::app.blk_read() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addon.stats \
+    bashio::app.stats \
         "${slug}" \
         "addons.${slug}.stats.blk_read" \
         '.blk_read'
@@ -1470,10 +1470,10 @@ function bashio::addon.blk_read() {
 # Arguments:
 #   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
-function bashio::addon.blk_write() {
+function bashio::app.blk_write() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addon.stats \
+    bashio::app.stats \
         "${slug}" \
         "addons.${slug}.stats.blk_write" \
         '.blk_write'
@@ -1485,7 +1485,7 @@ function bashio::addon.blk_write() {
 function bashio::require.protected() {
     local protected
 
-    protected=$(bashio::addon.protected 'self')
+    protected=$(bashio::app.protected 'self')
     if bashio::var.true "${protected}"; then
         return "${__BASHIO_EXIT_OK}"
     fi
@@ -1515,7 +1515,7 @@ function bashio::require.protected() {
 function bashio::require.unprotected() {
     local protected
 
-    protected=$(bashio::addon.protected 'self')
+    protected=$(bashio::app.protected 'self')
     if bashio::var.false "${protected}"; then
         return "${__BASHIO_EXIT_OK}"
     fi
@@ -1540,3 +1540,61 @@ function bashio::require.unprotected() {
 
     bashio::exit.nok
 }
+
+# ==============================================================================
+# Deprecated aliases.
+#
+# The "add-on" terminology has been renamed to "app". Every bashio::app.*
+# (and bashio::apps / bashio::apps.*) function therefore keeps a deprecated
+# bashio::addon.* (bashio::addons / bashio::addons.*) alias that delegates to
+# the new name. The aliases are generated from the defined app functions so new
+# ones are covered automatically. Each alias warns once, the first time it is
+# used, to avoid log spam when a getter is called in a loop.
+# ==============================================================================
+
+# Declared global (-g) so it survives being sourced from within a function.
+declare -gA __BASHIO_APP_DEPRECATION_WARNED=()
+
+# ------------------------------------------------------------------------------
+# Warns (once per name) that a function is deprecated in favour of another.
+#
+# Arguments:
+#   $1 Deprecated function name
+#   $2 Replacement function name
+# ------------------------------------------------------------------------------
+function bashio::apps.__deprecated() {
+    local old=${1}
+    local new=${2}
+    if [[ -z "${__BASHIO_APP_DEPRECATION_WARNED[${old}]:-}" ]]; then
+        __BASHIO_APP_DEPRECATION_WARNED[${old}]=1
+        bashio::log.warning "${old} is deprecated, use ${new} instead."
+    fi
+}
+
+# Generate the deprecated addon aliases for every app function defined above.
+__bashio_app_function=""
+__bashio_addon_function=""
+for __bashio_app_function in \
+    $(declare -F | awk '{ print $3 }' | grep -E '^bashio::app' | grep -v '__deprecated'); do
+    case "${__bashio_app_function}" in
+        bashio::apps)
+            __bashio_addon_function="bashio::addons"
+            ;;
+        bashio::apps.*)
+            __bashio_addon_function="bashio::addons.${__bashio_app_function#bashio::apps.}"
+            ;;
+        bashio::app.*)
+            __bashio_addon_function="bashio::addon.${__bashio_app_function#bashio::app.}"
+            ;;
+        *)
+            continue
+            ;;
+    esac
+    eval "
+${__bashio_addon_function}() {
+    bashio::apps.__deprecated '${__bashio_addon_function}' '${__bashio_app_function}'
+    ${__bashio_app_function} \"\$@\"
+}
+"
+done
+unset __bashio_app_function __bashio_addon_function

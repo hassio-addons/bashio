@@ -3,7 +3,7 @@
 # Tests for lib/addons.sh.
 #
 # These tests stub the API boundary (`bashio::api.supervisor`) and let the real
-# `bashio::addons` fetcher, jq filtering, and caching run. The cache is pointed
+# `bashio::apps` fetcher, jq filtering, and caching run. The cache is pointed
 # at a per-test temporary directory so tests stay isolated. Stubs record their
 # arguments via "$*" and the assertions check the EXACT call string (method,
 # resource, filter/JSON), so they pin down the contract rather than fragments.
@@ -34,7 +34,7 @@ store_listing() {
 
 @test "addons.reload posts to the reload endpoint" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addons.reload
+    run bashio::apps.reload
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "POST /addons/reload" ]
 }
@@ -42,48 +42,48 @@ store_listing() {
 @test "addons.reload propagates an API failure" {
     bashio::api.supervisor() { return 1; }
     rc=0
-    bashio::addons.reload || rc=$?
+    bashio::apps.reload || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
 @test "addon.start posts to the start endpoint for a given slug" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.start "example"
+    run bashio::app.start "example"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "POST /addons/example/start" ]
 }
 
 @test "addon.start defaults to the self slug" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.start
+    run bashio::app.start
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "POST /addons/self/start" ]
 }
 
 @test "addon.restart posts to the restart endpoint" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.restart "example"
+    run bashio::app.restart "example"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "POST /addons/example/restart" ]
 }
 
 @test "addon.stop posts to the stop endpoint" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.stop "example"
+    run bashio::app.stop "example"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "POST /addons/example/stop" ]
 }
 
 @test "addon.rebuild posts to the rebuild endpoint" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.rebuild "example"
+    run bashio::app.rebuild "example"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "POST /addons/example/rebuild" ]
 }
 
 @test "addon.install posts to the store install endpoint" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.install "example"
+    run bashio::app.install "example"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "POST /store/addons/example/install" ]
 }
@@ -91,13 +91,13 @@ store_listing() {
 @test "addon.install propagates an API failure" {
     bashio::api.supervisor() { return 1; }
     rc=0
-    bashio::addon.install "example" || rc=$?
+    bashio::app.install "example" || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
 @test "addon.uninstall posts to the uninstall endpoint" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.uninstall "example"
+    run bashio::app.uninstall "example"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "POST /addons/example/uninstall" ]
 }
@@ -105,13 +105,13 @@ store_listing() {
 @test "addon.uninstall propagates an API failure" {
     bashio::api.supervisor() { return 1; }
     rc=0
-    bashio::addon.uninstall "example" || rc=$?
+    bashio::app.uninstall "example" || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
 @test "addon.update posts to the store update endpoint for an explicit slug" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.update "example"
+    run bashio::app.update "example"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "POST /store/addons/example/update" ]
 }
@@ -119,9 +119,9 @@ store_listing() {
 @test "addon.update resolves self to a concrete slug before posting" {
     # self is not valid on the store endpoint, so the resolver must swap it for
     # the real slug obtained via addon.slug.
-    bashio::addon.slug() { printf '%s' "resolved_self"; }
+    bashio::app.slug() { printf '%s' "resolved_self"; }
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.update "self"
+    run bashio::app.update "self"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "POST /store/addons/resolved_self/update" ]
 }
@@ -129,54 +129,54 @@ store_listing() {
 @test "addon.update propagates an API failure" {
     bashio::api.supervisor() { return 1; }
     rc=0
-    bashio::addon.update "example" || rc=$?
+    bashio::app.update "example" || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
 @test "addon.logs requests raw logs output" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.logs "example"
+    run bashio::app.logs "example"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "GET /addons/example/logs true" ]
 }
 
 @test "addon.documentation requests raw documentation for an explicit slug" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.documentation "example"
+    run bashio::app.documentation "example"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "GET /addons/example/documentation true" ]
 }
 
 @test "addon.documentation resolves self before requesting" {
-    bashio::addon.slug() { printf '%s' "resolved_self"; }
+    bashio::app.slug() { printf '%s' "resolved_self"; }
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.documentation "self"
+    run bashio::app.documentation "self"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "GET /addons/resolved_self/documentation true" ]
 }
 
 @test "addon.changelog requests raw changelog for an explicit slug" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.changelog "example"
+    run bashio::app.changelog "example"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "GET /addons/example/changelog true" ]
 }
 
 @test "addon.changelog resolves self before requesting" {
-    bashio::addon.slug() { printf '%s' "resolved_self"; }
+    bashio::app.slug() { printf '%s' "resolved_self"; }
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.changelog "self"
+    run bashio::app.changelog "self"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "GET /addons/resolved_self/changelog true" ]
 }
 
 # ------------------------------------------------------------------------------
-# The bashio::addons fetcher: list mode, slug mode, caching, filtering.
+# The bashio::apps fetcher: list mode, slug mode, caching, filtering.
 # ------------------------------------------------------------------------------
 
 @test "addons lists every slug from the store listing" {
     bashio::api.supervisor() { store_listing; }
-    run bashio::addons
+    run bashio::apps
     [ "${status}" -eq 0 ]
     [ "${#lines[@]}" -eq 2 ]
     [ "${lines[0]}" = "alpha" ]
@@ -185,7 +185,7 @@ store_listing() {
 
 @test "addons caches the unfiltered store listing as store.addons.info" {
     bashio::api.supervisor() { store_listing; }
-    bashio::addons >/dev/null
+    bashio::apps >/dev/null
     [ -f "${__BASHIO_CACHE_DIR}/store.addons.info.cache" ]
     run jq -r '.addons | length' <"${__BASHIO_CACHE_DIR}/store.addons.info.cache"
     [ "${output}" = "2" ]
@@ -193,7 +193,7 @@ store_listing() {
 
 @test "addons caches the filtered list under the default cache key" {
     bashio::api.supervisor() { store_listing; }
-    bashio::addons >/dev/null
+    bashio::apps >/dev/null
     [ -f "${__BASHIO_CACHE_DIR}/addons.list.cache" ]
     run cat "${__BASHIO_CACHE_DIR}/addons.list.cache"
     [ "${lines[0]}" = "alpha" ]
@@ -207,7 +207,7 @@ store_listing() {
         echo "API SHOULD NOT BE CALLED"
         return 1
     }
-    run bashio::addons
+    run bashio::apps
     [ "${status}" -eq 0 ]
     [ "${output}" = "cached-value" ]
 }
@@ -219,7 +219,7 @@ store_listing() {
         echo "API SHOULD NOT BE CALLED"
         return 1
     }
-    run bashio::addons
+    run bashio::apps
     [ "${status}" -eq 0 ]
     [ "${lines[0]}" = "alpha" ]
     [ "${lines[1]}" = "beta" ]
@@ -228,7 +228,7 @@ store_listing() {
 @test "addons fails when the store listing API call fails" {
     bashio::api.supervisor() { return 1; }
     rc=0
-    bashio::addons >/dev/null || rc=$?
+    bashio::apps >/dev/null || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
@@ -243,7 +243,7 @@ store_listing() {
             printf '%s' '{"slug":"alpha"}'
         fi
     }
-    run bashio::addons "alpha"
+    run bashio::apps "alpha"
     [ "${status}" -eq 0 ]
     [ "${output}" = "alpha" ]
     run cat "${BATS_TEST_TMPDIR}/calls"
@@ -260,7 +260,7 @@ store_listing() {
             printf '%s' '{"slug":"beta"}'
         fi
     }
-    run bashio::addons "beta"
+    run bashio::apps "beta"
     [ "${status}" -eq 0 ]
     [ "${output}" = "beta" ]
     run cat "${BATS_TEST_TMPDIR}/calls"
@@ -277,7 +277,7 @@ store_listing() {
             printf '%s' '{"slug":"selfslug"}'
         fi
     }
-    run bashio::addons "self"
+    run bashio::apps "self"
     [ "${status}" -eq 0 ]
     [ "${output}" = "selfslug" ]
     run cat "${BATS_TEST_TMPDIR}/calls"
@@ -292,7 +292,7 @@ store_listing() {
             printf '%s' '{"slug":"alpha","name":"Alpha App"}'
         fi
     }
-    run bashio::addons "alpha" "custom.key" '.name'
+    run bashio::apps "alpha" "custom.key" '.name'
     [ "${status}" -eq 0 ]
     [ "${output}" = "Alpha App" ]
     [ -f "${__BASHIO_CACHE_DIR}/custom.key.cache" ]
@@ -308,7 +308,7 @@ store_listing() {
             printf '%s' '{"slug":"alpha","name":"Alpha App"}'
         fi
     }
-    run bashio::addons "alpha" false false
+    run bashio::apps "alpha" false false
     [ "${status}" -eq 0 ]
     run jq -r '.name' <<<"${output}"
     [ "${output}" = "Alpha App" ]
@@ -317,7 +317,7 @@ store_listing() {
 @test "addons fails when the jq filter is invalid" {
     bashio::api.supervisor() { store_listing; }
     rc=0
-    bashio::addons false false '.[' >/dev/null 2>&1 || rc=$?
+    bashio::apps false false '.[' >/dev/null 2>&1 || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
@@ -327,7 +327,7 @@ store_listing() {
 
 @test "addons.installed lists only installed slugs" {
     bashio::api.supervisor() { store_listing; }
-    run bashio::addons.installed
+    run bashio::apps.installed
     [ "${status}" -eq 0 ]
     [ "${#lines[@]}" -eq 1 ]
     [ "${lines[0]}" = "alpha" ]
@@ -341,7 +341,7 @@ store_listing() {
             printf '%s' '{"slug":"alpha","installed":true}'
         fi
     }
-    run bashio::addon.installed "alpha"
+    run bashio::app.installed "alpha"
     [ "${status}" -eq 0 ]
     [ "${output}" = "true" ]
 }
@@ -356,7 +356,7 @@ store_listing() {
             printf '%s' '{"slug":"alpha","installed":null}'
         fi
     }
-    run bashio::addon.installed "alpha"
+    run bashio::app.installed "alpha"
     [ "${status}" -eq 0 ]
     [ "${output}" = "true" ]
 }
@@ -369,13 +369,13 @@ store_listing() {
             printf '%s' '{"slug":"my_self_slug"}'
         fi
     }
-    run bashio::addon.slug
+    run bashio::app.slug
     [ "${status}" -eq 0 ]
     [ "${output}" = "my_self_slug" ]
 }
 
 # ------------------------------------------------------------------------------
-# Scalar getters. These all flow through bashio::addons with a fixed filter; a
+# Scalar getters. These all flow through bashio::apps with a fixed filter; a
 # representative set is checked end to end to confirm the filter and value.
 # ------------------------------------------------------------------------------
 
@@ -395,78 +395,78 @@ get_field() {
 }
 
 @test "addon.name returns the name field" {
-    run get_field '{"slug":"alpha","name":"Alpha"}' bashio::addon.name
+    run get_field '{"slug":"alpha","name":"Alpha"}' bashio::app.name
     [ "${status}" -eq 0 ]
     [ "${output}" = "Alpha" ]
 }
 
 @test "addon.hostname returns the hostname field" {
-    run get_field '{"slug":"alpha","hostname":"alpha-host"}' bashio::addon.hostname
+    run get_field '{"slug":"alpha","hostname":"alpha-host"}' bashio::app.hostname
     [ "${output}" = "alpha-host" ]
 }
 
 @test "addon.description returns the description field" {
-    run get_field '{"slug":"alpha","description":"Desc"}' bashio::addon.description
+    run get_field '{"slug":"alpha","description":"Desc"}' bashio::app.description
     [ "${output}" = "Desc" ]
 }
 
 @test "addon.long_description returns the long_description field" {
-    run get_field '{"slug":"alpha","long_description":"Long"}' bashio::addon.long_description
+    run get_field '{"slug":"alpha","long_description":"Long"}' bashio::app.long_description
     [ "${output}" = "Long" ]
 }
 
 @test "addon.url returns the url field" {
-    run get_field '{"slug":"alpha","url":"http://x"}' bashio::addon.url
+    run get_field '{"slug":"alpha","url":"http://x"}' bashio::app.url
     [ "${output}" = "http://x" ]
 }
 
 @test "addon.version returns the version field" {
-    run get_field '{"slug":"alpha","version":"1.2.3"}' bashio::addon.version
+    run get_field '{"slug":"alpha","version":"1.2.3"}' bashio::app.version
     [ "${output}" = "1.2.3" ]
 }
 
 @test "addon.version_latest returns the version_latest field" {
-    run get_field '{"slug":"alpha","version_latest":"2.0.0"}' bashio::addon.version_latest
+    run get_field '{"slug":"alpha","version_latest":"2.0.0"}' bashio::app.version_latest
     [ "${output}" = "2.0.0" ]
 }
 
 @test "addon.state returns the state field" {
-    run get_field '{"slug":"alpha","state":"started"}' bashio::addon.state
+    run get_field '{"slug":"alpha","state":"started"}' bashio::app.state
     [ "${output}" = "started" ]
 }
 
 @test "addon.stage returns the stage field" {
-    run get_field '{"slug":"alpha","stage":"stable"}' bashio::addon.stage
+    run get_field '{"slug":"alpha","stage":"stable"}' bashio::app.stage
     [ "${output}" = "stable" ]
 }
 
 @test "addon.startup returns the startup field" {
-    run get_field '{"slug":"alpha","startup":"application"}' bashio::addon.startup
+    run get_field '{"slug":"alpha","startup":"application"}' bashio::app.startup
     [ "${output}" = "application" ]
 }
 
 @test "addon.repository returns the repository field" {
-    run get_field '{"slug":"alpha","repository":"core"}' bashio::addon.repository
+    run get_field '{"slug":"alpha","repository":"core"}' bashio::app.repository
     [ "${output}" = "core" ]
 }
 
 @test "addon.apparmor returns the apparmor field" {
-    run get_field '{"slug":"alpha","apparmor":"default"}' bashio::addon.apparmor
+    run get_field '{"slug":"alpha","apparmor":"default"}' bashio::app.apparmor
     [ "${output}" = "default" ]
 }
 
 @test "addon.hassio_role returns the role field" { # codespell:ignore hassio
-    run get_field '{"slug":"alpha","hassio_role":"manager"}' bashio::addon.hassio_role
+    run get_field '{"slug":"alpha","hassio_role":"manager"}' bashio::app.hassio_role
     [ "${output}" = "manager" ]
 }
 
 @test "addon.homeassistant returns the minimal core version" {
-    run get_field '{"slug":"alpha","homeassistant":"2024.1.0"}' bashio::addon.homeassistant
+    run get_field '{"slug":"alpha","homeassistant":"2024.1.0"}' bashio::app.homeassistant
     [ "${output}" = "2024.1.0" ]
 }
 
 @test "addon.rating returns the rating field" {
-    run get_field '{"slug":"alpha","rating":6}' bashio::addon.rating
+    run get_field '{"slug":"alpha","rating":6}' bashio::app.rating
     [ "${output}" = "6" ]
 }
 
@@ -476,152 +476,152 @@ get_field() {
 # ------------------------------------------------------------------------------
 
 @test "addon.detached returns the detached value" {
-    run get_field '{"slug":"alpha","detached":true}' bashio::addon.detached
+    run get_field '{"slug":"alpha","detached":true}' bashio::app.detached
     [ "${output}" = "true" ]
 }
 
 @test "addon.detached defaults to false when absent" {
-    run get_field '{"slug":"alpha"}' bashio::addon.detached
+    run get_field '{"slug":"alpha"}' bashio::app.detached
     [ "${output}" = "false" ]
 }
 
 @test "addon.available returns the available value" {
-    run get_field '{"slug":"alpha","available":true}' bashio::addon.available
+    run get_field '{"slug":"alpha","available":true}' bashio::app.available
     [ "${output}" = "true" ]
 }
 
 @test "addon.advanced defaults to false when absent" {
-    run get_field '{"slug":"alpha"}' bashio::addon.advanced
+    run get_field '{"slug":"alpha"}' bashio::app.advanced
     [ "${output}" = "false" ]
 }
 
 @test "addon.update_available returns the value" {
-    run get_field '{"slug":"alpha","update_available":true}' bashio::addon.update_available
+    run get_field '{"slug":"alpha","update_available":true}' bashio::app.update_available
     [ "${output}" = "true" ]
 }
 
 @test "addon.build defaults to false when absent" {
-    run get_field '{"slug":"alpha"}' bashio::addon.build
+    run get_field '{"slug":"alpha"}' bashio::app.build
     [ "${output}" = "false" ]
 }
 
 @test "addon.host_network returns the value" {
-    run get_field '{"slug":"alpha","host_network":true}' bashio::addon.host_network
+    run get_field '{"slug":"alpha","host_network":true}' bashio::app.host_network
     [ "${output}" = "true" ]
 }
 
 @test "addon.host_pid defaults to false when absent" {
-    run get_field '{"slug":"alpha"}' bashio::addon.host_pid
+    run get_field '{"slug":"alpha"}' bashio::app.host_pid
     [ "${output}" = "false" ]
 }
 
 @test "addon.host_ipc returns the value" {
-    run get_field '{"slug":"alpha","host_ipc":true}' bashio::addon.host_ipc
+    run get_field '{"slug":"alpha","host_ipc":true}' bashio::app.host_ipc
     [ "${output}" = "true" ]
 }
 
 @test "addon.host_dbus defaults to false when absent" { # codespell:ignore dbus
-    run get_field '{"slug":"alpha"}' bashio::addon.host_dbus
+    run get_field '{"slug":"alpha"}' bashio::app.host_dbus
     [ "${output}" = "false" ]
 }
 
 @test "addon.udev returns the value" {
-    run get_field '{"slug":"alpha","udev":true}' bashio::addon.udev
+    run get_field '{"slug":"alpha","udev":true}' bashio::app.udev
     [ "${output}" = "true" ]
 }
 
 @test "addon.uart defaults to false when absent" {
-    run get_field '{"slug":"alpha"}' bashio::addon.uart
+    run get_field '{"slug":"alpha"}' bashio::app.uart
     [ "${output}" = "false" ]
 }
 
 @test "addon.usb returns the value" {
-    run get_field '{"slug":"alpha","usb":true}' bashio::addon.usb
+    run get_field '{"slug":"alpha","usb":true}' bashio::app.usb
     [ "${output}" = "true" ]
 }
 
 @test "addon.icon defaults to false when absent" {
-    run get_field '{"slug":"alpha"}' bashio::addon.icon
+    run get_field '{"slug":"alpha"}' bashio::app.icon
     [ "${output}" = "false" ]
 }
 
 @test "addon.logo returns the value" {
-    run get_field '{"slug":"alpha","logo":true}' bashio::addon.logo
+    run get_field '{"slug":"alpha","logo":true}' bashio::app.logo
     [ "${output}" = "true" ]
 }
 
 @test "addon.has_documentation defaults to false when absent" {
-    run get_field '{"slug":"alpha"}' bashio::addon.has_documentation
+    run get_field '{"slug":"alpha"}' bashio::app.has_documentation
     [ "${output}" = "false" ]
 }
 
 @test "addon.has_changelog returns the value" {
-    run get_field '{"slug":"alpha","changelog":true}' bashio::addon.has_changelog
+    run get_field '{"slug":"alpha","changelog":true}' bashio::app.has_changelog
     [ "${output}" = "true" ]
 }
 
 @test "addon.hassio_api defaults to false when absent" { # codespell:ignore hassio
-    run get_field '{"slug":"alpha"}' bashio::addon.hassio_api
+    run get_field '{"slug":"alpha"}' bashio::app.hassio_api
     [ "${output}" = "false" ]
 }
 
 @test "addon.homeassistant_api returns the value" {
-    run get_field '{"slug":"alpha","homeassistant_api":true}' bashio::addon.homeassistant_api
+    run get_field '{"slug":"alpha","homeassistant_api":true}' bashio::app.homeassistant_api
     [ "${output}" = "true" ]
 }
 
 @test "addon.auth_api defaults to false when absent" {
-    run get_field '{"slug":"alpha"}' bashio::addon.auth_api
+    run get_field '{"slug":"alpha"}' bashio::app.auth_api
     [ "${output}" = "false" ]
 }
 
 @test "addon.protected returns the value" {
-    run get_field '{"slug":"alpha","protected":true}' bashio::addon.protected
+    run get_field '{"slug":"alpha","protected":true}' bashio::app.protected
     [ "${output}" = "true" ]
 }
 
 @test "addon.stdin defaults to false when absent" {
-    run get_field '{"slug":"alpha"}' bashio::addon.stdin
+    run get_field '{"slug":"alpha"}' bashio::app.stdin
     [ "${output}" = "false" ]
 }
 
 @test "addon.full_access returns the value" {
-    run get_field '{"slug":"alpha","full_access":true}' bashio::addon.full_access
+    run get_field '{"slug":"alpha","full_access":true}' bashio::app.full_access
     [ "${output}" = "true" ]
 }
 
 @test "addon.gpio defaults to false when absent" {
-    run get_field '{"slug":"alpha"}' bashio::addon.gpio
+    run get_field '{"slug":"alpha"}' bashio::app.gpio
     [ "${output}" = "false" ]
 }
 
 @test "addon.kernel_modules returns the value" {
-    run get_field '{"slug":"alpha","kernel_modules":true}' bashio::addon.kernel_modules
+    run get_field '{"slug":"alpha","kernel_modules":true}' bashio::app.kernel_modules
     [ "${output}" = "true" ]
 }
 
 @test "addon.devicetree defaults to false when absent" {
-    run get_field '{"slug":"alpha"}' bashio::addon.devicetree
+    run get_field '{"slug":"alpha"}' bashio::app.devicetree
     [ "${output}" = "false" ]
 }
 
 @test "addon.docker_api returns the value" {
-    run get_field '{"slug":"alpha","docker_api":true}' bashio::addon.docker_api
+    run get_field '{"slug":"alpha","docker_api":true}' bashio::app.docker_api
     [ "${output}" = "true" ]
 }
 
 @test "addon.video defaults to false when absent" {
-    run get_field '{"slug":"alpha"}' bashio::addon.video
+    run get_field '{"slug":"alpha"}' bashio::app.video
     [ "${output}" = "false" ]
 }
 
 @test "addon.audio returns the value" {
-    run get_field '{"slug":"alpha","audio":true}' bashio::addon.audio
+    run get_field '{"slug":"alpha","audio":true}' bashio::app.audio
     [ "${output}" = "true" ]
 }
 
 @test "addon.ingress defaults to false when absent" {
-    run get_field '{"slug":"alpha"}' bashio::addon.ingress
+    run get_field '{"slug":"alpha"}' bashio::app.ingress
     [ "${output}" = "false" ]
 }
 
@@ -630,47 +630,47 @@ get_field() {
 # ------------------------------------------------------------------------------
 
 @test "addon.webui returns the value" {
-    run get_field '{"slug":"alpha","webui":"http://[HOST]"}' bashio::addon.webui
+    run get_field '{"slug":"alpha","webui":"http://[HOST]"}' bashio::app.webui
     [ "${output}" = "http://[HOST]" ]
 }
 
 @test "addon.webui is empty when absent" {
-    run get_field '{"slug":"alpha"}' bashio::addon.webui
+    run get_field '{"slug":"alpha"}' bashio::app.webui
     [ "${output}" = "" ]
 }
 
 @test "addon.ip_address returns the value" {
-    run get_field '{"slug":"alpha","ip_address":"172.30.0.2"}' bashio::addon.ip_address
+    run get_field '{"slug":"alpha","ip_address":"172.30.0.2"}' bashio::app.ip_address
     [ "${output}" = "172.30.0.2" ]
 }
 
 @test "addon.ip_address is empty when absent" {
-    run get_field '{"slug":"alpha"}' bashio::addon.ip_address
+    run get_field '{"slug":"alpha"}' bashio::app.ip_address
     [ "${output}" = "" ]
 }
 
 @test "addon.ingress_entry returns the value" {
-    run get_field '{"slug":"alpha","ingress_entry":"/api/ingress/x"}' bashio::addon.ingress_entry
+    run get_field '{"slug":"alpha","ingress_entry":"/api/ingress/x"}' bashio::app.ingress_entry
     [ "${output}" = "/api/ingress/x" ]
 }
 
 @test "addon.ingress_url returns the value" {
-    run get_field '{"slug":"alpha","ingress_url":"/x/"}' bashio::addon.ingress_url
+    run get_field '{"slug":"alpha","ingress_url":"/x/"}' bashio::app.ingress_url
     [ "${output}" = "/x/" ]
 }
 
 @test "addon.ingress_port returns the value" {
-    run get_field '{"slug":"alpha","ingress_port":8099}' bashio::addon.ingress_port
+    run get_field '{"slug":"alpha","ingress_port":8099}' bashio::app.ingress_port
     [ "${output}" = "8099" ]
 }
 
 @test "addon.ingress_port is empty when absent" {
-    run get_field '{"slug":"alpha"}' bashio::addon.ingress_port
+    run get_field '{"slug":"alpha"}' bashio::app.ingress_port
     [ "${output}" = "" ]
 }
 
 @test "addon.network_description is empty when absent" {
-    run get_field '{"slug":"alpha"}' bashio::addon.network_description
+    run get_field '{"slug":"alpha"}' bashio::app.network_description
     [ "${output}" = "" ]
 }
 
@@ -679,7 +679,7 @@ get_field() {
 # ------------------------------------------------------------------------------
 
 @test "addon.dns lists each DNS name" {
-    run get_field '{"slug":"alpha","dns":["dns1","dns2"]}' bashio::addon.dns
+    run get_field '{"slug":"alpha","dns":["dns1","dns2"]}' bashio::app.dns
     [ "${status}" -eq 0 ]
     [ "${#lines[@]}" -eq 2 ]
     [ "${lines[0]}" = "dns1" ]
@@ -687,40 +687,40 @@ get_field() {
 }
 
 @test "addon.dns is empty when absent" {
-    run get_field '{"slug":"alpha"}' bashio::addon.dns
+    run get_field '{"slug":"alpha"}' bashio::app.dns
     [ "${output}" = "" ]
 }
 
 @test "addon.arch lists each architecture" {
-    run get_field '{"slug":"alpha","arch":["amd64","aarch64"]}' bashio::addon.arch
+    run get_field '{"slug":"alpha","arch":["amd64","aarch64"]}' bashio::app.arch
     [ "${#lines[@]}" -eq 2 ]
     [ "${lines[0]}" = "amd64" ]
     [ "${lines[1]}" = "aarch64" ]
 }
 
 @test "addon.machine lists each machine type" {
-    run get_field '{"slug":"alpha","machine":["raspberrypi","tinker"]}' bashio::addon.machine
+    run get_field '{"slug":"alpha","machine":["raspberrypi","tinker"]}' bashio::app.machine
     [ "${#lines[@]}" -eq 2 ]
     [ "${lines[0]}" = "raspberrypi" ]
     [ "${lines[1]}" = "tinker" ]
 }
 
 @test "addon.privileged lists each privilege" {
-    run get_field '{"slug":"alpha","privileged":["NET_ADMIN","SYS_TIME"]}' bashio::addon.privileged
+    run get_field '{"slug":"alpha","privileged":["NET_ADMIN","SYS_TIME"]}' bashio::app.privileged
     [ "${#lines[@]}" -eq 2 ]
     [ "${lines[0]}" = "NET_ADMIN" ]
     [ "${lines[1]}" = "SYS_TIME" ]
 }
 
 @test "addon.devices lists each device" {
-    run get_field '{"slug":"alpha","devices":["/dev/ttyUSB0","/dev/ttyUSB1"]}' bashio::addon.devices
+    run get_field '{"slug":"alpha","devices":["/dev/ttyUSB0","/dev/ttyUSB1"]}' bashio::app.devices
     [ "${#lines[@]}" -eq 2 ]
     [ "${lines[0]}" = "/dev/ttyUSB0" ]
     [ "${lines[1]}" = "/dev/ttyUSB1" ]
 }
 
 @test "addon.devices is empty when absent" {
-    run get_field '{"slug":"alpha"}' bashio::addon.devices
+    run get_field '{"slug":"alpha"}' bashio::app.devices
     [ "${output}" = "" ]
 }
 
@@ -730,18 +730,18 @@ get_field() {
 # ------------------------------------------------------------------------------
 
 @test "addon.auto_update reads the value when no second argument is given" {
-    run get_field '{"slug":"alpha","auto_update":true}' bashio::addon.auto_update
+    run get_field '{"slug":"alpha","auto_update":true}' bashio::app.auto_update
     [ "${output}" = "true" ]
 }
 
 @test "addon.auto_update defaults to false when absent" {
-    run get_field '{"slug":"alpha"}' bashio::addon.auto_update
+    run get_field '{"slug":"alpha"}' bashio::app.auto_update
     [ "${output}" = "false" ]
 }
 
 @test "addon.auto_update posts the value as a raw boolean" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.auto_update "alpha" "true"
+    run bashio::app.auto_update "alpha" "true"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /addons/alpha/options {"auto_update":true}' ]
 }
@@ -749,18 +749,18 @@ get_field() {
 @test "addon.auto_update propagates an API failure on set" {
     bashio::api.supervisor() { return 1; }
     rc=0
-    bashio::addon.auto_update "alpha" "true" || rc=$?
+    bashio::app.auto_update "alpha" "true" || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
 @test "addon.boot reads the value when no second argument is given" {
-    run get_field '{"slug":"alpha","boot":"auto"}' bashio::addon.boot
+    run get_field '{"slug":"alpha","boot":"auto"}' bashio::app.boot
     [ "${output}" = "auto" ]
 }
 
 @test "addon.boot posts the value as a JSON string" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.boot "alpha" "manual"
+    run bashio::app.boot "alpha" "manual"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /addons/alpha/options {"boot":"manual"}' ]
 }
@@ -768,30 +768,30 @@ get_field() {
 @test "addon.boot propagates an API failure on set" {
     bashio::api.supervisor() { return 1; }
     rc=0
-    bashio::addon.boot "alpha" "manual" || rc=$?
+    bashio::app.boot "alpha" "manual" || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
 @test "addon.ingress_panel reads the value when no second argument is given" {
-    run get_field '{"slug":"alpha","ingress_panel":true}' bashio::addon.ingress_panel
+    run get_field '{"slug":"alpha","ingress_panel":true}' bashio::app.ingress_panel
     [ "${output}" = "true" ]
 }
 
 @test "addon.ingress_panel posts the value as a raw boolean" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.ingress_panel "alpha" "true"
+    run bashio::app.ingress_panel "alpha" "true"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /addons/alpha/options {"ingress_panel":true}' ]
 }
 
 @test "addon.watchdog reads the value when no second argument is given" {
-    run get_field '{"slug":"alpha","watchdog":true}' bashio::addon.watchdog
+    run get_field '{"slug":"alpha","watchdog":true}' bashio::app.watchdog
     [ "${output}" = "true" ]
 }
 
 @test "addon.watchdog posts the value as a raw boolean" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.watchdog "alpha" "false"
+    run bashio::app.watchdog "alpha" "false"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /addons/alpha/options {"watchdog":false}' ]
 }
@@ -799,30 +799,30 @@ get_field() {
 @test "addon.watchdog propagates an API failure on set" {
     bashio::api.supervisor() { return 1; }
     rc=0
-    bashio::addon.watchdog "alpha" "true" || rc=$?
+    bashio::app.watchdog "alpha" "true" || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
 @test "addon.audio_input reads the value when no second argument is given" {
-    run get_field '{"slug":"alpha","audio_input":"hw:1,0"}' bashio::addon.audio_input
+    run get_field '{"slug":"alpha","audio_input":"hw:1,0"}' bashio::app.audio_input
     [ "${output}" = "hw:1,0" ]
 }
 
 @test "addon.audio_input is empty when absent" {
-    run get_field '{"slug":"alpha"}' bashio::addon.audio_input
+    run get_field '{"slug":"alpha"}' bashio::app.audio_input
     [ "${output}" = "" ]
 }
 
 @test "addon.audio_input posts the value as a JSON string" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.audio_input "alpha" "hw:1,0"
+    run bashio::app.audio_input "alpha" "hw:1,0"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /addons/alpha/options {"audio_input":"hw:1,0"}' ]
 }
 
 @test "addon.audio_output posts the value as a JSON string" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.audio_output "alpha" "hw:0,0"
+    run bashio::app.audio_output "alpha" "hw:0,0"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /addons/alpha/options {"audio_output":"hw:0,0"}' ]
 }
@@ -830,7 +830,7 @@ get_field() {
 @test "addon.audio_output propagates an API failure on set" {
     bashio::api.supervisor() { return 1; }
     rc=0
-    bashio::addon.audio_output "alpha" "hw:0,0" || rc=$?
+    bashio::app.audio_output "alpha" "hw:0,0" || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
@@ -839,7 +839,7 @@ get_field() {
 # ------------------------------------------------------------------------------
 
 @test "addon.options reads the options object" {
-    run get_field '{"slug":"alpha","options":{"foo":"bar"}}' bashio::addon.options
+    run get_field '{"slug":"alpha","options":{"foo":"bar"}}' bashio::app.options
     [ "${status}" -eq 0 ]
     run jq -r '.foo' <<<"${output}"
     [ "${output}" = "bar" ]
@@ -849,7 +849,7 @@ get_field() {
     # The second positional argument is wrapped under the options key as raw
     # JSON via the ^ prefix internally.
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.options "alpha" '{"foo":"bar"}'
+    run bashio::app.options "alpha" '{"foo":"bar"}'
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /addons/alpha/options {"options":{"foo":"bar"}}' ]
 }
@@ -857,7 +857,7 @@ get_field() {
 @test "addon.options propagates an API failure on set" {
     bashio::api.supervisor() { return 1; }
     rc=0
-    bashio::addon.options "alpha" '{}' || rc=$?
+    bashio::app.options "alpha" '{}' || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
@@ -867,14 +867,14 @@ get_field() {
 # ------------------------------------------------------------------------------
 
 @test "addon.option stores the value as a literal string (no JSON injection)" {
-    bashio::addon.options() {
+    bashio::app.options() {
         if [[ $# -le 1 ]]; then
             printf '%s' '{"existing":"x"}'
         else
             printf '%s' "$2" >"${BATS_TEST_TMPDIR}/opts"
         fi
     }
-    bashio::addon.option "name" 'a","injected":"b'
+    bashio::app.option "name" 'a","injected":"b'
     # The crafted value is stored verbatim as a string...
     [ "$(jq -r '.name' <"${BATS_TEST_TMPDIR}/opts")" = 'a","injected":"b' ]
     # ...and must not have injected a separate key.
@@ -883,39 +883,39 @@ get_field() {
 }
 
 @test "addon.option sets a raw JSON value with the ^ prefix" {
-    bashio::addon.options() {
+    bashio::app.options() {
         if [[ $# -le 1 ]]; then
             printf '%s' '{}'
         else
             printf '%s' "$2" >"${BATS_TEST_TMPDIR}/opts"
         fi
     }
-    bashio::addon.option "enabled" "^true"
+    bashio::app.option "enabled" "^true"
     run jq -e '.enabled == true' <"${BATS_TEST_TMPDIR}/opts"
     [ "${status}" -eq 0 ]
 }
 
 @test "addon.option updates an already existing key in place" {
-    bashio::addon.options() {
+    bashio::app.options() {
         if [[ $# -le 1 ]]; then
             printf '%s' '{"name":"old"}'
         else
             printf '%s' "$2" >"${BATS_TEST_TMPDIR}/opts"
         fi
     }
-    bashio::addon.option "name" "new"
+    bashio::app.option "name" "new"
     [ "$(jq -r '.name' <"${BATS_TEST_TMPDIR}/opts")" = "new" ]
 }
 
 @test "addon.option removes a key when no value is given" {
-    bashio::addon.options() {
+    bashio::app.options() {
         if [[ $# -le 1 ]]; then
             printf '%s' '{"keep":"yes","drop":"no"}'
         else
             printf '%s' "$2" >"${BATS_TEST_TMPDIR}/opts"
         fi
     }
-    bashio::addon.option "drop"
+    bashio::app.option "drop"
     # The dropped key is gone...
     run jq -e 'has("drop")' <"${BATS_TEST_TMPDIR}/opts"
     [ "${status}" -ne 0 ]
@@ -924,14 +924,14 @@ get_field() {
 }
 
 @test "addon.option sets a raw JSON object with the ^ prefix" {
-    bashio::addon.options() {
+    bashio::app.options() {
         if [[ $# -le 1 ]]; then
             printf '%s' '{}'
         else
             printf '%s' "$2" >"${BATS_TEST_TMPDIR}/opts"
         fi
     }
-    bashio::addon.option "nested" '^{"a":1}'
+    bashio::app.option "nested" '^{"a":1}'
     run jq -e '.nested.a == 1' <"${BATS_TEST_TMPDIR}/opts"
     [ "${status}" -eq 0 ]
 }
@@ -945,7 +945,7 @@ get_field() {
         echo "$*" >"${BATS_TEST_TMPDIR}/call"
         printf '%s' '{"foo":"bar"}'
     }
-    run bashio::addon.config
+    run bashio::app.config
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "GET /addons/self/options/config false" ]
     run jq -r '.foo' <<<"${output}"
@@ -954,7 +954,7 @@ get_field() {
 
 @test "addon.config turns an empty response into an empty JSON object" {
     bashio::api.supervisor() { printf '%s' ''; }
-    run bashio::addon.config
+    run bashio::app.config
     [ "${status}" -eq 0 ]
     [ "${output}" = "{}" ]
 }
@@ -966,7 +966,7 @@ get_field() {
         echo "API SHOULD NOT BE CALLED"
         return 1
     }
-    run bashio::addon.config
+    run bashio::app.config
     [ "${status}" -eq 0 ]
     [ "${output}" = '{"cached":true}' ]
 }
@@ -974,7 +974,7 @@ get_field() {
 @test "addon.config fails when the API call fails" {
     bashio::api.supervisor() { return 1; }
     rc=0
-    bashio::addon.config >/dev/null || rc=$?
+    bashio::app.config >/dev/null || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
@@ -983,20 +983,20 @@ get_field() {
 # ------------------------------------------------------------------------------
 
 @test "addon.network returns the network map when present" {
-    run get_field '{"slug":"alpha","network":{"80/tcp":8080}}' bashio::addon.network
+    run get_field '{"slug":"alpha","network":{"80/tcp":8080}}' bashio::app.network
     [ "${status}" -eq 0 ]
     run jq -r '."80/tcp"' <<<"${output}"
     [ "${output}" = "8080" ]
 }
 
 @test "addon.network is empty when the network map is an empty object" {
-    run get_field '{"slug":"alpha","network":{}}' bashio::addon.network
+    run get_field '{"slug":"alpha","network":{}}' bashio::app.network
     [ "${output}" = "" ]
 }
 
 @test "addon.network posts the given network map as a raw JSON body" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::addon.network "alpha" '{"80/tcp":8080}'
+    run bashio::app.network "alpha" '{"80/tcp":8080}'
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /addons/alpha/options {"network":{"80/tcp":8080}}' ]
 }
@@ -1004,43 +1004,43 @@ get_field() {
 @test "addon.network propagates an API failure on set" {
     bashio::api.supervisor() { return 1; }
     rc=0
-    bashio::addon.network "alpha" '{}' || rc=$?
+    bashio::app.network "alpha" '{}' || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
 @test "addon.network_description returns the descriptions when present" {
-    run get_field '{"slug":"alpha","network_description":{"80/tcp":"Web"}}' bashio::addon.network_description
+    run get_field '{"slug":"alpha","network_description":{"80/tcp":"Web"}}' bashio::app.network_description
     run jq -r '."80/tcp"' <<<"${output}"
     [ "${output}" = "Web" ]
 }
 
 @test "addon.port reads the mapped port, defaulting the protocol to tcp" {
-    run get_field '{"slug":"alpha","network":{"80/tcp":8080}}' bashio::addon.port "80"
+    run get_field '{"slug":"alpha","network":{"80/tcp":8080}}' bashio::app.port "80"
     [ "${status}" -eq 0 ]
     [ "${output}" = "8080" ]
 }
 
 @test "addon.port reads a port with an explicit protocol" {
-    run get_field '{"slug":"alpha","network":{"53/udp":5353}}' bashio::addon.port "53/udp"
+    run get_field '{"slug":"alpha","network":{"53/udp":5353}}' bashio::app.port "53/udp"
     [ "${output}" = "5353" ]
 }
 
 @test "addon.port is empty when the port is not mapped" {
-    run get_field '{"slug":"alpha","network":{}}' bashio::addon.port "80"
+    run get_field '{"slug":"alpha","network":{}}' bashio::app.port "80"
     [ "${output}" = "" ]
 }
 
 @test "addon.port sets a user port by merging into the network map" {
     # Read returns the current network, write records the merged result. The
     # third argument switches the function into set mode.
-    bashio::addon.network() {
+    bashio::app.network() {
         if [[ $# -ge 2 ]]; then
             echo "$2" >"${BATS_TEST_TMPDIR}/net"
         else
             printf '%s' '{"80/tcp":8080}'
         fi
     }
-    run bashio::addon.port "443" "alpha" "8443"
+    run bashio::app.port "443" "alpha" "8443"
     [ "${status}" -eq 0 ]
     [ "$(jq -r '."443/tcp"' <"${BATS_TEST_TMPDIR}/net")" = "8443" ]
     # The pre-existing mapping is preserved.
@@ -1048,7 +1048,7 @@ get_field() {
 }
 
 @test "addon.port_description reads the description, defaulting to tcp" {
-    run get_field '{"slug":"alpha","network_description":{"80/tcp":"Web UI"}}' bashio::addon.port_description "80"
+    run get_field '{"slug":"alpha","network_description":{"80/tcp":"Web UI"}}' bashio::app.port_description "80"
     [ "${output}" = "Web UI" ]
 }
 
@@ -1069,7 +1069,7 @@ stats_field() {
 }
 
 @test "addon.stats fetches the stats endpoint and returns the raw object" {
-    run stats_field '{"cpu_percent":1.5,"memory_usage":100}' bashio::addon.stats
+    run stats_field '{"cpu_percent":1.5,"memory_usage":100}' bashio::app.stats
     [ "${status}" -eq 0 ]
     run cat "${BATS_TEST_TMPDIR}/calls"
     [ "${lines[0]}" = "GET /addons/alpha/stats false" ]
@@ -1078,7 +1078,7 @@ stats_field() {
 @test "addon.stats fails when the API call fails" {
     bashio::api.supervisor() { return 1; }
     rc=0
-    bashio::addon.stats "alpha" >/dev/null || rc=$?
+    bashio::app.stats "alpha" >/dev/null || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
@@ -1089,7 +1089,7 @@ stats_field() {
         echo "API SHOULD NOT BE CALLED"
         return 1
     }
-    run bashio::addon.stats "alpha"
+    run bashio::app.stats "alpha"
     [ "${status}" -eq 0 ]
     run jq -r '.cpu_percent' <<<"${output}"
     [ "${output}" = "9" ]
@@ -1097,10 +1097,10 @@ stats_field() {
 
 # The derived stat getters (cpu_percent, memory_usage, memory_limit,
 # memory_percent, network_tx, network_rx, blk_read, blk_write) all dispatch to
-# bashio::addon.stats with a per-field jq filter and return the extracted value.
+# bashio::app.stats with a per-field jq filter and return the extracted value.
 
 @test "addon.cpu_percent returns the cpu_percent value from the stats" {
-    run stats_field '{"cpu_percent":1.5}' bashio::addon.cpu_percent
+    run stats_field '{"cpu_percent":1.5}' bashio::app.cpu_percent
     [ "${status}" -eq 0 ]
     [ "${output}" = "1.5" ]
 }
@@ -1108,12 +1108,12 @@ stats_field() {
 @test "addon.cpu_percent fails when the API call fails" {
     bashio::api.supervisor() { return 1; }
     rc=0
-    bashio::addon.cpu_percent "alpha" >/dev/null 2>&1 || rc=$?
+    bashio::app.cpu_percent "alpha" >/dev/null 2>&1 || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
 @test "addon.memory_usage returns the memory_usage value from the stats" {
-    run stats_field '{"memory_usage":2048}' bashio::addon.memory_usage
+    run stats_field '{"memory_usage":2048}' bashio::app.memory_usage
     [ "${status}" -eq 0 ]
     [ "${output}" = "2048" ]
 }
@@ -1121,12 +1121,12 @@ stats_field() {
 @test "addon.memory_usage fails when the API call fails" {
     bashio::api.supervisor() { return 1; }
     rc=0
-    bashio::addon.memory_usage "alpha" >/dev/null 2>&1 || rc=$?
+    bashio::app.memory_usage "alpha" >/dev/null 2>&1 || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
 @test "addon.memory_limit returns the memory_limit value from the stats" {
-    run stats_field '{"memory_limit":4096}' bashio::addon.memory_limit
+    run stats_field '{"memory_limit":4096}' bashio::app.memory_limit
     [ "${status}" -eq 0 ]
     [ "${output}" = "4096" ]
 }
@@ -1134,12 +1134,12 @@ stats_field() {
 @test "addon.memory_limit fails when the API call fails" {
     bashio::api.supervisor() { return 1; }
     rc=0
-    bashio::addon.memory_limit "alpha" >/dev/null 2>&1 || rc=$?
+    bashio::app.memory_limit "alpha" >/dev/null 2>&1 || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
 @test "addon.memory_percent returns the memory_percent value from the stats" {
-    run stats_field '{"memory_percent":50.0}' bashio::addon.memory_percent
+    run stats_field '{"memory_percent":50.0}' bashio::app.memory_percent
     [ "${status}" -eq 0 ]
     [ "${output}" = "50.0" ]
 }
@@ -1147,12 +1147,12 @@ stats_field() {
 @test "addon.memory_percent fails when the API call fails" {
     bashio::api.supervisor() { return 1; }
     rc=0
-    bashio::addon.memory_percent "alpha" >/dev/null 2>&1 || rc=$?
+    bashio::app.memory_percent "alpha" >/dev/null 2>&1 || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
 @test "addon.network_tx returns the network_tx value from the stats" {
-    run stats_field '{"network_tx":1000}' bashio::addon.network_tx
+    run stats_field '{"network_tx":1000}' bashio::app.network_tx
     [ "${status}" -eq 0 ]
     [ "${output}" = "1000" ]
 }
@@ -1160,12 +1160,12 @@ stats_field() {
 @test "addon.network_tx fails when the API call fails" {
     bashio::api.supervisor() { return 1; }
     rc=0
-    bashio::addon.network_tx "alpha" >/dev/null 2>&1 || rc=$?
+    bashio::app.network_tx "alpha" >/dev/null 2>&1 || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
 @test "addon.network_rx returns the network_rx value from the stats" {
-    run stats_field '{"network_rx":2000}' bashio::addon.network_rx
+    run stats_field '{"network_rx":2000}' bashio::app.network_rx
     [ "${status}" -eq 0 ]
     [ "${output}" = "2000" ]
 }
@@ -1173,12 +1173,12 @@ stats_field() {
 @test "addon.network_rx fails when the API call fails" {
     bashio::api.supervisor() { return 1; }
     rc=0
-    bashio::addon.network_rx "alpha" >/dev/null 2>&1 || rc=$?
+    bashio::app.network_rx "alpha" >/dev/null 2>&1 || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
 @test "addon.blk_read returns the blk_read value from the stats" {
-    run stats_field '{"blk_read":300}' bashio::addon.blk_read
+    run stats_field '{"blk_read":300}' bashio::app.blk_read
     [ "${status}" -eq 0 ]
     [ "${output}" = "300" ]
 }
@@ -1186,12 +1186,12 @@ stats_field() {
 @test "addon.blk_read fails when the API call fails" {
     bashio::api.supervisor() { return 1; }
     rc=0
-    bashio::addon.blk_read "alpha" >/dev/null 2>&1 || rc=$?
+    bashio::app.blk_read "alpha" >/dev/null 2>&1 || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
 @test "addon.blk_write returns the blk_write value from the stats" {
-    run stats_field '{"blk_write":400}' bashio::addon.blk_write
+    run stats_field '{"blk_write":400}' bashio::app.blk_write
     [ "${status}" -eq 0 ]
     [ "${output}" = "400" ]
 }
@@ -1199,7 +1199,7 @@ stats_field() {
 @test "addon.blk_write fails when the API call fails" {
     bashio::api.supervisor() { return 1; }
     rc=0
-    bashio::addon.blk_write "alpha" >/dev/null 2>&1 || rc=$?
+    bashio::app.blk_write "alpha" >/dev/null 2>&1 || rc=$?
     [ "${rc}" -ne 0 ]
 }
 
@@ -1208,25 +1208,68 @@ stats_field() {
 # ------------------------------------------------------------------------------
 
 @test "require.protected succeeds when protection mode is enabled" {
-    bashio::addon.protected() { printf '%s' "true"; }
+    bashio::app.protected() { printf '%s' "true"; }
     run bashio::require.protected
     [ "${status}" -eq 0 ]
 }
 
 @test "require.protected exits non-zero when protection mode is disabled" {
-    bashio::addon.protected() { printf '%s' "false"; }
+    bashio::app.protected() { printf '%s' "false"; }
     run bashio::require.protected
     [ "${status}" -ne 0 ]
 }
 
 @test "require.unprotected succeeds when protection mode is disabled" {
-    bashio::addon.protected() { printf '%s' "false"; }
+    bashio::app.protected() { printf '%s' "false"; }
     run bashio::require.unprotected
     [ "${status}" -eq 0 ]
 }
 
 @test "require.unprotected exits non-zero when protection mode is enabled" {
-    bashio::addon.protected() { printf '%s' "true"; }
+    bashio::app.protected() { printf '%s' "true"; }
     run bashio::require.unprotected
     [ "${status}" -ne 0 ]
+}
+
+# ------------------------------------------------------------------------------
+# Deprecated addon.* / addons.* aliases (renamed to app.* / apps.*).
+# ------------------------------------------------------------------------------
+
+@test "the deprecated addon.name alias delegates to app.name" {
+    bashio::app.name() { printf 'app:%s' "$1"; }
+    run bashio::addon.name "myslug"
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "app:myslug" ]
+}
+
+@test "the deprecated addon.name alias warns once" {
+    bashio::app.name() { :; }
+    warns=0
+    bashio::log.warning() { warns=$((warns + 1)); }
+    # Direct calls (no run/command-substitution) so the warn-once state and the
+    # counter both live in this shell.
+    bashio::addon.name "self" >/dev/null
+    bashio::addon.name "self" >/dev/null
+    [ "${warns}" -eq 1 ]
+}
+
+@test "the deprecated addons alias delegates to apps" {
+    bashio::apps() { printf 'apps-list'; }
+    run bashio::addons
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "apps-list" ]
+}
+
+@test "the deprecated addons.reload alias delegates to apps.reload" {
+    bashio::apps.reload() { printf 'reloaded'; }
+    run bashio::addons.reload
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "reloaded" ]
+}
+
+@test "the deprecated addon.option alias delegates to app.option" {
+    bashio::app.option() { printf 'set:%s=%s' "$1" "$2"; }
+    run bashio::addon.option "key" "value"
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "set:key=value" ]
 }
