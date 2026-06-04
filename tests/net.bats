@@ -39,24 +39,30 @@ setup() {
     local nc_pid=$!
     # Give the listener a moment to bind.
     sleep 0.2
+    local before after elapsed
+    before="$(date +%s)"
     run bashio::net.wait_for "${port}" 127.0.0.1 5
+    after="$(date +%s)"
+    elapsed=$((after - before))
     # Clean up the listener regardless of test outcome.
     kill "${nc_pid}" 2>/dev/null || true
     wait "${nc_pid}" 2>/dev/null || true
     [ "${status}" -eq "${__BASHIO_EXIT_OK}" ]
+    # The port was already open, so the call must return quickly (well under 2 s).
+    [ "${elapsed}" -lt 2 ]
 }
 
 # ---------------------------------------------------------------------------
 # Default argument handling
 # ---------------------------------------------------------------------------
 
-@test "net.wait_for accepts only a port argument and uses localhost default" {
-    # Port 19998 unlikely to be open; timeout of 1 second; host defaults to localhost.
+@test "net.wait_for falls back to localhost when host argument is empty" {
+    # Port 19998 unlikely to be open; timeout of 1 second; empty host falls back to localhost.
     run bashio::net.wait_for 19998 "" 1
     [ "${status}" -eq "${__BASHIO_EXIT_OK}" ]
 }
 
-@test "net.wait_for with only a port argument does not hang beyond its timeout" {
+@test "net.wait_for does not hang beyond its explicit timeout when port is unreachable" {
     # The function internally defaults to 60-second timeout.
     # We supply an explicit short timeout to keep the suite fast.
     local before after elapsed
