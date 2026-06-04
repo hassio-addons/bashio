@@ -12,7 +12,7 @@ source "${BATS_TEST_DIRNAME}/test_helper.bash"
 
 setup() {
     LOG_FD=1
-    __BASHIO_LOG_LEVEL="${__BASHIO_LOG_LEVEL_INFO}"  # 5 - well below trace (7)
+    __BASHIO_LOG_LEVEL="${__BASHIO_LOG_LEVEL_INFO}" # 5 - well below trace (7)
     __BASHIO_LOG_FORMAT="[{TIMESTAMP}] {LEVEL}: {MESSAGE}"
     __BASHIO_LOG_TIMESTAMP="%T"
 }
