@@ -18,7 +18,10 @@ setup() {
 # ---------------------------------------------------------------------------
 
 @test "discovery calls POST /discovery with service and config payload" {
-    bashio::api.supervisor() { printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call"; printf '%s' '"abc-uuid"'; }
+    bashio::api.supervisor() {
+        printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call"
+        printf '%s' '"abc-uuid"'
+    }
     run bashio::discovery "mqtt" '{"host":"broker.local","port":1883}'
     [ "${status}" -eq 0 ]
     call="$(cat "${BATS_TEST_TMPDIR}/call")"
