@@ -74,7 +74,7 @@ bashio::string.length() {
 # bashio::string.substring "${stringZ}" 0      # abcABC123ABCabc
 # bashio::string.substring "${stringZ}" 1      # bcABC123ABCabc
 # bashio::string.substring "${stringZ}" 7      # 23ABCabc
-# bashio::string.substring "${stringZ}" 7 3    # 23AB
+# bashio::string.substring "${stringZ}" 7 3    # 23A
 #
 # Arguments:
 #   $1 String to return a substring of

@@ -38,7 +38,7 @@ function bashio::log.reinitialize_output() {
 # Log a message to output.
 #
 # Arguments:
-#   $1 Message to display
+#   $* Message to display
 # ------------------------------------------------------------------------------
 bashio::log() {
     local message=$*
@@ -50,7 +50,7 @@ bashio::log() {
 # Log a message to output (in red).
 #
 # Arguments:
-#   $1 Message to display
+#   $* Message to display
 # ------------------------------------------------------------------------------
 bashio::log.red() {
     local message=$*
@@ -62,7 +62,7 @@ bashio::log.red() {
 # Log a message to output (in green).
 #
 # Arguments:
-#   $1 Message to display
+#   $* Message to display
 # ------------------------------------------------------------------------------
 bashio::log.green() {
     local message=$*
@@ -74,7 +74,7 @@ bashio::log.green() {
 # Log a message to output (in yellow).
 #
 # Arguments:
-#   $1 Message to display
+#   $* Message to display
 # ------------------------------------------------------------------------------
 bashio::log.yellow() {
     local message=$*
@@ -86,7 +86,7 @@ bashio::log.yellow() {
 # Log a message to output (in blue).
 #
 # Arguments:
-#   $1 Message to display
+#   $* Message to display
 # ------------------------------------------------------------------------------
 bashio::log.blue() {
     local message=$*
@@ -98,7 +98,7 @@ bashio::log.blue() {
 # Log a message to output (in magenta).
 #
 # Arguments:
-#   $1 Message to display
+#   $* Message to display
 # ------------------------------------------------------------------------------
 bashio::log.magenta() {
     local message=$*
@@ -110,7 +110,7 @@ bashio::log.magenta() {
 # Log a message to output (in cyan).
 #
 # Arguments:
-#   $1 Message to display
+#   $* Message to display
 # ------------------------------------------------------------------------------
 bashio::log.cyan() {
     local message=$*

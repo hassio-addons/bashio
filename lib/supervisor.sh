@@ -233,7 +233,7 @@ function bashio::supervisor.country() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns the current logging level of the Supervisor.
+# Returns or sets the current logging level of the Supervisor.
 #
 # Arguments:
 #   $1 Logging level to set (optional).
@@ -261,7 +261,7 @@ function bashio::supervisor.ip_address() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns if debug is enabled on the supervisor
+# Returns or sets if debug is enabled on the Supervisor.
 #
 # Arguments:
 #   $1 Set debug (optional).
@@ -285,7 +285,7 @@ function bashio::supervisor.debug() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns if debug block is enabled on the supervisor
+# Returns or sets if debug block is enabled on the Supervisor.
 #
 # Arguments:
 #   $1 Set debug block (optional).
