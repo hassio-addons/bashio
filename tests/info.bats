@@ -38,10 +38,16 @@ setup() {
 # ---------------------------------------------------------------------------
 
 @test "info calls GET /info" {
-    bashio::api.supervisor() { printf '%s' "${INFO_JSON}"; }
+    local call_args="${BATS_TEST_TMPDIR}/args"
+    bashio::api.supervisor() {
+        printf '%s' "$*" >"${call_args}"
+        printf '%s' "${INFO_JSON}"
+    }
     run bashio::info
     [ "${status}" -eq 0 ]
     [ "${output}" = "${INFO_JSON}" ]
+    # The base fetcher must forward the exact method, resource and raw flag.
+    [ "$(cat "${call_args}")" = "GET /info false" ]
 }
 
 @test "info applies an optional jq filter" {
@@ -212,10 +218,12 @@ setup() {
     bashio::api.supervisor() { printf '%s' "${INFO_JSON}"; }
     run bashio::info.supported_arch
     [ "${status}" -eq 0 ]
-    # Five architectures are present in the fixture.
-    [ "$(printf '%s\n' "${output}" | wc -l)" -ge 5 ]
-    [[ "${output}" == *"amd64"* ]]
-    [[ "${output}" == *"aarch64"* ]]
+    # The fixture array is fixed, so assert the exact newline-separated output.
+    [ "${output}" = "aarch64
+amd64
+armhf
+armv7
+i386" ]
 }
 
 @test "info.supported_arch propagates an API failure" {
@@ -344,9 +352,21 @@ setup() {
         printf '%d' $(($(cat "${call_file}") + 1)) >"${call_file}"
         printf '%s' "${INFO_JSON}"
     }
-    # Call both getters without `run` so the cache state is shared.
-    bashio::info.arch >/dev/null
-    bashio::info.hostname >/dev/null
-    # The raw 'info' blob is fetched once; both getters share the same base cache.
+    # Call the field getter so its filtered value is cached under its own key
+    # ('supervisor.info.arch'), alongside the base 'info' blob cache.
+    [ "$(bashio::info.arch)" = "amd64" ]
+    [ "$(cat "${call_file}")" -eq 1 ]
+
+    # Flush ONLY the base 'info' blob cache key, leaving the per-field key intact.
+    bashio::cache.flush 'info'
+
+    # Re-call the same getter with a now-failing api stub. If the per-field value
+    # were not cached on its own key, this would fall through to the API and fail.
+    bashio::api.supervisor() {
+        printf '%d' $(($(cat "${call_file}") + 1)) >"${call_file}"
+        return 1
+    }
+    [ "$(bashio::info.arch)" = "amd64" ]
+    # No additional API call was made; the value came from the per-field cache.
     [ "$(cat "${call_file}")" -eq 1 ]
 }
