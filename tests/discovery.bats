@@ -71,12 +71,20 @@ setup() {
     [ ! -d "${BATS_TEST_TMPDIR}/cache" ]
 }
 
-@test "discovery returns success even when the API call fails" {
-    # bashio::discovery does not check the API return code; it always flushes
-    # the cache and returns success. The test documents this existing behaviour.
+@test "discovery masks API failure: cache is flushed and exit status is 0" {
+    # bashio::discovery does not propagate the API return code. The trailing
+    # bashio::cache.flush_all call masks any prior failure, so the overall
+    # function always returns 0. Prime a cache entry to confirm the flush
+    # still runs even when the API call fails.
+    bashio::cache.set "some.key" "before-failure"
+    [ -f "${BATS_TEST_TMPDIR}/cache/some.key.cache" ]
+
     bashio::api.supervisor() { return 1; }
-    run bashio::discovery "mqtt" '{"host":"x"}'
-    [ "${status}" -eq 0 ]
+    rc=0
+    bashio::discovery "mqtt" '{"host":"x"}' >/dev/null || rc=$?
+    [ "${rc}" -eq 0 ]
+    # The cache must be gone, proving flush_all ran despite the API failure.
+    [ ! -d "${BATS_TEST_TMPDIR}/cache" ]
 }
 
 # ---------------------------------------------------------------------------
@@ -108,11 +116,18 @@ setup() {
     [ ! -d "${BATS_TEST_TMPDIR}/cache" ]
 }
 
-@test "discovery.delete returns success even when the API call fails" {
-    # bashio::discovery.delete does not check the API return code; it always
-    # flushes the cache and returns success. The test documents this existing
-    # behaviour.
+@test "discovery.delete masks API failure: cache is flushed and exit status is 0" {
+    # bashio::discovery.delete does not propagate the API return code. The
+    # trailing bashio::cache.flush_all call masks any prior failure, so the
+    # overall function always returns 0. Prime a cache entry to confirm the
+    # flush still runs even when the API call fails.
+    bashio::cache.set "some.key" "before-failure"
+    [ -f "${BATS_TEST_TMPDIR}/cache/some.key.cache" ]
+
     bashio::api.supervisor() { return 1; }
-    run bashio::discovery.delete "abc-def-uuid"
-    [ "${status}" -eq 0 ]
+    rc=0
+    bashio::discovery.delete "abc-def-uuid" || rc=$?
+    [ "${rc}" -eq 0 ]
+    # The cache must be gone, proving flush_all ran despite the API failure.
+    [ ! -d "${BATS_TEST_TMPDIR}/cache" ]
 }
