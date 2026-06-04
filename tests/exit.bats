@@ -78,6 +78,29 @@ setup() {
     run bashio::exit.die_if_empty "" "boom from die_if_empty"
     [ "${status}" -eq "${__BASHIO_EXIT_NOK}" ]
     [[ "${output}" == *"boom from die_if_empty"* ]]
+
+    run bashio::exit.die_if_false "true" "should not be logged by die_if_false"
+    [ "${status}" -eq "${__BASHIO_EXIT_OK}" ]
+    [ -z "${output}" ]
+
+    run bashio::exit.die_if_true "false" "should not be logged by die_if_true"
+    [ "${status}" -eq "${__BASHIO_EXIT_OK}" ]
+    [ -z "${output}" ]
+
+    run bashio::exit.die_if_empty "present" "should not be logged by die_if_empty"
+    [ "${status}" -eq "${__BASHIO_EXIT_OK}" ]
+    [ -z "${output}" ]
+}
+
+@test "the deprecated die_if_false alias warns and still delegates" {
+    # Triggering case: still exits with the failure code...
+    run hass.die_if_false "false" # codespell:ignore
+    [ "${status}" -eq "${__BASHIO_EXIT_NOK}" ]
+    [[ "${output}" == *"deprecated"* ]]
+    # Non-triggering case: continues, but the deprecation warning is emitted.
+    run hass.die_if_false "true" # codespell:ignore
+    [ "${status}" -eq "${__BASHIO_EXIT_OK}" ]
+    [[ "${output}" == *"deprecated"* ]]
 }
 
 @test "the deprecated die_if_true alias warns and still delegates" {

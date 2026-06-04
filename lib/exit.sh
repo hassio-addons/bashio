@@ -62,6 +62,15 @@ function bashio::exit.die_if_true() {
 }
 
 # ------------------------------------------------------------------------------
+# Deprecated alias for bashio::exit.die_if_false.
+# ------------------------------------------------------------------------------
+function hass.die_if_false() { # codespell:ignore
+    bashio::log.warning \
+        "${FUNCNAME[0]} is deprecated, use bashio::exit.die_if_false instead."
+    bashio::exit.die_if_false "$@"
+}
+
+# ------------------------------------------------------------------------------
 # Deprecated alias for bashio::exit.die_if_true.
 # ------------------------------------------------------------------------------
 function hass.die_if_true() { # codespell:ignore
