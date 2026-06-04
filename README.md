@@ -99,6 +99,17 @@ Furthermore, Bashio is used by the
 [Home Assistant Community Apps project][repository], those apps will be
 a great resource of practical examples.
 
+### Deprecation: `addon` renamed to `app`
+
+Add-ons have been rebranded to apps, so the `bashio::addon.*` functions
+(and `bashio::addons` / `bashio::addons.*`) have been renamed to
+`bashio::app.*` (and `bashio::apps` / `bashio::apps.*`).
+
+The old names still work: each keeps a deprecated alias that delegates to
+its new counterpart and logs a warning the first time it is used. Please
+migrate to the `app` names; for example, replace `bashio::addon.name`
+with `bashio::app.name`. The aliases may be removed in a future release.
+
 ## Known issues and limitations
 
 - Some parts of the Supervisor API are not implemented yet.
