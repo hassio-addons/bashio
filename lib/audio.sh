@@ -54,7 +54,7 @@ function bashio::audio.logs() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns a JSON object with generic version information about audio the server.
+# Returns a JSON object with generic version information about the audio server.
 #
 # Arguments:
 #   $1 Cache key to store results in (optional)

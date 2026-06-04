@@ -895,7 +895,7 @@ function bashio::addon.usb() {
 # Returns whether or not this app has an icon available.
 #
 # Arguments:
-#   $1 App slug
+#   $1 App slug (optional, default: self)
 # ------------------------------------------------------------------------------
 function bashio::addon.icon() {
     local slug=${1:-'self'}
