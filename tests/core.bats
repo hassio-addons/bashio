@@ -37,6 +37,12 @@ setup() {
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "POST /core/stop" ]
 }
 
+@test "core.stop propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    run bashio::core.stop
+    [ "${status}" -ne 0 ]
+}
+
 @test "core.restart posts to the restart endpoint" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
     run bashio::core.restart
@@ -57,6 +63,12 @@ setup() {
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "POST /core/rebuild" ]
 }
 
+@test "core.rebuild propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    run bashio::core.rebuild
+    [ "${status}" -ne 0 ]
+}
+
 @test "core.check posts to the check endpoint" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
     run bashio::core.check
@@ -64,11 +76,23 @@ setup() {
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "POST /core/check" ]
 }
 
+@test "core.check propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    run bashio::core.check
+    [ "${status}" -ne 0 ]
+}
+
 @test "core.logs fetches the logs with the raw flag" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
     run bashio::core.logs
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "GET /core/logs true" ]
+}
+
+@test "core.logs propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    run bashio::core.logs
+    [ "${status}" -ne 0 ]
 }
 
 # ------------------------------------------------------------------------------
@@ -91,16 +115,14 @@ setup() {
 
 @test "core.update propagates an API failure" {
     bashio::api.supervisor() { return 1; }
-    rc=0
-    bashio::core.update || rc=$?
-    [ "${rc}" -ne 0 ]
+    run bashio::core.update
+    [ "${status}" -ne 0 ]
 }
 
 @test "core.update with a version propagates an API failure" {
     bashio::api.supervisor() { return 1; }
-    rc=0
-    bashio::core.update "2024.1.0" || rc=$?
-    [ "${rc}" -ne 0 ]
+    run bashio::core.update "2024.1.0"
+    [ "${status}" -ne 0 ]
 }
 
 # ------------------------------------------------------------------------------
