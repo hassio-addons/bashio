@@ -510,15 +510,16 @@ setup() {
 
 @test "config.require.ssl succeeds without checks when SSL is disabled" {
     bashio::addon.config() { printf '%s' '{"ssl":false}'; }
-    # No certificate files should be probed when SSL is off.
-    fs_called=0
+    # No certificate files should be probed when SSL is off. Use a marker file
+    # because the stub runs in run's subshell, where a shell variable would not
+    # propagate back to this test.
     bashio::fs.file_exists() {
-        fs_called=1
+        : >"${BATS_TEST_TMPDIR}/fs-probed"
         return 0
     }
     run bashio::config.require.ssl
     [ "${status}" -eq 0 ]
-    [ "${fs_called}" -eq 0 ]
+    [ ! -e "${BATS_TEST_TMPDIR}/fs-probed" ]
 }
 
 @test "config.require.ssl succeeds when SSL is enabled and both files exist" {
