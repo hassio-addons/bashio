@@ -172,21 +172,19 @@ setup() {
     run bashio::services.publish "mqtt" '{"host":"broker.local"}'
     [ "${status}" -eq 0 ]
     call="$(cat "${BATS_TEST_TMPDIR}/call")"
-    [[ "${call}" == *"POST"* ]]
-    [[ "${call}" == *"/services/mqtt"* ]]
-    [[ "${call}" == *'{"host":"broker.local"}'* ]]
+    [ "${call}" = 'POST /services/mqtt {"host":"broker.local"}' ]
 }
 
 @test "services.publish flushes the cache" {
     # Prime the cache first.
     bashio::api.supervisor() { printf '%s' "${SERVICE_JSON}"; }
     bashio::services "mqtt" >/dev/null
-    [ -f "${BATS_TEST_TMPDIR}/cache/service.info.mqtt.cache" ]
+    [ -f "${__BASHIO_CACHE_DIR}/service.info.mqtt.cache" ]
 
     bashio::api.supervisor() { printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call2"; }
     bashio::services.publish "mqtt" '{"host":"new"}'
     # Cache directory must be gone after publish.
-    [ ! -d "${BATS_TEST_TMPDIR}/cache" ]
+    [ ! -d "${__BASHIO_CACHE_DIR}" ]
 }
 
 @test "services.publish flushes the cache even when the API call fails" {
@@ -215,20 +213,19 @@ setup() {
     run bashio::services.delete "mqtt"
     [ "${status}" -eq 0 ]
     call="$(cat "${BATS_TEST_TMPDIR}/call")"
-    [[ "${call}" == *"DELETE"* ]]
-    [[ "${call}" == *"/services/mqtt"* ]]
+    [ "${call}" = "DELETE /services/mqtt" ]
 }
 
 @test "services.delete flushes the cache" {
     # Prime the cache first.
     bashio::api.supervisor() { printf '%s' "${SERVICE_JSON}"; }
     bashio::services "mqtt" >/dev/null
-    [ -f "${BATS_TEST_TMPDIR}/cache/service.info.mqtt.cache" ]
+    [ -f "${__BASHIO_CACHE_DIR}/service.info.mqtt.cache" ]
 
     bashio::api.supervisor() { printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call2"; }
     bashio::services.delete "mqtt"
     # Cache directory must be gone after delete.
-    [ ! -d "${BATS_TEST_TMPDIR}/cache" ]
+    [ ! -d "${__BASHIO_CACHE_DIR}" ]
 }
 
 @test "services.delete flushes the cache even when the API call fails" {
