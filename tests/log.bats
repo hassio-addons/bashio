@@ -83,14 +83,35 @@ setup() {
     done
 }
 
-@test "log.level maps names to numeric levels case-insensitively" {
-    bashio::log.level "DEBUG"
-    [ "${__BASHIO_LOG_LEVEL}" -eq "${__BASHIO_LOG_LEVEL_DEBUG}" ]
+@test "log.level maps every level name to its numeric value" {
+    # Covers every arm of the case statement and guards against a name being
+    # wired to the wrong level. 'critical' is an alias for fatal.
+    declare -A expected=(
+        [all]="${__BASHIO_LOG_LEVEL_ALL}"
+        [trace]="${__BASHIO_LOG_LEVEL_TRACE}"
+        [debug]="${__BASHIO_LOG_LEVEL_DEBUG}"
+        [info]="${__BASHIO_LOG_LEVEL_INFO}"
+        [notice]="${__BASHIO_LOG_LEVEL_NOTICE}"
+        [warning]="${__BASHIO_LOG_LEVEL_WARNING}"
+        [error]="${__BASHIO_LOG_LEVEL_ERROR}"
+        [fatal]="${__BASHIO_LOG_LEVEL_FATAL}"
+        [critical]="${__BASHIO_LOG_LEVEL_FATAL}"
+        [off]="${__BASHIO_LOG_LEVEL_OFF}"
+    )
+    for name in "${!expected[@]}"; do
+        # Keep internal logging silent before each call: log.level resolves the
+        # name via `$(bashio::string.lower ...)`, and because this suite points
+        # LOG_FD at fd 1, a verbose level would let string.lower's own trace
+        # leak into that command substitution and corrupt the match.
+        __BASHIO_LOG_LEVEL="${__BASHIO_LOG_LEVEL_OFF}"
+        bashio::log.level "${name}"
+        [ "${__BASHIO_LOG_LEVEL}" -eq "${expected[$name]}" ]
+    done
 }
 
-@test "log.level accepts the 'critical' alias for fatal" {
-    bashio::log.level critical
-    [ "${__BASHIO_LOG_LEVEL}" -eq "${__BASHIO_LOG_LEVEL_FATAL}" ]
+@test "log.level matches level names case-insensitively" {
+    bashio::log.level "DEBUG"
+    [ "${__BASHIO_LOG_LEVEL}" -eq "${__BASHIO_LOG_LEVEL_DEBUG}" ]
 }
 
 @test "log.level off silences even fatal messages" {
