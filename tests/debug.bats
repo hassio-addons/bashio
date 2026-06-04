@@ -9,6 +9,7 @@
 # ==============================================================================
 
 source "${BATS_TEST_DIRNAME}/test_helper.bash"
+bats_require_minimum_version 1.5.0
 
 setup() {
     LOG_FD=1
@@ -91,8 +92,23 @@ setup() {
 
 @test "debug emits no output when returning OK" {
     __BASHIO_LOG_LEVEL="${__BASHIO_LOG_LEVEL_DEBUG}"
-    run bashio::debug
+    run --separate-stderr bashio::debug
     [ -z "${output}" ]
+    [ -z "${stderr}" ]
+}
+
+@test "debug with message returns NOK and emits no output below DEBUG" {
+    __BASHIO_LOG_LEVEL="${__BASHIO_LOG_LEVEL_INFO}"
+    run bashio::debug "some message"
+    [ "${status}" -eq "${__BASHIO_EXIT_NOK}" ]
+    [ -z "${output}" ]
+}
+
+@test "debug with message returns OK and emits output at DEBUG level" {
+    __BASHIO_LOG_LEVEL="${__BASHIO_LOG_LEVEL_DEBUG}"
+    run bashio::debug "some message"
+    [ "${status}" -eq "${__BASHIO_EXIT_OK}" ]
+    [[ "${output}" == *"some message"* ]]
 }
 
 # ---------------------------------------------------------------------------

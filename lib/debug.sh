@@ -9,10 +9,15 @@
 
 # ------------------------------------------------------------------------------
 # Checks if we are currently running in debug mode, based on the log module.
+# If a message is provided and debug logging is enabled, it is emitted.
 # ------------------------------------------------------------------------------
 bashio::debug() {
     if [[ "${__BASHIO_LOG_LEVEL}" -lt "${__BASHIO_LOG_LEVEL_DEBUG}" ]]; then
         return "${__BASHIO_EXIT_NOK}"
+    fi
+
+    if [[ "$#" -gt 0 ]]; then
+        bashio::log.debug "$@"
     fi
 
     return "${__BASHIO_EXIT_OK}"
