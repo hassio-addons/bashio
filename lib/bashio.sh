@@ -80,6 +80,8 @@ source "${__BASHIO_LIB_DIR}/info.sh"
 source "${__BASHIO_LIB_DIR}/jobs.sh"
 # shellcheck source=lib/jq.sh
 source "${__BASHIO_LIB_DIR}/jq.sh"
+# shellcheck source=lib/mounts.sh
+source "${__BASHIO_LIB_DIR}/mounts.sh"
 # shellcheck source=lib/multicast.sh
 source "${__BASHIO_LIB_DIR}/multicast.sh"
 # shellcheck source=lib/net.sh
