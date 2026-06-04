@@ -10,6 +10,8 @@
 
 source "${BATS_TEST_DIRNAME}/test_helper.bash"
 
+bats_require_minimum_version 1.5.0
+
 setup() {
     LOG_FD=1
     __BASHIO_LOG_LEVEL="${__BASHIO_LOG_LEVEL_INFO}" # 5 - well below trace (7)
@@ -85,14 +87,16 @@ setup() {
 
 @test "trace emits no output when returning NOK" {
     __BASHIO_LOG_LEVEL="${__BASHIO_LOG_LEVEL_INFO}"
-    run bashio::trace
+    run --separate-stderr bashio::trace
     [ -z "${output}" ]
+    [ -z "${stderr}" ]
 }
 
 @test "trace emits no output when returning OK" {
     __BASHIO_LOG_LEVEL="${__BASHIO_LOG_LEVEL_TRACE}"
-    run bashio::trace
+    run --separate-stderr bashio::trace
     [ -z "${output}" ]
+    [ -z "${stderr}" ]
 }
 
 # ---------------------------------------------------------------------------
