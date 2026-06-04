@@ -38,17 +38,21 @@ setup() {
 # ------------------------------------------------------------------------------
 
 @test "backups.freeze without a timeout posts no options" {
-    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    bashio::api.supervisor() { printf '%s\n' "$@" >"${BATS_TEST_TMPDIR}/call"; }
     run bashio::backups.freeze
     [ "${status}" -eq 0 ]
-    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "POST /backups/freeze " ]
+    [ "$(sed -n '1p' "${BATS_TEST_TMPDIR}/call")" = "POST" ]
+    [ "$(sed -n '2p' "${BATS_TEST_TMPDIR}/call")" = "/backups/freeze" ]
+    [ "$(sed -n '3p' "${BATS_TEST_TMPDIR}/call")" = "" ]
 }
 
 @test "backups.freeze with a timeout posts the timeout as JSON options" {
-    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    bashio::api.supervisor() { printf '%s\n' "$@" >"${BATS_TEST_TMPDIR}/call"; }
     run bashio::backups.freeze "30"
     [ "${status}" -eq 0 ]
-    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /backups/freeze {"timeout":30}' ]
+    [ "$(sed -n '1p' "${BATS_TEST_TMPDIR}/call")" = "POST" ]
+    [ "$(sed -n '2p' "${BATS_TEST_TMPDIR}/call")" = "/backups/freeze" ]
+    [ "$(sed -n '3p' "${BATS_TEST_TMPDIR}/call")" = '{"timeout":30}' ]
 }
 
 @test "backups.freeze propagates an API failure" {
