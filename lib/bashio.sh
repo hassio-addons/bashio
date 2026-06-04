@@ -54,6 +54,8 @@ source "${__BASHIO_LIB_DIR}/apps.sh"
 source "${__BASHIO_LIB_DIR}/api.sh"
 # shellcheck source=lib/audio.sh
 source "${__BASHIO_LIB_DIR}/audio.sh"
+# shellcheck source=lib/auth.sh
+source "${__BASHIO_LIB_DIR}/auth.sh"
 # shellcheck source=lib/backups.sh
 source "${__BASHIO_LIB_DIR}/backups.sh"
 # shellcheck source=lib/cli.sh
