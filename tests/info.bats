@@ -55,7 +55,7 @@ setup() {
     local call_file="${BATS_TEST_TMPDIR}/calls"
     printf '0' >"${call_file}"
     bashio::api.supervisor() {
-        printf '%d' $(( $(cat "${call_file}") + 1 )) >"${call_file}"
+        printf '%d' $(($(cat "${call_file}") + 1)) >"${call_file}"
         printf '%s' "${INFO_JSON}"
     }
     bashio::info >/dev/null
@@ -341,7 +341,7 @@ setup() {
     local call_file="${BATS_TEST_TMPDIR}/calls2"
     printf '0' >"${call_file}"
     bashio::api.supervisor() {
-        printf '%d' $(( $(cat "${call_file}") + 1 )) >"${call_file}"
+        printf '%d' $(($(cat "${call_file}") + 1)) >"${call_file}"
         printf '%s' "${INFO_JSON}"
     }
     # Call both getters without `run` so the cache state is shared.
