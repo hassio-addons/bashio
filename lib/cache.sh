@@ -21,12 +21,18 @@
 # ------------------------------------------------------------------------------
 function bashio::cache.__valid_key() {
     local key=${1:-}
+    local display
 
     if [[ "${key}" =~ ^[A-Za-z0-9._-]+$ ]]; then
         return "${__BASHIO_EXIT_OK}"
     fi
 
-    bashio::log.error "Invalid cache key: '${key}'"
+    # Sanitize the rejected (untrusted) key before logging it: strip control
+    # characters and backslashes so it cannot inject newlines or escape
+    # sequences through the log formatter's printf '%b'.
+    display=${key//[[:cntrl:]]/?}
+    display=${display//\\/?}
+    bashio::log.error "Invalid cache key: '${display}'"
     return "${__BASHIO_EXIT_NOK}"
 }
 

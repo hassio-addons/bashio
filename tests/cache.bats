@@ -71,6 +71,9 @@ setup() {
     run bashio::cache.set "sub/dir" "value"
     [ "${status}" -ne 0 ]
     [ ! -e "${__BASHIO_CACHE_DIR}/sub" ]
+    # The key is rejected before any filesystem access, so the cache directory
+    # is not even created.
+    [ ! -e "${__BASHIO_CACHE_DIR}" ]
 }
 
 @test "cache.set rejects a path-traversal key without escaping the cache dir" {
@@ -90,9 +93,28 @@ setup() {
     [ "${status}" -ne 0 ]
 }
 
-@test "cache.flush rejects an invalid key" {
-    run bashio::cache.flush "../../etc/passwd"
+@test "cache.flush rejects an invalid key without deleting outside the cache dir" {
+    # Sentinel outside the cache dir that a traversal key would target.
+    : >"${BATS_TEST_TMPDIR}/escaped.cache"
+    run bashio::cache.flush "../escaped"
     [ "${status}" -ne 0 ]
+    # The arbitrary path must be untouched.
+    [ -e "${BATS_TEST_TMPDIR}/escaped.cache" ]
+}
+
+@test "cache rejecting a key does not inject control characters into the log" {
+    # The rejected key is untrusted; the log formatter uses printf %b, so a
+    # newline or escape sequence in the key must not reach the log verbatim.
+    # Call directly (not via run) so the stub's captured message survives.
+    logged=""
+    bashio::log.error() { logged="$*"; }
+    rc=0
+    bashio::cache.exists "$(printf 'bad\nESC\x1bINJECT')" || rc=$?
+    [ "${rc}" -ne 0 ]
+    [ -n "${logged}" ]
+    # The newline and escape character must not survive into the message.
+    [[ "${logged}" != *$'\n'* ]]
+    [[ "${logged}" != *$'\x1b'* ]]
 }
 
 @test "cache.set rejects an empty key" {
