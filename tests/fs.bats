@@ -57,3 +57,13 @@ source "${BATS_TEST_DIRNAME}/test_helper.bash"
     run bashio::fs.socket_exists "${BATS_TEST_TMPDIR}/not-a-socket"
     [ "${status}" -ne 0 ]
 }
+
+@test "fs.socket_exists succeeds for a real socket" {
+    # Create an actual UNIX domain socket. python3 is used because the shell has
+    # no portable way to bind one; skip if it is unavailable.
+    command -v python3 >/dev/null 2>&1 || skip "python3 not available to create a socket"
+    local sock="${BATS_TEST_TMPDIR}/sock"
+    python3 -c "import socket; s = socket.socket(socket.AF_UNIX); s.bind('${sock}')"
+    run bashio::fs.socket_exists "${sock}"
+    [ "${status}" -eq 0 ]
+}
