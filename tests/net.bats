@@ -31,22 +31,31 @@ setup() {
     [ "${status}" -eq "${__BASHIO_EXIT_OK}" ]
 }
 
-@test "net.wait_for returns OK for an immediately available port" {
-    # Find a free port and open a listener with nc.
+@test "net.wait_for returns quickly when the port is already open" {
+    # Open a real listener so the fast path (port already reachable) is
+    # exercised, not just the return-code contract. A python3 listener is used
+    # because the nc invocation differs across implementations (busybox vs
+    # openbsd) and a single-shot listener would race with the connection; the
+    # backlog lets the connect succeed at the kernel level without accept().
+    command -v python3 >/dev/null 2>&1 || skip "python3 not available to open a listener"
     local port=19876
-    # Start a simple listener that accepts one connection and exits.
-    nc -l -p "${port}" 127.0.0.1 >/dev/null 2>&1 &
-    local nc_pid=$!
+    python3 -c "import socket, time
+s = socket.socket()
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+s.bind(('127.0.0.1', ${port}))
+s.listen(5)
+time.sleep(10)" &
+    local listener_pid=$!
     # Give the listener a moment to bind.
-    sleep 0.2
+    sleep 0.5
     local before after elapsed
     before="$(date +%s)"
     run bashio::net.wait_for "${port}" 127.0.0.1 5
     after="$(date +%s)"
     elapsed=$((after - before))
     # Clean up the listener regardless of test outcome.
-    kill "${nc_pid}" 2>/dev/null || true
-    wait "${nc_pid}" 2>/dev/null || true
+    kill "${listener_pid}" 2>/dev/null || true
+    wait "${listener_pid}" 2>/dev/null || true
     [ "${status}" -eq "${__BASHIO_EXIT_OK}" ]
     # The port was already open, so the call must return quickly (well under 2 s).
     [ "${elapsed}" -lt 2 ]
