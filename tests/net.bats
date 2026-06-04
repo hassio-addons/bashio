@@ -16,7 +16,7 @@ source "${BATS_TEST_DIRNAME}/test_helper.bash"
 
 setup() {
     LOG_FD=1
-    __BASHIO_LOG_LEVEL="${__BASHIO_LOG_LEVEL_OFF}"  # keep trace output silent
+    __BASHIO_LOG_LEVEL="${__BASHIO_LOG_LEVEL_OFF}" # keep trace output silent
     __BASHIO_LOG_FORMAT="[{TIMESTAMP}] {LEVEL}: {MESSAGE}"
     __BASHIO_LOG_TIMESTAMP="%T"
 }
@@ -63,7 +63,7 @@ setup() {
     before="$(date +%s)"
     run bashio::net.wait_for 19997 127.0.0.1 2
     after="$(date +%s)"
-    elapsed=$(( after - before ))
+    elapsed=$((after - before))
     [ "${status}" -eq "${__BASHIO_EXIT_OK}" ]
     # Must finish well inside the 2-second window (allow 5 s for slow CI).
     [ "${elapsed}" -lt 5 ]
