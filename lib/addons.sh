@@ -1368,7 +1368,7 @@ function bashio::addon.stats() {
 function bashio::addon.cpu_percent() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons.stats \
+    bashio::addon.stats \
         "${slug}" \
         "addons.${slug}.stats.cpu_percent" \
         '.cpu_percent'
@@ -1383,7 +1383,7 @@ function bashio::addon.cpu_percent() {
 function bashio::addon.memory_usage() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons.stats \
+    bashio::addon.stats \
         "${slug}" \
         "addons.${slug}.stats.memory_usage" \
         '.memory_usage'
@@ -1398,7 +1398,7 @@ function bashio::addon.memory_usage() {
 function bashio::addon.memory_limit() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons.stats \
+    bashio::addon.stats \
         "${slug}" \
         "addons.${slug}.stats.memory_limit" \
         '.memory_limit'
@@ -1413,7 +1413,7 @@ function bashio::addon.memory_limit() {
 function bashio::addon.memory_percent() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons.stats \
+    bashio::addon.stats \
         "${slug}" \
         "addons.${slug}.stats.memory_percent" \
         '.memory_percent'
@@ -1428,7 +1428,7 @@ function bashio::addon.memory_percent() {
 function bashio::addon.network_tx() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons.stats \
+    bashio::addon.stats \
         "${slug}" \
         "addons.${slug}.stats.network_tx" \
         '.network_tx'
@@ -1443,7 +1443,7 @@ function bashio::addon.network_tx() {
 function bashio::addon.network_rx() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons.stats \
+    bashio::addon.stats \
         "${slug}" \
         "addons.${slug}.stats.network_rx" \
         '.network_rx'
@@ -1458,7 +1458,7 @@ function bashio::addon.network_rx() {
 function bashio::addon.blk_read() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons.stats \
+    bashio::addon.stats \
         "${slug}" \
         "addons.${slug}.stats.blk_read" \
         '.blk_read'
@@ -1473,7 +1473,7 @@ function bashio::addon.blk_read() {
 function bashio::addon.blk_write() {
     local slug=${1:-'self'}
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::addons.stats \
+    bashio::addon.stats \
         "${slug}" \
         "addons.${slug}.stats.blk_write" \
         '.blk_write'
