@@ -57,6 +57,24 @@ source "${BATS_TEST_DIRNAME}/test_helper.bash"
     [ "${output}" = '{"count":42}' ]
 }
 
+@test "bashio::var.json escapes special characters in the key" {
+    run bashio::var.json 'a"b' "value"
+    [ "${status}" -eq 0 ]
+    # The output must be valid JSON whose single key is the literal input,
+    # with no structure injected by the embedded quote.
+    [ "$(jq -r 'to_entries | length' <<<"${output}")" = "1" ]
+    [ "$(jq -r 'to_entries[0].key' <<<"${output}")" = 'a"b' ]
+    [ "$(jq -r 'to_entries[0].value' <<<"${output}")" = "value" ]
+}
+
+@test "bashio::var.json escapes a backslash in the key" {
+    run bashio::var.json 'a\b' "value"
+    [ "${status}" -eq 0 ]
+    [ "$(jq -r 'to_entries | length' <<<"${output}")" = "1" ]
+    [ "$(jq -r 'to_entries[0].key' <<<"${output}")" = 'a\b' ]
+    [ "$(jq -r 'to_entries[0].value' <<<"${output}")" = "value" ]
+}
+
 @test "bashio::var.json fails for an odd number of arguments" {
     run bashio::var.json only-a-key
     [ "${status}" -ne 0 ]

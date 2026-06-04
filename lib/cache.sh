@@ -58,11 +58,31 @@ function bashio::cache.set() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if ! bashio::fs.directory_exists "${__BASHIO_CACHE_DIR}"; then
-        mkdir -p "${__BASHIO_CACHE_DIR}" ||
+        # Cached values can contain secrets, so create the directory with an
+        # owner-only umask instead of relying on the (predictable) default
+        # permissions. A subshell keeps the umask change local to this call.
+        (umask 077 && mkdir -p -- "${__BASHIO_CACHE_DIR}") ||
             bashio::exit.nok "Could not create cache folder"
     fi
 
-    if ! printf "%s" "$value" >"${__BASHIO_CACHE_DIR}/${key}.cache"; then
+    # Enforce owner-only access even if the directory already existed, for
+    # example one left behind by an older version with broader permissions.
+    # Fail hard rather than write secrets into a directory we cannot secure.
+    chmod 0700 -- "${__BASHIO_CACHE_DIR}" ||
+        bashio::exit.nok "Could not restrict permissions on the cache folder"
+
+    # Remove any existing entry first, so the value is always written to a
+    # freshly created file instead of inheriting a permissive mode (or
+    # following a symlink) from a file left behind by an older version. If the
+    # removal fails, abort rather than write into an unknown target.
+    if ! rm -f -- "${__BASHIO_CACHE_DIR}/${key}.cache"; then
+        bashio::log.warning "An error occurred while storing ${key} to cache"
+        return "${__BASHIO_EXIT_NOK}"
+    fi
+
+    # Write under a tight umask so the cache file (which can hold secrets) is
+    # created owner-only instead of with the ambient umask.
+    if ! (umask 077 && printf "%s" "$value" >"${__BASHIO_CACHE_DIR}/${key}.cache"); then
         bashio::log.warning "An error occurred while storing ${key} to cache"
         return "${__BASHIO_EXIT_NOK}"
     fi

@@ -139,8 +139,6 @@ function bashio::var.json() {
 
     counter=0
     for i in "${data[@]}"; do
-        item="\"$i\""
-
         separator=","
         if [ $((++counter % 2)) -eq 0 ]; then
             separator=":"
@@ -150,6 +148,10 @@ function bashio::var.json() {
             else
                 item=$(bashio::var.json_string "${i}")
             fi
+        else
+            # Object keys are always JSON strings and must be escaped, so a key
+            # containing a quote or backslash cannot break out of the JSON.
+            item=$(bashio::var.json_string "${i}")
         fi
 
         json="$json$separator$item"
