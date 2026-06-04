@@ -81,8 +81,9 @@ setup() {
     bashio::api.supervisor() { printf '%s' "${HARDWARE_JSON}"; }
     run bashio::hardware.serial
     [ "${status}" -eq 0 ]
-    [[ "${output}" == *"/dev/ttyUSB0"* ]]
-    [[ "${output}" == *"/dev/ttyUSB1"* ]]
+    [ "${#lines[@]}" -eq 2 ]
+    [ "${lines[0]}" = "/dev/ttyUSB0" ]
+    [ "${lines[1]}" = "/dev/ttyUSB1" ]
 }
 
 @test "hardware.serial propagates an API failure" {
@@ -109,8 +110,9 @@ setup() {
     bashio::api.supervisor() { printf '%s' "${HARDWARE_JSON}"; }
     run bashio::hardware.input
     [ "${status}" -eq 0 ]
-    [[ "${output}" == *"keyboard0"* ]]
-    [[ "${output}" == *"mouse0"* ]]
+    [ "${#lines[@]}" -eq 2 ]
+    [ "${lines[0]}" = "keyboard0" ]
+    [ "${lines[1]}" = "mouse0" ]
 }
 
 @test "hardware.input propagates an API failure" {
@@ -128,8 +130,9 @@ setup() {
     bashio::api.supervisor() { printf '%s' "${HARDWARE_JSON}"; }
     run bashio::hardware.disk
     [ "${status}" -eq 0 ]
-    [[ "${output}" == *"/dev/sda"* ]]
-    [[ "${output}" == *"/dev/sdb"* ]]
+    [ "${#lines[@]}" -eq 2 ]
+    [ "${lines[0]}" = "/dev/sda" ]
+    [ "${lines[1]}" = "/dev/sdb" ]
 }
 
 @test "hardware.disk propagates an API failure" {
@@ -147,7 +150,8 @@ setup() {
     bashio::api.supervisor() { printf '%s' "${HARDWARE_JSON}"; }
     run bashio::hardware.gpio
     [ "${status}" -eq 0 ]
-    [[ "${output}" == *"gpiochip0"* ]]
+    [ "${#lines[@]}" -eq 1 ]
+    [ "${lines[0]}" = "gpiochip0" ]
 }
 
 @test "hardware.gpio propagates an API failure" {
@@ -165,7 +169,8 @@ setup() {
     bashio::api.supervisor() { printf '%s' "${HARDWARE_JSON}"; }
     run bashio::hardware.usb
     [ "${status}" -eq 0 ]
-    [[ "${output}" == *"0403:6001"* ]]
+    [ "${#lines[@]}" -eq 1 ]
+    [ "${lines[0]}" = "0403:6001" ]
 }
 
 @test "hardware.usb propagates an API failure" {
