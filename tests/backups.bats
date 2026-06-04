@@ -407,6 +407,13 @@ setup() {
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "DELETE /backups/aaa" ]
 }
 
+@test "backup.delete propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::backup.delete "aaa" || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
 # ------------------------------------------------------------------------------
 # backup.restore_full / backup.restore_partial
 # ------------------------------------------------------------------------------

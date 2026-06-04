@@ -77,14 +77,13 @@ setup() {
     [ ! -d "${BATS_TEST_TMPDIR}/cache" ]
 }
 
-@test "discovery masks API failure: cache is flushed and exit status is 0" {
-    # bashio::discovery does not propagate the API return code: its return
-    # status is whatever bashio::cache.flush_all returns. An API failure is
-    # only masked when the caller suppresses errexit (as here, with `|| rc=$?`).
-    # Prime a cache entry to confirm the flush still runs even when the API
-    # call fails, and record the call so we can prove the API was attempted.
+@test "discovery propagates an API failure" {
+    # The failing Supervisor call is attempted and its failure is returned to
+    # the caller (captured with `|| rc=$?` since errexit is suppressed in a
+    # conditional context). The function returns before flushing, so a primed
+    # cache entry survives.
     bashio::cache.set "some.key" "before-failure"
-    [ -f "${BATS_TEST_TMPDIR}/cache/some.key.cache" ]
+    [ -f "${__BASHIO_CACHE_DIR}/some.key.cache" ]
 
     bashio::api.supervisor() {
         printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call"
@@ -92,12 +91,11 @@ setup() {
     }
     rc=0
     bashio::discovery "mqtt" '{"host":"x"}' >/dev/null || rc=$?
-    [ "${rc}" -eq 0 ]
+    [ "${rc}" -ne 0 ]
     # The failing Supervisor call must still have been attempted.
     call="$(cat "${BATS_TEST_TMPDIR}/call")"
     [[ "${call}" == "POST /discovery "* ]]
-    # The cache must be gone, proving flush_all ran despite the API failure.
-    [ ! -d "${BATS_TEST_TMPDIR}/cache" ]
+    [ -f "${__BASHIO_CACHE_DIR}/some.key.cache" ]
 }
 
 # ---------------------------------------------------------------------------
@@ -130,14 +128,13 @@ setup() {
     [ ! -d "${BATS_TEST_TMPDIR}/cache" ]
 }
 
-@test "discovery.delete masks API failure: cache is flushed and exit status is 0" {
-    # bashio::discovery.delete does not propagate the API return code: its
-    # return status is whatever bashio::cache.flush_all returns. An API failure
-    # is only masked when the caller suppresses errexit (as here, with
-    # `|| rc=$?`). Prime a cache entry to confirm the flush still runs even when
-    # the API call fails, and record the call so we can prove it was attempted.
+@test "discovery.delete propagates an API failure" {
+    # The failing Supervisor call is attempted and its failure is returned to
+    # the caller (captured with `|| rc=$?` since errexit is suppressed in a
+    # conditional context). The function returns before flushing, so a primed
+    # cache entry survives.
     bashio::cache.set "some.key" "before-failure"
-    [ -f "${BATS_TEST_TMPDIR}/cache/some.key.cache" ]
+    [ -f "${__BASHIO_CACHE_DIR}/some.key.cache" ]
 
     bashio::api.supervisor() {
         printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call"
@@ -145,10 +142,9 @@ setup() {
     }
     rc=0
     bashio::discovery.delete "abc-def-uuid" || rc=$?
-    [ "${rc}" -eq 0 ]
+    [ "${rc}" -ne 0 ]
     # The failing Supervisor call must still have been attempted.
     call="$(cat "${BATS_TEST_TMPDIR}/call")"
     [ "${call}" = "DELETE /discovery/abc-def-uuid" ]
-    # The cache must be gone, proving flush_all ran despite the API failure.
-    [ ! -d "${BATS_TEST_TMPDIR}/cache" ]
+    [ -f "${__BASHIO_CACHE_DIR}/some.key.cache" ]
 }

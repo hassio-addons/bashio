@@ -100,7 +100,8 @@ function bashio::services.publish() {
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
-    bashio::api.supervisor "POST" "/services/${service}" "${config}"
+    bashio::api.supervisor "POST" "/services/${service}" "${config}" ||
+        return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
 
@@ -114,6 +115,7 @@ function bashio::services.delete() {
     local service=${1}
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
-    bashio::api.supervisor "DELETE" "/services/${service}"
+    bashio::api.supervisor "DELETE" "/services/${service}" ||
+        return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
