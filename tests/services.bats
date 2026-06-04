@@ -120,7 +120,7 @@ setup() {
     local call_file="${BATS_TEST_TMPDIR}/calls"
     printf '0' >"${call_file}"
     bashio::api.supervisor() {
-        printf '%d' $(( $(cat "${call_file}") + 1 )) >"${call_file}"
+        printf '%d' $(($(cat "${call_file}") + 1)) >"${call_file}"
         printf '%s' "${SERVICE_JSON}"
     }
     # Call both without `run` so the cache state is shared.
