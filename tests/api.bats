@@ -41,10 +41,46 @@ setup() {
     [ "${status}" -ne 0 ]
 }
 
+@test "api.supervisor fails on a forbidden error (403)" {
+    MOCK_BODY='{"result":"error","message":"forbidden"}'
+    MOCK_STATUS='403'
+    run bashio::api.supervisor GET /test
+    [ "${status}" -ne 0 ]
+}
+
 @test "api.supervisor fails on a not-found error (404)" {
     MOCK_BODY='{"result":"error","message":"missing"}'
     MOCK_STATUS='404'
     run bashio::api.supervisor GET /test
+    [ "${status}" -ne 0 ]
+}
+
+@test "api.supervisor fails on a method-not-allowed error (405)" {
+    MOCK_BODY='{"result":"error","message":"nope"}'
+    MOCK_STATUS='405'
+    run bashio::api.supervisor GET /test
+    [ "${status}" -ne 0 ]
+}
+
+@test "api.supervisor fails on an unexpected HTTP status with no error result" {
+    # A non-200 status whose body does not carry a "result":"error" must still
+    # be reported as a failure by the catch-all status check.
+    MOCK_BODY='{"result":"ok"}'
+    MOCK_STATUS='500'
+    run bashio::api.supervisor GET /test
+    [ "${status}" -ne 0 ]
+}
+
+@test "api.supervisor fails when the request to curl itself fails" {
+    curl() { return 1; }
+    run bashio::api.supervisor GET /test
+    [ "${status}" -ne 0 ]
+}
+
+@test "api.supervisor fails when the jq filter is invalid" {
+    MOCK_BODY='{"result":"ok","data":{"hello":"world"}}'
+    MOCK_STATUS='200'
+    run bashio::api.supervisor GET /test false '.['
     [ "${status}" -ne 0 ]
 }
 

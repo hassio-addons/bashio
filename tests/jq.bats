@@ -75,3 +75,17 @@ source "${BATS_TEST_DIRNAME}/test_helper.bash"
     [ "${status}" -eq 0 ]
     [ "$(jq -r '.name' <<<"${output}")" = 'a"b' ]
 }
+
+@test "jq.is_boolean detects a boolean and rejects other types" {
+    run bashio::jq.is_boolean '{"flag":true}' '.flag'
+    [ "${status}" -eq 0 ]
+    run bashio::jq.is_boolean '{"flag":"true"}' '.flag'
+    [ "${status}" -ne 0 ]
+}
+
+@test "jq.is_array detects an array and rejects other types" {
+    run bashio::jq.is_array '{"items":[1,2]}' '.items'
+    [ "${status}" -eq 0 ]
+    run bashio::jq.is_array '{"items":"nope"}' '.items'
+    [ "${status}" -ne 0 ]
+}

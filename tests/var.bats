@@ -85,3 +85,31 @@ source "${BATS_TEST_DIRNAME}/test_helper.bash"
     [ "${status}" -eq 0 ]
     [ "${output}" = '"he said \"hi\""' ]
 }
+
+@test "bashio::var.defined succeeds for a set variable and fails for an unset one" {
+    # shellcheck disable=SC2034
+    a_defined_variable="value"
+    run bashio::var.defined "a_defined_variable"
+    [ "${status}" -eq 0 ]
+    run bashio::var.defined "a_variable_that_is_not_set"
+    [ "${status}" -ne 0 ]
+}
+
+@test "bashio::var.defined treats an empty-but-set variable as defined" {
+    # shellcheck disable=SC2034
+    an_empty_variable=""
+    run bashio::var.defined "an_empty_variable"
+    [ "${status}" -eq 0 ]
+}
+
+@test "bashio::var.json_array builds a JSON array from its arguments" {
+    run bashio::var.json_array one two three
+    [ "${status}" -eq 0 ]
+    [ "${output}" = '["one","two","three"]' ]
+}
+
+@test "bashio::var.json_array escapes its elements" {
+    run bashio::var.json_array 'a"b'
+    [ "${status}" -eq 0 ]
+    [ "$(jq -r '.[0]' <<<"${output}")" = 'a"b' ]
+}
