@@ -81,7 +81,13 @@ function bashio::security.pwned() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${pwned}"; then
-        pwned=$(bashio::var.json pwned "^${pwned}")
+        # Normalize to a strict boolean so an arbitrary value cannot inject
+        # extra fields into the options JSON through the raw-JSON prefix.
+        if bashio::var.true "${pwned}"; then
+            pwned=$(bashio::var.json pwned "^true")
+        else
+            pwned=$(bashio::var.json pwned "^false")
+        fi
         bashio::api.supervisor POST /security/options "${pwned}" ||
             return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
@@ -102,7 +108,13 @@ function bashio::security.force_security() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${force}"; then
-        force=$(bashio::var.json force_security "^${force}")
+        # Normalize to a strict boolean so an arbitrary value cannot inject
+        # extra fields into the options JSON through the raw-JSON prefix.
+        if bashio::var.true "${force}"; then
+            force=$(bashio::var.json force_security "^true")
+        else
+            force=$(bashio::var.json force_security "^false")
+        fi
         bashio::api.supervisor POST /security/options "${force}" ||
             return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all

@@ -108,6 +108,17 @@ setup() {
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /security/options {"pwned":true}' ]
 }
 
+@test "security.pwned normalizes the value and cannot inject extra options" {
+    bashio::api.supervisor() { printf '%s' "$3" >"${BATS_TEST_TMPDIR}/body"; }
+    # A crafted value must not break out into additional options keys; anything
+    # that is not strictly true is treated as false.
+    run bashio::security.pwned 'true,"force_security":true'
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/body")" = '{"pwned":false}' ]
+    run jq -e 'has("force_security")' <"${BATS_TEST_TMPDIR}/body"
+    [ "${status}" -ne 0 ]
+}
+
 @test "security.pwned propagates an API failure when reading" {
     bashio::api.supervisor() { return 1; }
     run bashio::security.pwned
