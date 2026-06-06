@@ -80,6 +80,8 @@ source "${__BASHIO_LIB_DIR}/hardware.sh"
 source "${__BASHIO_LIB_DIR}/host.sh"
 # shellcheck source=lib/info.sh
 source "${__BASHIO_LIB_DIR}/info.sh"
+# shellcheck source=lib/ingress.sh
+source "${__BASHIO_LIB_DIR}/ingress.sh"
 # shellcheck source=lib/jobs.sh
 source "${__BASHIO_LIB_DIR}/jobs.sh"
 # shellcheck source=lib/jq.sh
