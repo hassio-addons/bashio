@@ -54,6 +54,8 @@ source "${__BASHIO_LIB_DIR}/apps.sh"
 source "${__BASHIO_LIB_DIR}/api.sh"
 # shellcheck source=lib/audio.sh
 source "${__BASHIO_LIB_DIR}/audio.sh"
+# shellcheck source=lib/auth.sh
+source "${__BASHIO_LIB_DIR}/auth.sh"
 # shellcheck source=lib/backups.sh
 source "${__BASHIO_LIB_DIR}/backups.sh"
 # shellcheck source=lib/cli.sh
@@ -68,6 +70,8 @@ source "${__BASHIO_LIB_DIR}/debug.sh"
 source "${__BASHIO_LIB_DIR}/exit.sh"
 # shellcheck source=lib/discovery.sh
 source "${__BASHIO_LIB_DIR}/discovery.sh"
+# shellcheck source=lib/docker.sh
+source "${__BASHIO_LIB_DIR}/docker.sh"
 # shellcheck source=lib/dns.sh
 source "${__BASHIO_LIB_DIR}/dns.sh"
 # shellcheck source=lib/hardware.sh
@@ -94,6 +98,8 @@ source "${__BASHIO_LIB_DIR}/os.sh"
 source "${__BASHIO_LIB_DIR}/pwned.sh"
 # shellcheck source=lib/repositories.sh
 source "${__BASHIO_LIB_DIR}/repositories.sh"
+# shellcheck source=lib/resolution.sh
+source "${__BASHIO_LIB_DIR}/resolution.sh"
 # shellcheck source=lib/security.sh
 source "${__BASHIO_LIB_DIR}/security.sh"
 # shellcheck source=lib/services.sh
