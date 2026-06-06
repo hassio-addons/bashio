@@ -28,7 +28,7 @@ setup() {
 # bashio::mounts - base fetcher
 # ---------------------------------------------------------------------------
 
-@test "mounts fetches the info endpoint and lists mount names by default" {
+@test "mounts fetches the info endpoint and returns the raw object by default" {
     bashio::api.supervisor() {
         printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call"
         printf '%s' "${MOUNTS_JSON}"
@@ -36,8 +36,20 @@ setup() {
     run bashio::mounts
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "GET /mounts false" ]
-    [ "${lines[0]}" = "my_share" ]
-    [ "${lines[1]}" = "media_nas" ]
+    # No default filter, so the whole mounts object is returned (use
+    # bashio::mounts.list for names). Caching the unfiltered blob under the
+    # default key must not corrupt the shared mounts.info cache.
+    [ "$(printf '%s' "${output}" | jq -r '.mounts[0].name')" = "my_share" ]
+}
+
+@test "a bare mounts call leaves the mounts.info cache as the full object" {
+    bashio::api.supervisor() { printf '%s' "${MOUNTS_JSON}"; }
+    # A bare call (default cache key + no filter) must cache the full blob under
+    # mounts.info, not a filtered value, so later getters still get valid JSON.
+    bashio::mounts >/dev/null
+    run bashio::cache.get 'mounts.info'
+    [ "${status}" -eq 0 ]
+    [ "$(printf '%s' "${output}" | jq -r '.mounts[0].name')" = "my_share" ]
 }
 
 @test "mounts applies a custom jq filter to the info response" {

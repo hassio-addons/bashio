@@ -16,7 +16,7 @@
 # ------------------------------------------------------------------------------
 function bashio::mounts() {
     local cache_key=${1:-'mounts.info'}
-    local filter=${2:-'.mounts[].name'}
+    local filter=${2:-}
     local info
     local response
 
