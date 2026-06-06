@@ -117,3 +117,12 @@ setup() {
     # The failing Supervisor call must still have been attempted.
     [[ "$(cat "${BATS_TEST_TMPDIR}/call")" == "POST /ingress/validate_session "* ]]
 }
+
+@test "ingress.validate_session does not log the session id" {
+    # The session id is a credential and must not reach the trace log.
+    logged=""
+    bashio::log.trace() { logged+=" $*"; }
+    bashio::api.supervisor() { return 0; }
+    bashio::ingress.validate_session "secret-session-id" >/dev/null
+    [[ "${logged}" != *"secret-session-id"* ]]
+}

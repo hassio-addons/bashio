@@ -72,7 +72,9 @@ function bashio::ingress.validate_session() {
     local session=${1}
     local payload
 
-    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    # The session id is effectively a credential, so it is kept out of the
+    # trace log (only the function name is logged).
+    bashio::log.trace "${FUNCNAME[0]}"
 
     payload=$(bashio::var.json session "${session}")
     bashio::api.supervisor POST /ingress/validate_session "${payload}" ||
