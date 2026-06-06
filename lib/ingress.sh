@@ -58,7 +58,7 @@ function bashio::ingress.panels() {
 # ------------------------------------------------------------------------------
 function bashio::ingress.session() {
     bashio::log.trace "${FUNCNAME[0]}"
-    bashio::api.supervisor POST /ingress/session false '.session' ||
+    bashio::api.supervisor POST /ingress/session '{}' '.session' ||
         return "${__BASHIO_EXIT_NOK}"
 }
 

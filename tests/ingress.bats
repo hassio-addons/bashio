@@ -63,7 +63,7 @@ setup() {
     }
     run bashio::ingress.session
     [ "${status}" -eq 0 ]
-    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "POST /ingress/session false .session" ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "POST /ingress/session {} .session" ]
 }
 
 @test "ingress.session returns the session id from the API response" {
