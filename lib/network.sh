@@ -175,7 +175,11 @@ function bashio::network.enabled() {
     bashio::log.trace "${FUNCNAME[0]}"
 
     if bashio::var.has_value "${enabled}"; then
-        enabled=$(bashio::var.json enabled "^${enabled}")
+        if bashio::var.true "${enabled}"; then
+            enabled=$(bashio::var.json enabled "^true")
+        else
+            enabled=$(bashio::var.json enabled "^false")
+        fi
         bashio::api.supervisor POST "/network/interface/${interface}/update" "${enabled}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else

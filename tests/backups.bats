@@ -62,6 +62,14 @@ setup() {
     [ "${rc}" -ne 0 ]
 }
 
+@test "backups.freeze rejects a non-integer timeout without calling the API" {
+    bashio::api.supervisor() { echo "called" >"${BATS_TEST_TMPDIR}/call"; }
+    rc=0
+    bashio::backups.freeze '30,"foo":1' || rc=$?
+    [ "${rc}" -ne 0 ]
+    [ ! -e "${BATS_TEST_TMPDIR}/call" ]
+}
+
 # ------------------------------------------------------------------------------
 # backups.thaw
 # ------------------------------------------------------------------------------
@@ -107,6 +115,14 @@ setup() {
     rc=0
     bashio::backups.days_until_stale "10" || rc=$?
     [ "${rc}" -ne 0 ]
+}
+
+@test "backups.days_until_stale rejects a non-integer value without calling the API" {
+    bashio::api.supervisor() { echo "called" >"${BATS_TEST_TMPDIR}/call"; }
+    rc=0
+    bashio::backups.days_until_stale '10,"foo":1' || rc=$?
+    [ "${rc}" -ne 0 ]
+    [ ! -e "${BATS_TEST_TMPDIR}/call" ]
 }
 
 # ------------------------------------------------------------------------------

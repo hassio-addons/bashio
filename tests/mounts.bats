@@ -146,6 +146,17 @@ setup() {
     [ -f "${__BASHIO_CACHE_DIR}/mounts.info.cache" ]
 }
 
+@test "mounts.create does not log the mount credentials" {
+    # A CIFS/NFS mount definition carries a username and password; these must
+    # not reach the trace log.
+    logged=""
+    bashio::log.trace() { logged+=" $*"; }
+    bashio::api.supervisor() { return 0; }
+    bashio::mounts.create '{"name":"share","username":"admin","password":"hunter2"}'
+    [[ "${logged}" != *"hunter2"* ]]
+    [[ "${logged}" != *"admin"* ]]
+}
+
 # ---------------------------------------------------------------------------
 # bashio::mounts.options
 # ---------------------------------------------------------------------------
@@ -181,6 +192,16 @@ setup() {
     [ "${status}" -ne 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /mounts/options {"default_backup_mount":"x"}' ]
     [ -f "${__BASHIO_CACHE_DIR}/mounts.info.cache" ]
+}
+
+@test "mounts.options does not log the options payload" {
+    # The options object can carry mount credentials, so the payload must not
+    # reach the trace log.
+    logged=""
+    bashio::log.trace() { logged+=" $*"; }
+    bashio::api.supervisor() { return 0; }
+    bashio::mounts.options '{"name":"share","password":"hunter2"}'
+    [[ "${logged}" != *"hunter2"* ]]
 }
 
 # ---------------------------------------------------------------------------

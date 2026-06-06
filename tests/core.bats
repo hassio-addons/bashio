@@ -321,6 +321,15 @@ setup() {
     [ "${rc}" -ne 0 ]
 }
 
+@test "core.watchdog normalizes the value and cannot inject extra options" {
+    bashio::api.supervisor() { printf '%s' "$3" >"${BATS_TEST_TMPDIR}/body"; }
+    run bashio::core.watchdog 'true,"backups_exclude_database":true'
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/body")" = '{"watchdog":false}' ]
+    run jq -e 'has("backups_exclude_database")' <"${BATS_TEST_TMPDIR}/body"
+    [ "${status}" -ne 0 ]
+}
+
 # ------------------------------------------------------------------------------
 # core.stats: fetcher, filtering, caching, and failure handling.
 # ------------------------------------------------------------------------------

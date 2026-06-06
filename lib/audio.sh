@@ -20,9 +20,9 @@ function bashio::audio.update() {
 
     if bashio::var.has_value "${version}"; then
         version=$(bashio::var.json version "${version}")
-        bashio::api.supervisor POST /audio/update "${version}"
+        bashio::api.supervisor POST /audio/update "${version}" || return "${__BASHIO_EXIT_NOK}"
     else
-        bashio::api.supervisor POST /audio/update
+        bashio::api.supervisor POST /audio/update || return "${__BASHIO_EXIT_NOK}"
     fi
     bashio::cache.flush_all
 }

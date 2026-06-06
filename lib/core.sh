@@ -225,7 +225,11 @@ function bashio::core.watchdog() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${watchdog}"; then
-        watchdog=$(bashio::var.json watchdog "^${watchdog}")
+        if bashio::var.true "${watchdog}"; then
+            watchdog=$(bashio::var.json watchdog "^true")
+        else
+            watchdog=$(bashio::var.json watchdog "^false")
+        fi
         bashio::api.supervisor POST /core/options "${watchdog}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
