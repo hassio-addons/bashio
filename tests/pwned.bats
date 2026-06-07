@@ -45,6 +45,25 @@ setup() {
     [[ "${output}" != *"SuperSecretValue"* ]]
 }
 
+@test "pwned sends only the 5-char hash prefix to the HIBP API (k-anonymity)" {
+    # The whole point of the k-anonymity model is that only the first 5 hash
+    # characters ever leave the machine; the full SHA-1 (and its suffix) must
+    # never be sent. Capture what is actually passed to curl and assert it.
+    local captured="${BATS_TEST_TMPDIR}/curl_args"
+    curl() {
+        # Capture each argument on its own line so boundaries are preserved.
+        printf '%s\n' "$@" >"${captured}"
+        printf '%s\n%s' "${MOCK_BODY}" "${MOCK_STATUS}"
+    }
+    bashio::pwned "test" >/dev/null
+    run cat "${captured}"
+    # The 5-char prefix is sent...
+    [[ "${output}" == *"/A94A8"* ]]
+    # ...but never the full hash or the matching suffix.
+    [[ "${output}" != *"A94A8FE5CCB19BA61C4C0873D391E987982FBBD3"* ]]
+    [[ "${output}" != *"${TEST_SUFFIX}"* ]]
+}
+
 @test "pwned returns the occurrence count when the password is found" {
     MOCK_BODY="${TEST_SUFFIX}:42"
     run bashio::pwned "test"

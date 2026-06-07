@@ -345,7 +345,9 @@ setup() {
     bashio::api.supervisor() { printf '%s' '{"addons":[{"slug":"core_ssh"}]}'; }
     run bashio::backup.addons "aaa"
     [ "${status}" -eq 0 ]
-    [[ "${output}" == *"core_ssh"* ]]
+    # Must return the inner array, not the full unfiltered object. A substring
+    # check would also pass on the wrapping blob, so pin the exact structure.
+    [ "$(printf '%s' "${output}" | jq -cS '.')" = '[{"slug":"core_ssh"}]' ]
 }
 
 @test "backup.addons returns empty when the addon list is empty" {
@@ -359,7 +361,7 @@ setup() {
     bashio::api.supervisor() { printf '%s' '{"repositories":["core"]}'; }
     run bashio::backup.repositories "aaa"
     [ "${status}" -eq 0 ]
-    [[ "${output}" == *"core"* ]]
+    [ "$(printf '%s' "${output}" | jq -cS '.')" = '["core"]' ]
 }
 
 @test "backup.repositories returns empty when the list is empty" {
@@ -373,7 +375,7 @@ setup() {
     bashio::api.supervisor() { printf '%s' '{"folders":["share"]}'; }
     run bashio::backup.folders "aaa"
     [ "${status}" -eq 0 ]
-    [[ "${output}" == *"share"* ]]
+    [ "$(printf '%s' "${output}" | jq -cS '.')" = '["share"]' ]
 }
 
 @test "backup.folders returns empty when the list is empty" {

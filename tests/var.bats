@@ -20,6 +20,11 @@ source "${BATS_TEST_DIRNAME}/test_helper.bash"
     [ "${status}" -eq 0 ]
 }
 
+@test "bashio::var.false fails for any other value" {
+    run bashio::var.false "true"
+    [ "${status}" -ne 0 ]
+}
+
 @test "bashio::var.has_value succeeds for a non-empty value" {
     run bashio::var.has_value "something"
     [ "${status}" -eq 0 ]
@@ -33,6 +38,11 @@ source "${BATS_TEST_DIRNAME}/test_helper.bash"
 @test "bashio::var.is_empty succeeds for an empty value" {
     run bashio::var.is_empty ""
     [ "${status}" -eq 0 ]
+}
+
+@test "bashio::var.is_empty fails for a non-empty value" {
+    run bashio::var.is_empty "something"
+    [ "${status}" -ne 0 ]
 }
 
 @test "bashio::var.equals succeeds for equal values" {
