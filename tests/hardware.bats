@@ -117,6 +117,13 @@ AUDIO_JSON='{"audio":{"input":{"a":"Mic"},"output":{"b":"Speaker"}}}'
     [ "${rc}" -ne 0 ]
 }
 
+@test "hardware.audio propagates a jq filter failure" {
+    bashio::api.supervisor() { printf '%s' "${AUDIO_JSON}"; }
+    rc=0
+    bashio::hardware.audio 'test.bad.filter' 'INVALID_FILTER_!!!' || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
 @test "hardware.audio with the base key and a filter does not corrupt the base blob" {
     bashio::api.supervisor() { printf '%s' "${AUDIO_JSON}"; }
     run bashio::hardware.audio 'hardware.audio' '.audio.input.a'
