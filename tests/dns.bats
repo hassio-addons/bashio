@@ -128,6 +128,35 @@ setup() {
     [ "${status}" -ne 0 ]
 }
 
+@test "dns with the base key and a filter does not corrupt the base blob" {
+    # Passing the reserved base key together with a filter must not overwrite
+    # the shared blob with the filtered scalar; later unfiltered reads must
+    # still return the full object.
+    bashio::api.supervisor() {
+        printf '%s' '{"version":"1.0","host":"172.30.32.3"}'
+    }
+    run bashio::dns 'dns.info' '.host'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "172.30.32.3" ]
+    run bashio::cache.get 'dns.info'
+    [ "${status}" -eq 0 ]
+    [ "$(printf '%s' "${output}" | jq -r '.host')" = "172.30.32.3" ]
+}
+
+@test "dns base key with a filter stays filtered on a repeated call" {
+    # The base blob is cached after the first call; a second base-key+filter
+    # call must still apply the filter, not return the cached unfiltered blob.
+    bashio::api.supervisor() {
+        printf '%s' '{"version":"1.0","host":"172.30.32.3"}'
+    }
+    run bashio::dns 'dns.info' '.host'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "172.30.32.3" ]
+    run bashio::dns 'dns.info' '.host'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "172.30.32.3" ]
+}
+
 @test "dns serves a previously cached value without calling the API" {
     bashio::cache.set 'dns.info.cached' 'cached-value'
     bashio::api.supervisor() { echo "called" >"${BATS_TEST_TMPDIR}/call"; }
