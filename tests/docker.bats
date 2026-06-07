@@ -275,17 +275,17 @@ setup() {
 }
 
 # ------------------------------------------------------------------------------
-# bashio::docker.registries.remove
+# bashio::docker.registries.delete
 # ------------------------------------------------------------------------------
 
-@test "docker.registries.remove deletes the registry by hostname" {
+@test "docker.registries.delete deletes the registry by hostname" {
     bashio::api.supervisor() { printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call"; }
-    run bashio::docker.registries.remove "hub.docker.com"
+    run bashio::docker.registries.delete "hub.docker.com"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "DELETE /docker/registries/hub.docker.com" ]
 }
 
-@test "docker.registries.remove flushes the cache" {
+@test "docker.registries.delete flushes the cache" {
     # Prime the cache first.
     bashio::api.supervisor() {
         printf '%s' '{"registries":{"hub.docker.com":{"username":"alice"}}}'
@@ -294,16 +294,16 @@ setup() {
     [ -f "${__BASHIO_CACHE_DIR}/docker.registries.cache" ]
 
     bashio::api.supervisor() { printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call2"; }
-    bashio::docker.registries.remove "hub.docker.com"
+    bashio::docker.registries.delete "hub.docker.com"
     [ ! -d "${__BASHIO_CACHE_DIR}" ]
 }
 
-@test "docker.registries.remove propagates an API failure" {
+@test "docker.registries.delete propagates an API failure" {
     bashio::api.supervisor() {
         printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call"
         return 1
     }
-    run bashio::docker.registries.remove "hub.docker.com"
+    run bashio::docker.registries.delete "hub.docker.com"
     [ "${status}" -ne 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "DELETE /docker/registries/hub.docker.com" ]
 }

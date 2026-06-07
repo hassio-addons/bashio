@@ -206,12 +206,12 @@ function bashio::docker.registries.add() {
 }
 
 # ------------------------------------------------------------------------------
-# Removes a Docker registry.
+# Deletes a Docker registry.
 #
 # Arguments:
 #   $1 Hostname of the registry
 # ------------------------------------------------------------------------------
-function bashio::docker.registries.remove() {
+function bashio::docker.registries.delete() {
     local hostname=${1}
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
