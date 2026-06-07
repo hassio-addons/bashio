@@ -51,6 +51,15 @@ setup() {
     [ "${rc}" -ne 0 ]
 }
 
+@test "jobs.options flushes the cache after a successful set" {
+    bashio::cache.set 'some.key' 'stale'
+    bashio::api.supervisor() { return 0; }
+    run bashio::jobs.options '{"ignore_conditions":[]}'
+    [ "${status}" -eq 0 ]
+    run bashio::cache.exists 'some.key'
+    [ "${status}" -ne 0 ]
+}
+
 # ------------------------------------------------------------------------------
 # jobs (the generic fetcher)
 # ------------------------------------------------------------------------------
