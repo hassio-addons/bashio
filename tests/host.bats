@@ -209,6 +209,23 @@ setup() {
     [ "${rc}" -ne 0 ]
 }
 
+@test "host.disk_usage propagates a jq filter failure" {
+    bashio::api.supervisor() { printf '%s' '{"total":100,"used":40,"free":60}'; }
+    rc=0
+    bashio::host.disk_usage 'host.disk_usage.bad' 'INVALID_FILTER_!!!' || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+@test "host.disk_usage with the base key and a filter does not corrupt the base blob" {
+    bashio::api.supervisor() { printf '%s' '{"total":100,"used":40,"free":60}'; }
+    run bashio::host.disk_usage 'host.disk_usage' '.free'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "60" ]
+    run bashio::cache.get 'host.disk_usage'
+    [ "${status}" -eq 0 ]
+    [ "$(printf '%s' "${output}" | jq -r '.free')" = "60" ]
+}
+
 # ------------------------------------------------------------------------------
 # hostname getter/setter.
 # ------------------------------------------------------------------------------
