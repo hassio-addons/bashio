@@ -30,7 +30,12 @@ function bashio::backups.freeze() {
 
     if bashio::var.has_value "${timeout}"; then
         if [[ ! "${timeout}" =~ ^(0|[1-9][0-9]*)$ ]]; then
-            bashio::log.error "Invalid timeout, expected a non-negative integer: ${timeout}"
+            # Sanitize the rejected (untrusted) value before logging it, so it
+            # cannot inject newlines or escape sequences into the log.
+            local display=${timeout//[[:cntrl:]]/?}
+            display=${display//\\/?}
+            bashio::log.error \
+                "Invalid timeout, expected a non-negative integer: '${display}'"
             return "${__BASHIO_EXIT_NOK}"
         fi
         options=$(bashio::var.json timeout "^${timeout}")
@@ -61,8 +66,12 @@ function bashio::backups.days_until_stale() {
 
     if bashio::var.has_value "${days_until_stale}"; then
         if [[ ! "${days_until_stale}" =~ ^(0|[1-9][0-9]*)$ ]]; then
+            # Sanitize the rejected (untrusted) value before logging it, so it
+            # cannot inject newlines or escape sequences into the log.
+            local display=${days_until_stale//[[:cntrl:]]/?}
+            display=${display//\\/?}
             bashio::log.error \
-                "Invalid days_until_stale, expected a non-negative integer: ${days_until_stale}"
+                "Invalid days_until_stale, expected a non-negative integer: '${display}'"
             return "${__BASHIO_EXIT_NOK}"
         fi
         days_until_stale=$(bashio::var.json days_until_stale "^${days_until_stale}")

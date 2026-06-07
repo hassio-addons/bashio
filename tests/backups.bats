@@ -86,6 +86,20 @@ setup() {
     [ ! -e "${BATS_TEST_TMPDIR}/call" ]
 }
 
+@test "backups.freeze rejecting a value does not inject control characters into the log" {
+    # The rejected value is untrusted; a newline or escape sequence in it must
+    # not reach the log verbatim. Call directly (not via run) so the stub's
+    # captured message survives.
+    logged=""
+    bashio::log.error() { logged="$*"; }
+    rc=0
+    bashio::backups.freeze "$(printf '1\nESC\x1bINJECT')" || rc=$?
+    [ "${rc}" -ne 0 ]
+    [ -n "${logged}" ]
+    [[ "${logged}" != *$'\n'* ]]
+    [[ "${logged}" != *$'\x1b'* ]]
+}
+
 # ------------------------------------------------------------------------------
 # backups.thaw
 # ------------------------------------------------------------------------------
