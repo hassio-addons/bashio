@@ -52,7 +52,7 @@ function bashio::mounts() {
         fi
     fi
 
-    # Never overwrite the base info blob with a filtered result: the
+    # Never overwrite the base blob with a filtered result: the
     # base blob is already cached above, so only cache under a distinct
     # caller-provided key.
     if [[ "${cache_key}" != 'mounts.info' ]]; then

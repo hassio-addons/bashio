@@ -62,7 +62,7 @@ function bashio::network() {
         fi
     fi
 
-    # Never overwrite the base info blob with a filtered result: the
+    # Never overwrite the base blob with a filtered result: the
     # base blob is already cached above, so only cache under a distinct
     # caller-provided key.
     if [[ "${cache_key}" != 'network.info' ]]; then
@@ -144,7 +144,7 @@ function bashio::network.interface() {
         fi
     fi
 
-    # Never overwrite the base info blob with a filtered result: the
+    # Never overwrite the base blob with a filtered result: the
     # base blob is already cached above, so only cache under a distinct
     # caller-provided key.
     if [[ "${cache_key}" != "network.interface.${interface}.info" ]]; then

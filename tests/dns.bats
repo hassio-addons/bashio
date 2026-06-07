@@ -150,6 +150,7 @@ setup() {
         printf '%s' '{"version":"1.0","host":"172.30.32.3"}'
     }
     run bashio::dns 'dns.info' '.host'
+    [ "${status}" -eq 0 ]
     [ "${output}" = "172.30.32.3" ]
     run bashio::dns 'dns.info' '.host'
     [ "${status}" -eq 0 ]

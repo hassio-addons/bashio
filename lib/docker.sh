@@ -52,7 +52,7 @@ function bashio::docker() {
         fi
     fi
 
-    # Never overwrite the base info blob with a filtered result: the
+    # Never overwrite the base blob with a filtered result: the
     # base blob is already cached above, so only cache under a distinct
     # caller-provided key.
     if [[ "${cache_key}" != 'docker.info' ]]; then
@@ -164,7 +164,7 @@ function bashio::docker.registries() {
         fi
     fi
 
-    # Never overwrite the base info blob with a filtered result: the
+    # Never overwrite the base blob with a filtered result: the
     # base blob is already cached above, so only cache under a distinct
     # caller-provided key.
     if [[ "${cache_key}" != 'docker.registries' ]]; then
