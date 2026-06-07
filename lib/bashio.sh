@@ -113,5 +113,7 @@ source "${__BASHIO_LIB_DIR}/supervisor.sh"
 source "${__BASHIO_LIB_DIR}/trace.sh"
 # shellcheck source=lib/try.sh
 source "${__BASHIO_LIB_DIR}/try.sh"
+# shellcheck source=lib/updates.sh
+source "${__BASHIO_LIB_DIR}/updates.sh"
 # shellcheck source=lib/var.sh
 source "${__BASHIO_LIB_DIR}/var.sh"
