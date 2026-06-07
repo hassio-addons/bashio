@@ -36,7 +36,8 @@ function bashio::os.config_sync() {
 }
 
 # ------------------------------------------------------------------------------
-# Returns a JSON object with generic Home Assistant information.
+# Returns a JSON object with generic Home Assistant Operating System
+# (HassOS) information.
 #
 # Arguments:
 #   $1 Cache key to store results in (optional)

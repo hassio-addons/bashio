@@ -87,7 +87,7 @@ bashio::log.info "${USERNAME}"
 
 ## Functions
 
-Bashio has more than 250 functions available: communicating with
+Bashio has more than 450 functions available: communicating with
 the Supervisor API, Have I Been Pwned, file system, logging, configuration handling
 and a lot more!
 
