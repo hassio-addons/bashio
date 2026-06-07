@@ -34,6 +34,44 @@ setup() {
 }
 
 # ------------------------------------------------------------------------------
+# bashio::jobs.options
+# ------------------------------------------------------------------------------
+
+@test "jobs.options posts the given JSON to the options endpoint" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::jobs.options '{"ignore_conditions":["healthy"]}'
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /jobs/options {"ignore_conditions":["healthy"]}' ]
+}
+
+@test "jobs.options propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::jobs.options '{"ignore_conditions":[]}' || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+@test "jobs.options flushes the cache after a successful set" {
+    bashio::cache.set 'some.key' 'stale'
+    bashio::api.supervisor() { return 0; }
+    run bashio::jobs.options '{"ignore_conditions":[]}'
+    [ "${status}" -eq 0 ]
+    run bashio::cache.exists 'some.key'
+    [ "${status}" -ne 0 ]
+}
+
+@test "jobs.options does not log the options payload" {
+    # The options object is an opaque caller-provided payload, so it must not
+    # reach the trace log. Call directly (not via run) so the captured message
+    # survives.
+    logged=""
+    bashio::log.trace() { logged+=" $*"; }
+    bashio::api.supervisor() { return 0; }
+    bashio::jobs.options '{"ignore_conditions":["SENTINEL_VALUE"]}'
+    [[ "${logged}" != *"SENTINEL_VALUE"* ]]
+}
+
+# ------------------------------------------------------------------------------
 # jobs (the generic fetcher)
 # ------------------------------------------------------------------------------
 
