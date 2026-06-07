@@ -74,6 +74,67 @@ setup() {
 }
 
 # ---------------------------------------------------------------------------
+# bashio::hardware.audio
+# ---------------------------------------------------------------------------
+
+AUDIO_JSON='{"audio":{"input":{"a":"Mic"},"output":{"b":"Speaker"}}}'
+
+@test "hardware.audio calls GET /hardware/audio" {
+    local args_file="${BATS_TEST_TMPDIR}/api_args"
+    bashio::api.supervisor() {
+        printf '%s' "$*" >"${args_file}"
+        printf '%s' "${AUDIO_JSON}"
+    }
+    run bashio::hardware.audio
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "${AUDIO_JSON}" ]
+    [ "$(cat "${args_file}")" = "GET /hardware/audio false" ]
+}
+
+@test "hardware.audio applies an optional jq filter" {
+    bashio::api.supervisor() { printf '%s' "${AUDIO_JSON}"; }
+    run bashio::hardware.audio 'test.audio.input' '.audio.input.a'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "Mic" ]
+}
+
+@test "hardware.audio returns cached data on a second call without hitting the API" {
+    local call_file="${BATS_TEST_TMPDIR}/calls"
+    printf '0' >"${call_file}"
+    bashio::api.supervisor() {
+        printf '%d' $(($(cat "${call_file}") + 1)) >"${call_file}"
+        printf '%s' "${AUDIO_JSON}"
+    }
+    bashio::hardware.audio >/dev/null
+    bashio::hardware.audio >/dev/null
+    [ "$(cat "${call_file}")" -eq 1 ]
+}
+
+@test "hardware.audio propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::hardware.audio || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+@test "hardware.audio propagates a jq filter failure" {
+    bashio::api.supervisor() { printf '%s' "${AUDIO_JSON}"; }
+    rc=0
+    bashio::hardware.audio 'test.bad.filter' 'INVALID_FILTER_!!!' || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+@test "hardware.audio with the base key and a filter does not corrupt the base blob" {
+    bashio::api.supervisor() { printf '%s' "${AUDIO_JSON}"; }
+    run bashio::hardware.audio 'hardware.audio' '.audio.input.a'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "Mic" ]
+    run bashio::cache.get 'hardware.audio'
+    [ "${status}" -eq 0 ]
+    [ "$(printf '%s' "${output}" | jq -r '.audio.input.a')" = "Mic" ]
+}
+
+# ---------------------------------------------------------------------------
 # bashio::hardware.serial
 # ---------------------------------------------------------------------------
 
