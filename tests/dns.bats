@@ -82,6 +82,33 @@ setup() {
 }
 
 # ------------------------------------------------------------------------------
+# bashio::dns.options
+# ------------------------------------------------------------------------------
+
+@test "dns.options posts the given JSON to the options endpoint" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::dns.options '{"fallback":false}'
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /dns/options {"fallback":false}' ]
+}
+
+@test "dns.options propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::dns.options '{"fallback":false}' || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+@test "dns.options flushes the cache after a successful set" {
+    bashio::cache.set 'dns.info' 'stale'
+    bashio::api.supervisor() { return 0; }
+    run bashio::dns.options '{"fallback":false}'
+    [ "${status}" -eq 0 ]
+    run bashio::cache.exists 'dns.info'
+    [ "${status}" -ne 0 ]
+}
+
+# ------------------------------------------------------------------------------
 # bashio::dns.logs
 # ------------------------------------------------------------------------------
 

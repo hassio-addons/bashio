@@ -46,6 +46,24 @@ function bashio::dns.restart() {
 }
 
 # ------------------------------------------------------------------------------
+# Sets the DNS plugin options.
+#
+# Arguments:
+#   $1 Options object (JSON)
+# ------------------------------------------------------------------------------
+function bashio::dns.options() {
+    local options=${1}
+
+    # The options object is an opaque caller-provided payload, so trace only
+    # the function name, never the payload itself.
+    bashio::log.trace "${FUNCNAME[0]}"
+
+    bashio::api.supervisor POST /dns/options "${options}" ||
+        return "${__BASHIO_EXIT_NOK}"
+    bashio::cache.flush_all
+}
+
+# ------------------------------------------------------------------------------
 # Returns the logs created by the DNS.
 # ------------------------------------------------------------------------------
 function bashio::dns.logs() {
