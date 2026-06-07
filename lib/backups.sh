@@ -29,8 +29,8 @@ function bashio::backups.freeze() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${timeout}"; then
-        if [[ ! "${timeout}" =~ ^[0-9]+$ ]]; then
-            bashio::log.error "Invalid timeout, expected a positive integer: ${timeout}"
+        if [[ ! "${timeout}" =~ ^(0|[1-9][0-9]*)$ ]]; then
+            bashio::log.error "Invalid timeout, expected a non-negative integer: ${timeout}"
             return "${__BASHIO_EXIT_NOK}"
         fi
         options=$(bashio::var.json timeout "^${timeout}")
@@ -60,9 +60,9 @@ function bashio::backups.days_until_stale() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${days_until_stale}"; then
-        if [[ ! "${days_until_stale}" =~ ^[0-9]+$ ]]; then
+        if [[ ! "${days_until_stale}" =~ ^(0|[1-9][0-9]*)$ ]]; then
             bashio::log.error \
-                "Invalid days_until_stale, expected a positive integer: ${days_until_stale}"
+                "Invalid days_until_stale, expected a non-negative integer: ${days_until_stale}"
             return "${__BASHIO_EXIT_NOK}"
         fi
         days_until_stale=$(bashio::var.json days_until_stale "^${days_until_stale}")
