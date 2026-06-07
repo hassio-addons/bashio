@@ -17,6 +17,22 @@ function bashio::jobs.reset() {
 }
 
 # ------------------------------------------------------------------------------
+# Sets the job manager options.
+#
+# Arguments:
+#   $1 Options object (JSON)
+# ------------------------------------------------------------------------------
+function bashio::jobs.options() {
+    local options=${1}
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    bashio::api.supervisor POST /jobs/options "${options}" ||
+        return "${__BASHIO_EXIT_NOK}"
+    bashio::cache.flush_all
+}
+
+# ------------------------------------------------------------------------------
 # Returns a JSON object with information about jobs.
 #
 # Arguments:

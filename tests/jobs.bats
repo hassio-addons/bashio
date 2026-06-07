@@ -34,6 +34,24 @@ setup() {
 }
 
 # ------------------------------------------------------------------------------
+# bashio::jobs.options
+# ------------------------------------------------------------------------------
+
+@test "jobs.options posts the given JSON to the options endpoint" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::jobs.options '{"ignore_conditions":["healthy"]}'
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /jobs/options {"ignore_conditions":["healthy"]}' ]
+}
+
+@test "jobs.options propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::jobs.options '{"ignore_conditions":[]}' || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+# ------------------------------------------------------------------------------
 # jobs (the generic fetcher)
 # ------------------------------------------------------------------------------
 
