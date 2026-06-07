@@ -131,6 +131,102 @@ setup() {
 }
 
 # ------------------------------------------------------------------------------
+# bashio::host.services
+# ------------------------------------------------------------------------------
+
+@test "host.services calls GET /host/services" {
+    bashio::api.supervisor() {
+        echo "$*" >"${BATS_TEST_TMPDIR}/call"
+        printf '%s' '{"services":[{"name":"sshd.service","state":"active"}]}'
+    }
+    run bashio::host.services
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "GET /host/services false" ]
+    [ "${output}" = '{"services":[{"name":"sshd.service","state":"active"}]}' ]
+}
+
+@test "host.services applies an optional jq filter" {
+    bashio::api.supervisor() {
+        printf '%s' '{"services":[{"name":"sshd.service","state":"active"}]}'
+    }
+    run bashio::host.services 'host.services.first' '.services[0].name'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "sshd.service" ]
+}
+
+@test "host.services propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::host.services || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+@test "host.services propagates a jq filter failure" {
+    bashio::api.supervisor() { printf '%s' '{"services":[]}'; }
+    rc=0
+    bashio::host.services 'host.services.bad' 'INVALID_FILTER_!!!' || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+@test "host.services with the base key and a filter does not corrupt the base blob" {
+    bashio::api.supervisor() {
+        printf '%s' '{"services":[{"name":"sshd.service"}]}'
+    }
+    run bashio::host.services 'host.services' '.services[0].name'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "sshd.service" ]
+    run bashio::cache.get 'host.services'
+    [ "${status}" -eq 0 ]
+    [ "$(printf '%s' "${output}" | jq -r '.services[0].name')" = "sshd.service" ]
+}
+
+# ------------------------------------------------------------------------------
+# bashio::host.disk_usage
+# ------------------------------------------------------------------------------
+
+@test "host.disk_usage calls GET /host/disks/default/usage" {
+    bashio::api.supervisor() {
+        echo "$*" >"${BATS_TEST_TMPDIR}/call"
+        printf '%s' '{"total":100,"used":40,"free":60}'
+    }
+    run bashio::host.disk_usage
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "GET /host/disks/default/usage false" ]
+    [ "${output}" = '{"total":100,"used":40,"free":60}' ]
+}
+
+@test "host.disk_usage applies an optional jq filter" {
+    bashio::api.supervisor() { printf '%s' '{"total":100,"used":40,"free":60}'; }
+    run bashio::host.disk_usage 'host.disk_usage.free' '.free'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "60" ]
+}
+
+@test "host.disk_usage propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::host.disk_usage || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+@test "host.disk_usage propagates a jq filter failure" {
+    bashio::api.supervisor() { printf '%s' '{"total":100,"used":40,"free":60}'; }
+    rc=0
+    bashio::host.disk_usage 'host.disk_usage.bad' 'INVALID_FILTER_!!!' || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+@test "host.disk_usage with the base key and a filter does not corrupt the base blob" {
+    bashio::api.supervisor() { printf '%s' '{"total":100,"used":40,"free":60}'; }
+    run bashio::host.disk_usage 'host.disk_usage' '.free'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "60" ]
+    run bashio::cache.get 'host.disk_usage'
+    [ "${status}" -eq 0 ]
+    [ "$(printf '%s' "${output}" | jq -r '.free')" = "60" ]
+}
+
+# ------------------------------------------------------------------------------
 # hostname getter/setter.
 # ------------------------------------------------------------------------------
 
