@@ -363,7 +363,11 @@ function bashio::app.auto_update() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${auto_update}"; then
-        auto_update=$(bashio::var.json auto_update "^${auto_update}")
+        if bashio::var.true "${auto_update}"; then
+            auto_update=$(bashio::var.json auto_update "^true")
+        else
+            auto_update=$(bashio::var.json auto_update "^false")
+        fi
         bashio::api.supervisor POST "/addons/${slug}/options" "${auto_update}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
@@ -1275,7 +1279,11 @@ function bashio::app.ingress_panel() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${ingress_panel}"; then
-        ingress_panel=$(bashio::var.json ingress_panel "^${ingress_panel}")
+        if bashio::var.true "${ingress_panel}"; then
+            ingress_panel=$(bashio::var.json ingress_panel "^true")
+        else
+            ingress_panel=$(bashio::var.json ingress_panel "^false")
+        fi
         bashio::api.supervisor POST "/addons/${slug}/options" "${ingress_panel}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else
@@ -1300,7 +1308,11 @@ function bashio::app.watchdog() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::var.has_value "${watchdog}"; then
-        watchdog=$(bashio::var.json watchdog "^${watchdog}")
+        if bashio::var.true "${watchdog}"; then
+            watchdog=$(bashio::var.json watchdog "^true")
+        else
+            watchdog=$(bashio::var.json watchdog "^false")
+        fi
         bashio::api.supervisor POST "/addons/${slug}/options" "${watchdog}" || return "${__BASHIO_EXIT_NOK}"
         bashio::cache.flush_all
     else

@@ -48,6 +48,17 @@ setup() {
     [ "$(printf '%s' "${payload}" | jq -r '.service')" = "myservice" ]
 }
 
+@test "discovery does not log the config payload" {
+    # The configuration object can carry credentials (for example MQTT broker
+    # username and password), so it must not reach the trace log.
+    logged=""
+    bashio::log.trace() { logged+=" $*"; }
+    bashio::api.supervisor() { printf '%s' 'test-uuid'; }
+    bashio::discovery "mqtt" '{"username":"admin","password":"hunter2"}' >/dev/null
+    [[ "${logged}" != *"hunter2"* ]]
+    [[ "${logged}" != *"admin"* ]]
+}
+
 @test "discovery payload embeds the config object" {
     bashio::api.supervisor() {
         printf '%s' "$3" >"${BATS_TEST_TMPDIR}/payload"

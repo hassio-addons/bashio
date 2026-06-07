@@ -19,7 +19,10 @@ function bashio::discovery() {
     local config=${2}
     local payload
 
-    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    # The configuration object can carry credentials (for example MQTT broker
+    # username and password), so trace only the function name and the service,
+    # never the configuration payload.
+    bashio::log.trace "${FUNCNAME[0]}" "${service}"
 
     payload=$(
         bashio::var.json \

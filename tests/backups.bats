@@ -62,6 +62,44 @@ setup() {
     [ "${rc}" -ne 0 ]
 }
 
+@test "backups.freeze rejects a non-integer timeout without calling the API" {
+    bashio::api.supervisor() { echo "called" >"${BATS_TEST_TMPDIR}/call"; }
+    rc=0
+    bashio::backups.freeze '30,"foo":1' || rc=$?
+    [ "${rc}" -ne 0 ]
+    [ ! -e "${BATS_TEST_TMPDIR}/call" ]
+}
+
+@test "backups.freeze accepts a zero timeout" {
+    bashio::api.supervisor() { printf '%s\n' "$@" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::backups.freeze "0"
+    [ "${status}" -eq 0 ]
+    [ "$(sed -n '3p' "${BATS_TEST_TMPDIR}/call")" = '{"timeout":0}' ]
+}
+
+@test "backups.freeze rejects a leading-zero timeout without calling the API" {
+    # A leading zero (e.g. "007") would embed as invalid JSON, so reject it.
+    bashio::api.supervisor() { echo "called" >"${BATS_TEST_TMPDIR}/call"; }
+    rc=0
+    bashio::backups.freeze "007" || rc=$?
+    [ "${rc}" -ne 0 ]
+    [ ! -e "${BATS_TEST_TMPDIR}/call" ]
+}
+
+@test "backups.freeze rejecting a value does not inject control characters into the log" {
+    # The rejected value is untrusted; a newline or escape sequence in it must
+    # not reach the log verbatim. Call directly (not via run) so the stub's
+    # captured message survives.
+    logged=""
+    bashio::log.error() { logged="$*"; }
+    rc=0
+    bashio::backups.freeze "$(printf '1\nESC\x1bINJECT')" || rc=$?
+    [ "${rc}" -ne 0 ]
+    [ -n "${logged}" ]
+    [[ "${logged}" != *$'\n'* ]]
+    [[ "${logged}" != *$'\x1b'* ]]
+}
+
 # ------------------------------------------------------------------------------
 # backups.thaw
 # ------------------------------------------------------------------------------
@@ -107,6 +145,29 @@ setup() {
     rc=0
     bashio::backups.days_until_stale "10" || rc=$?
     [ "${rc}" -ne 0 ]
+}
+
+@test "backups.days_until_stale rejects a non-integer value without calling the API" {
+    bashio::api.supervisor() { echo "called" >"${BATS_TEST_TMPDIR}/call"; }
+    rc=0
+    bashio::backups.days_until_stale '10,"foo":1' || rc=$?
+    [ "${rc}" -ne 0 ]
+    [ ! -e "${BATS_TEST_TMPDIR}/call" ]
+}
+
+@test "backups.days_until_stale accepts a zero value" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::backups.days_until_stale "0"
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /backups/options {"days_until_stale":0}' ]
+}
+
+@test "backups.days_until_stale rejects a leading-zero value without calling the API" {
+    bashio::api.supervisor() { echo "called" >"${BATS_TEST_TMPDIR}/call"; }
+    rc=0
+    bashio::backups.days_until_stale "007" || rc=$?
+    [ "${rc}" -ne 0 ]
+    [ ! -e "${BATS_TEST_TMPDIR}/call" ]
 }
 
 # ------------------------------------------------------------------------------

@@ -254,6 +254,15 @@ setup() {
     [ "${rc}" -ne 0 ]
 }
 
+@test "network.enabled normalizes the value and cannot inject extra options" {
+    bashio::api.supervisor() { printf '%s' "$3" >"${BATS_TEST_TMPDIR}/body"; }
+    run bashio::network.enabled 'eth0' 'true,"ipv4":{"method":"disabled"}'
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/body")" = '{"enabled":false}' ]
+    run jq -e 'has("ipv4")' <"${BATS_TEST_TMPDIR}/body"
+    [ "${status}" -ne 0 ]
+}
+
 @test "network.enabled getter propagates an API failure" {
     bashio::api.supervisor() { return 1; }
     run bashio::network.enabled

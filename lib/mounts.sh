@@ -78,7 +78,9 @@ function bashio::mounts.default_backup_mount() {
 function bashio::mounts.create() {
     local mount=${1}
 
-    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    # A mount definition can carry credentials (CIFS/NFS username and
+    # password), so trace only the function name, never the payload.
+    bashio::log.trace "${FUNCNAME[0]}"
 
     bashio::api.supervisor POST /mounts "${mount}" || return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
@@ -93,7 +95,9 @@ function bashio::mounts.create() {
 function bashio::mounts.options() {
     local options=${1}
 
-    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    # The options object can carry mount credentials, so trace only the
+    # function name, never the payload.
+    bashio::log.trace "${FUNCNAME[0]}"
 
     bashio::api.supervisor POST /mounts/options "${options}" ||
         return "${__BASHIO_EXIT_NOK}"

@@ -753,6 +753,17 @@ get_field() {
     [ "${rc}" -ne 0 ]
 }
 
+@test "addon.auto_update normalizes the value and cannot inject extra options" {
+    bashio::api.supervisor() { printf '%s' "$3" >"${BATS_TEST_TMPDIR}/body"; }
+    # A crafted value must not break out into additional options keys; anything
+    # that is not strictly true is treated as false.
+    run bashio::app.auto_update "alpha" 'true,"rootfs_path":"/"'
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/body")" = '{"auto_update":false}' ]
+    run jq -e 'has("rootfs_path")' <"${BATS_TEST_TMPDIR}/body"
+    [ "${status}" -ne 0 ]
+}
+
 @test "addon.boot reads the value when no second argument is given" {
     run get_field '{"slug":"alpha","boot":"auto"}' bashio::app.boot
     [ "${output}" = "auto" ]
@@ -784,6 +795,15 @@ get_field() {
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /addons/alpha/options {"ingress_panel":true}' ]
 }
 
+@test "addon.ingress_panel normalizes the value and cannot inject extra options" {
+    bashio::api.supervisor() { printf '%s' "$3" >"${BATS_TEST_TMPDIR}/body"; }
+    run bashio::app.ingress_panel "alpha" 'true,"rootfs_path":"/"'
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/body")" = '{"ingress_panel":false}' ]
+    run jq -e 'has("rootfs_path")' <"${BATS_TEST_TMPDIR}/body"
+    [ "${status}" -ne 0 ]
+}
+
 @test "addon.watchdog reads the value when no second argument is given" {
     run get_field '{"slug":"alpha","watchdog":true}' bashio::app.watchdog
     [ "${output}" = "true" ]
@@ -794,6 +814,15 @@ get_field() {
     run bashio::app.watchdog "alpha" "false"
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /addons/alpha/options {"watchdog":false}' ]
+}
+
+@test "addon.watchdog normalizes the value and cannot inject extra options" {
+    bashio::api.supervisor() { printf '%s' "$3" >"${BATS_TEST_TMPDIR}/body"; }
+    run bashio::app.watchdog "alpha" 'true,"rootfs_path":"/"'
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/body")" = '{"watchdog":false}' ]
+    run jq -e 'has("rootfs_path")' <"${BATS_TEST_TMPDIR}/body"
+    [ "${status}" -ne 0 ]
 }
 
 @test "addon.watchdog propagates an API failure on set" {

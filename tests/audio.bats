@@ -31,6 +31,20 @@ setup() {
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /audio/update {"version":"1.2.3"}' ]
 }
 
+@test "audio.update propagates an API failure with a version" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::audio.update "1.2.3" || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+@test "audio.update propagates an API failure without a version" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::audio.update || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
 # ------------------------------------------------------------------------------
 # bashio::audio.reload (preserved + expanded)
 # ------------------------------------------------------------------------------
