@@ -96,6 +96,118 @@ function bashio::host() {
 }
 
 # ------------------------------------------------------------------------------
+# Returns a JSON object with the systemd services available on the host.
+#
+# Arguments:
+#   $1 Cache key to store results in (optional)
+#   $2 jq Filter to apply on the result (optional)
+# ------------------------------------------------------------------------------
+function bashio::host.services() {
+    local cache_key=${1:-'host.services'}
+    local filter=${2:-}
+    local info
+    local response
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    if bashio::cache.exists "${cache_key}"; then
+        # The base key holds the unfiltered blob, so only serve it from the
+        # cache when no filter is requested; a filtered call must recompute.
+        if [[ "${cache_key}" != 'host.services' ]] ||
+            ! bashio::var.has_value "${filter}"; then
+            bashio::cache.get "${cache_key}"
+            return "${__BASHIO_EXIT_OK}"
+        fi
+    fi
+
+    if bashio::cache.exists 'host.services'; then
+        info=$(bashio::cache.get 'host.services')
+    else
+        info=$(bashio::api.supervisor GET /host/services false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get host services from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
+        bashio::cache.set 'host.services' "${info}"
+    fi
+
+    response="${info}"
+    if bashio::var.has_value "${filter}"; then
+        response=$(bashio::jq "${info}" "${filter}")
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to execute the jq filter"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
+    fi
+
+    # Never overwrite the base blob with a filtered result: the
+    # base blob is already cached above, so only cache under a distinct
+    # caller-provided key.
+    if [[ "${cache_key}" != 'host.services' ]]; then
+        bashio::cache.set "${cache_key}" "${response}"
+    fi
+    printf "%s" "${response}"
+
+    return "${__BASHIO_EXIT_OK}"
+}
+
+# ------------------------------------------------------------------------------
+# Returns a JSON object with a breakdown of disk usage on the host system.
+#
+# Arguments:
+#   $1 Cache key to store results in (optional)
+#   $2 jq Filter to apply on the result (optional)
+# ------------------------------------------------------------------------------
+function bashio::host.disk_usage() {
+    local cache_key=${1:-'host.disk_usage'}
+    local filter=${2:-}
+    local info
+    local response
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    if bashio::cache.exists "${cache_key}"; then
+        # The base key holds the unfiltered blob, so only serve it from the
+        # cache when no filter is requested; a filtered call must recompute.
+        if [[ "${cache_key}" != 'host.disk_usage' ]] ||
+            ! bashio::var.has_value "${filter}"; then
+            bashio::cache.get "${cache_key}"
+            return "${__BASHIO_EXIT_OK}"
+        fi
+    fi
+
+    if bashio::cache.exists 'host.disk_usage'; then
+        info=$(bashio::cache.get 'host.disk_usage')
+    else
+        info=$(bashio::api.supervisor GET /host/disks/default/usage false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get host disk usage from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
+        bashio::cache.set 'host.disk_usage' "${info}"
+    fi
+
+    response="${info}"
+    if bashio::var.has_value "${filter}"; then
+        response=$(bashio::jq "${info}" "${filter}")
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to execute the jq filter"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
+    fi
+
+    # Never overwrite the base blob with a filtered result: the
+    # base blob is already cached above, so only cache under a distinct
+    # caller-provided key.
+    if [[ "${cache_key}" != 'host.disk_usage' ]]; then
+        bashio::cache.set "${cache_key}" "${response}"
+    fi
+    printf "%s" "${response}"
+
+    return "${__BASHIO_EXIT_OK}"
+}
+
+# ------------------------------------------------------------------------------
 # Returns or sets the hostname of the host system.
 #
 # Arguments:
