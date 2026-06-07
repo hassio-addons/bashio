@@ -23,8 +23,13 @@ function bashio::docker() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::cache.exists "${cache_key}"; then
-        bashio::cache.get "${cache_key}"
-        return "${__BASHIO_EXIT_OK}"
+        # The base key holds the unfiltered blob, so only serve it from the
+        # cache when no filter is requested; a filtered call must recompute.
+        if [[ "${cache_key}" != 'docker.info' ]] ||
+            ! bashio::var.has_value "${filter}"; then
+            bashio::cache.get "${cache_key}"
+            return "${__BASHIO_EXIT_OK}"
+        fi
     fi
 
     if bashio::cache.exists 'docker.info'; then
@@ -130,8 +135,13 @@ function bashio::docker.registries() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::cache.exists "${cache_key}"; then
-        bashio::cache.get "${cache_key}"
-        return "${__BASHIO_EXIT_OK}"
+        # The base key holds the unfiltered blob, so only serve it from the
+        # cache when no filter is requested; a filtered call must recompute.
+        if [[ "${cache_key}" != 'docker.registries' ]] ||
+            ! bashio::var.has_value "${filter}"; then
+            bashio::cache.get "${cache_key}"
+            return "${__BASHIO_EXIT_OK}"
+        fi
     fi
 
     if bashio::cache.exists 'docker.registries'; then

@@ -23,8 +23,13 @@ function bashio::security() {
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
     if bashio::cache.exists "${cache_key}"; then
-        bashio::cache.get "${cache_key}"
-        return "${__BASHIO_EXIT_OK}"
+        # The base key holds the unfiltered blob, so only serve it from the
+        # cache when no filter is requested; a filtered call must recompute.
+        if [[ "${cache_key}" != 'security.info' ]] ||
+            ! bashio::var.has_value "${filter}"; then
+            bashio::cache.get "${cache_key}"
+            return "${__BASHIO_EXIT_OK}"
+        fi
     fi
 
     if bashio::cache.exists 'security.info'; then

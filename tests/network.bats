@@ -166,6 +166,11 @@ setup() {
     run bashio::cache.get 'network.interface.eth0.info'
     [ "${status}" -eq 0 ]
     [ "$(printf '%s' "${output}" | jq -r '.interface')" = "eth0" ]
+    # A repeated base-key+filter call must still apply the filter, not return
+    # the cached unfiltered blob.
+    run bashio::network.interface 'network.interface.eth0.info' 'eth0' '.type'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "ethernet" ]
 }
 
 @test "network.interface applies a jq filter to the info response" {
