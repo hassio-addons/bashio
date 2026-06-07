@@ -67,7 +67,12 @@ function bashio::cli() {
         fi
     fi
 
-    bashio::cache.set "${cache_key}" "${response}"
+    # Never overwrite the base info blob with a filtered result: the
+    # base blob is already cached above, so only cache under a distinct
+    # caller-provided key.
+    if [[ "${cache_key}" != 'cli.info' ]]; then
+        bashio::cache.set "${cache_key}" "${response}"
+    fi
     printf "%s" "${response}"
 
     return "${__BASHIO_EXIT_OK}"
@@ -137,7 +142,12 @@ function bashio::cli.stats() {
         fi
     fi
 
-    bashio::cache.set "${cache_key}" "${response}"
+    # Never overwrite the base info blob with a filtered result: the
+    # base blob is already cached above, so only cache under a distinct
+    # caller-provided key.
+    if [[ "${cache_key}" != 'cli.stats' ]]; then
+        bashio::cache.set "${cache_key}" "${response}"
+    fi
     printf "%s" "${response}"
 
     return "${__BASHIO_EXIT_OK}"

@@ -154,6 +154,20 @@ setup() {
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "GET /network/interface/eth0/info false" ]
 }
 
+@test "network.interface with the dynamic base key and a filter does not corrupt the base blob" {
+    # The per-interface base key is dynamic; passing it together with a filter
+    # must not overwrite the shared blob with the filtered scalar.
+    bashio::api.supervisor() {
+        printf '%s' '{"interface":"eth0","type":"ethernet"}'
+    }
+    run bashio::network.interface 'network.interface.eth0.info' 'eth0' '.type'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "ethernet" ]
+    run bashio::cache.get 'network.interface.eth0.info'
+    [ "${status}" -eq 0 ]
+    [ "$(printf '%s' "${output}" | jq -r '.interface')" = "eth0" ]
+}
+
 @test "network.interface applies a jq filter to the info response" {
     bashio::api.supervisor() {
         printf '%s' '{"interface":"eth0","type":"ethernet"}'
