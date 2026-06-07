@@ -51,7 +51,8 @@ setup() {
     # never be sent. Capture what is actually passed to curl and assert it.
     local captured="${BATS_TEST_TMPDIR}/curl_args"
     curl() {
-        printf '%s' "$*" >"${captured}"
+        # Capture each argument on its own line so boundaries are preserved.
+        printf '%s\n' "$@" >"${captured}"
         printf '%s\n%s' "${MOCK_BODY}" "${MOCK_STATUS}"
     }
     bashio::pwned "test" >/dev/null
