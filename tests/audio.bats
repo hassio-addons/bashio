@@ -93,6 +93,157 @@ setup() {
 }
 
 # ------------------------------------------------------------------------------
+# bashio::audio.volume
+# ------------------------------------------------------------------------------
+
+@test "audio.volume posts index and volume to the device stream endpoint" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::audio.volume "output" "0" "0.5"
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /audio/volume/output {"index":0,"volume":0.5}' ]
+}
+
+@test "audio.volume targets the application stream when requested" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::audio.volume "input" "2" "1" "true"
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /audio/volume/input/application {"index":2,"volume":1}' ]
+}
+
+@test "audio.volume rejects an invalid stream type without calling the API" {
+    bashio::api.supervisor() { echo "called" >"${BATS_TEST_TMPDIR}/call"; }
+    rc=0
+    bashio::audio.volume "speaker" "0" "0.5" || rc=$?
+    [ "${rc}" -ne 0 ]
+    [ ! -e "${BATS_TEST_TMPDIR}/call" ]
+}
+
+@test "audio.volume rejects a non-numeric index and cannot inject extra keys" {
+    bashio::api.supervisor() { echo "called" >"${BATS_TEST_TMPDIR}/call"; }
+    rc=0
+    bashio::audio.volume "output" '0,"x":1' "0.5" || rc=$?
+    [ "${rc}" -ne 0 ]
+    [ ! -e "${BATS_TEST_TMPDIR}/call" ]
+}
+
+@test "audio.volume rejects a non-numeric volume without calling the API" {
+    bashio::api.supervisor() { echo "called" >"${BATS_TEST_TMPDIR}/call"; }
+    rc=0
+    bashio::audio.volume "output" "0" "loud" || rc=$?
+    [ "${rc}" -ne 0 ]
+    [ ! -e "${BATS_TEST_TMPDIR}/call" ]
+}
+
+@test "audio.volume propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::audio.volume "output" "0" "0.5" || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+# ------------------------------------------------------------------------------
+# bashio::audio.mute
+# ------------------------------------------------------------------------------
+
+@test "audio.mute posts index and active to the device stream endpoint" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::audio.mute "output" "1" "true"
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /audio/mute/output {"index":1,"active":true}' ]
+}
+
+@test "audio.mute normalizes the active flag and cannot inject extra keys" {
+    bashio::api.supervisor() { printf '%s' "$3" >"${BATS_TEST_TMPDIR}/body"; }
+    run bashio::audio.mute "output" "1" 'true,"x":1'
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/body")" = '{"index":1,"active":false}' ]
+    run jq -e 'has("x")' <"${BATS_TEST_TMPDIR}/body"
+    [ "${status}" -ne 0 ]
+}
+
+@test "audio.mute targets the application stream when requested" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::audio.mute "input" "0" "false" "true"
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /audio/mute/input/application {"index":0,"active":false}' ]
+}
+
+@test "audio.mute rejects an invalid stream type without calling the API" {
+    bashio::api.supervisor() { echo "called" >"${BATS_TEST_TMPDIR}/call"; }
+    rc=0
+    bashio::audio.mute "speaker" "0" "true" || rc=$?
+    [ "${rc}" -ne 0 ]
+    [ ! -e "${BATS_TEST_TMPDIR}/call" ]
+}
+
+@test "audio.mute propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::audio.mute "output" "0" "true" || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+# ------------------------------------------------------------------------------
+# bashio::audio.default
+# ------------------------------------------------------------------------------
+
+@test "audio.default posts the stream name to the default endpoint" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::audio.default "output" "alsa_output.0"
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /audio/default/output {"name":"alsa_output.0"}' ]
+}
+
+@test "audio.default escapes the name and cannot inject extra keys" {
+    bashio::api.supervisor() { printf '%s' "$3" >"${BATS_TEST_TMPDIR}/body"; }
+    run bashio::audio.default "output" 'x","y":"z'
+    [ "${status}" -eq 0 ]
+    run jq -e 'has("y")' <"${BATS_TEST_TMPDIR}/body"
+    [ "${status}" -ne 0 ]
+}
+
+@test "audio.default rejects an invalid stream type without calling the API" {
+    bashio::api.supervisor() { echo "called" >"${BATS_TEST_TMPDIR}/call"; }
+    rc=0
+    bashio::audio.default "speaker" "x" || rc=$?
+    [ "${rc}" -ne 0 ]
+    [ ! -e "${BATS_TEST_TMPDIR}/call" ]
+}
+
+@test "audio.default propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::audio.default "output" "x" || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+# ------------------------------------------------------------------------------
+# bashio::audio.profile
+# ------------------------------------------------------------------------------
+
+@test "audio.profile posts the card and profile name" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::audio.profile "card0" "output:analog-stereo"
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /audio/profile {"card":"card0","name":"output:analog-stereo"}' ]
+}
+
+@test "audio.profile escapes its arguments and cannot inject extra keys" {
+    bashio::api.supervisor() { printf '%s' "$3" >"${BATS_TEST_TMPDIR}/body"; }
+    run bashio::audio.profile 'x","y":"z' "name"
+    [ "${status}" -eq 0 ]
+    run jq -e 'has("y")' <"${BATS_TEST_TMPDIR}/body"
+    [ "${status}" -ne 0 ]
+}
+
+@test "audio.profile propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::audio.profile "card0" "x" || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+# ------------------------------------------------------------------------------
 # bashio::audio (info fetcher)
 # ------------------------------------------------------------------------------
 

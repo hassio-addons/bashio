@@ -54,6 +54,139 @@ function bashio::audio.logs() {
 }
 
 # ------------------------------------------------------------------------------
+# Sets the volume on an audio stream.
+#
+# Arguments:
+#   $1 Stream type ('input' or 'output')
+#   $2 Stream index
+#   $3 Volume level (a number between 0 and 1, e.g. 0.5)
+#   $4 Apply to the application stream instead of the device (optional)
+# ------------------------------------------------------------------------------
+function bashio::audio.volume() {
+    local source=${1}
+    local index=${2}
+    local volume=${3}
+    local application=${4:-false}
+    local resource
+    local payload
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    if [[ ! "${source}" =~ ^(input|output)$ ]]; then
+        bashio::log.error "Invalid stream type, expected 'input' or 'output'"
+        return "${__BASHIO_EXIT_NOK}"
+    fi
+    if [[ ! "${index}" =~ ^(0|[1-9][0-9]*)$ ]]; then
+        bashio::log.error "Invalid index, expected a non-negative integer"
+        return "${__BASHIO_EXIT_NOK}"
+    fi
+    if [[ ! "${volume}" =~ ^(0|[1-9][0-9]*)(\.[0-9]+)?$ ]]; then
+        bashio::log.error "Invalid volume, expected a non-negative number"
+        return "${__BASHIO_EXIT_NOK}"
+    fi
+
+    resource="/audio/volume/${source}"
+    if bashio::var.true "${application}"; then
+        resource="${resource}/application"
+    fi
+
+    payload=$(bashio::var.json index "^${index}" volume "^${volume}")
+    bashio::api.supervisor POST "${resource}" "${payload}" ||
+        return "${__BASHIO_EXIT_NOK}"
+    bashio::cache.flush_all
+}
+
+# ------------------------------------------------------------------------------
+# Mutes or unmutes an audio stream.
+#
+# Arguments:
+#   $1 Stream type ('input' or 'output')
+#   $2 Stream index
+#   $3 Mute state (true to mute, false to unmute)
+#   $4 Apply to the application stream instead of the device (optional)
+# ------------------------------------------------------------------------------
+function bashio::audio.mute() {
+    local source=${1}
+    local index=${2}
+    local active=${3}
+    local application=${4:-false}
+    local resource
+    local payload
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    if [[ ! "${source}" =~ ^(input|output)$ ]]; then
+        bashio::log.error "Invalid stream type, expected 'input' or 'output'"
+        return "${__BASHIO_EXIT_NOK}"
+    fi
+    if [[ ! "${index}" =~ ^(0|[1-9][0-9]*)$ ]]; then
+        bashio::log.error "Invalid index, expected a non-negative integer"
+        return "${__BASHIO_EXIT_NOK}"
+    fi
+
+    if bashio::var.true "${active}"; then
+        active='^true'
+    else
+        active='^false'
+    fi
+
+    resource="/audio/mute/${source}"
+    if bashio::var.true "${application}"; then
+        resource="${resource}/application"
+    fi
+
+    payload=$(bashio::var.json index "^${index}" active "${active}")
+    bashio::api.supervisor POST "${resource}" "${payload}" ||
+        return "${__BASHIO_EXIT_NOK}"
+    bashio::cache.flush_all
+}
+
+# ------------------------------------------------------------------------------
+# Sets the default audio stream.
+#
+# Arguments:
+#   $1 Stream type ('input' or 'output')
+#   $2 Name of the stream to set as default
+# ------------------------------------------------------------------------------
+function bashio::audio.default() {
+    local source=${1}
+    local name=${2}
+    local payload
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    if [[ ! "${source}" =~ ^(input|output)$ ]]; then
+        bashio::log.error "Invalid stream type, expected 'input' or 'output'"
+        return "${__BASHIO_EXIT_NOK}"
+    fi
+
+    payload=$(bashio::var.json name "${name}")
+    bashio::api.supervisor POST "/audio/default/${source}" "${payload}" ||
+        return "${__BASHIO_EXIT_NOK}"
+    bashio::cache.flush_all
+}
+
+# ------------------------------------------------------------------------------
+# Activates an audio profile on a card.
+#
+# Arguments:
+#   $1 Card identifier
+#   $2 Profile name to activate
+# ------------------------------------------------------------------------------
+function bashio::audio.profile() {
+    local card=${1}
+    local name=${2}
+    local payload
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    payload=$(bashio::var.json card "${card}" name "${name}")
+    bashio::api.supervisor POST /audio/profile "${payload}" ||
+        return "${__BASHIO_EXIT_NOK}"
+    bashio::cache.flush_all
+}
+
+# ------------------------------------------------------------------------------
 # Returns a JSON object with generic version information about the audio server.
 #
 # Arguments:
