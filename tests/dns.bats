@@ -99,6 +99,15 @@ setup() {
     [ "${rc}" -ne 0 ]
 }
 
+@test "dns.options flushes the cache after a successful set" {
+    bashio::cache.set 'dns.info' 'stale'
+    bashio::api.supervisor() { return 0; }
+    run bashio::dns.options '{"fallback":false}'
+    [ "${status}" -eq 0 ]
+    run bashio::cache.exists 'dns.info'
+    [ "${status}" -ne 0 ]
+}
+
 # ------------------------------------------------------------------------------
 # bashio::dns.logs
 # ------------------------------------------------------------------------------

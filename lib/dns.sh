@@ -54,7 +54,9 @@ function bashio::dns.restart() {
 function bashio::dns.options() {
     local options=${1}
 
-    bashio::log.trace "${FUNCNAME[0]}" "$@"
+    # The options object is an opaque caller-provided payload, so trace only
+    # the function name, never the payload itself.
+    bashio::log.trace "${FUNCNAME[0]}"
 
     bashio::api.supervisor POST /dns/options "${options}" ||
         return "${__BASHIO_EXIT_NOK}"
