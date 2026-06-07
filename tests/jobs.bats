@@ -60,6 +60,17 @@ setup() {
     [ "${status}" -ne 0 ]
 }
 
+@test "jobs.options does not log the options payload" {
+    # The options object is an opaque caller-provided payload, so it must not
+    # reach the trace log. Call directly (not via run) so the captured message
+    # survives.
+    logged=""
+    bashio::log.trace() { logged+=" $*"; }
+    bashio::api.supervisor() { return 0; }
+    bashio::jobs.options '{"ignore_conditions":["SENTINEL_VALUE"]}'
+    [[ "${logged}" != *"SENTINEL_VALUE"* ]]
+}
+
 # ------------------------------------------------------------------------------
 # jobs (the generic fetcher)
 # ------------------------------------------------------------------------------
