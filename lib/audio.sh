@@ -59,7 +59,8 @@ function bashio::audio.logs() {
 # Arguments:
 #   $1 Stream type ('input' or 'output')
 #   $2 Stream index
-#   $3 Volume level (a number between 0 and 1, e.g. 0.5)
+#   $3 Volume level (a non-negative number where 1.0 is 100%, e.g. 0.5;
+#      values above 1.0 amplify the stream)
 #   $4 Apply to the application stream instead of the device (optional)
 # ------------------------------------------------------------------------------
 function bashio::audio.volume() {
