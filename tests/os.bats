@@ -125,7 +125,7 @@ setup() {
     [ "${output}" = "12.0" ]
 }
 
-@test "os fails when the API call fails" {
+@test "os propagates an API failure" {
     bashio::api.supervisor() { return 1; }
     run bashio::os
     [ "${status}" -ne 0 ]
@@ -180,7 +180,7 @@ setup() {
     [ "${output}" = "rpi4" ]
 }
 
-@test "os.boot returns the active boot slot" {
+@test "os.boot returns the active boot" {
     bashio::api.supervisor() {
         printf '%s' '{"boot":"A"}'
     }
