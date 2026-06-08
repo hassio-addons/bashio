@@ -131,3 +131,178 @@ function bashio::os.boot() {
     bashio::log.trace "${FUNCNAME[0]}"
     bashio::os 'os.info.boot' '.boot'
 }
+
+# ------------------------------------------------------------------------------
+# Returns a JSON object with the swap settings (HassOS 15.0 or newer).
+#
+# Arguments:
+#   $1 Cache key to store results in (optional)
+#   $2 jq Filter to apply on the result (optional)
+# ------------------------------------------------------------------------------
+function bashio::os.swap() {
+    local cache_key=${1:-'os.swap'}
+    local filter=${2:-}
+    local info
+    local response
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    if bashio::cache.exists "${cache_key}"; then
+        # The base key holds the unfiltered blob, so only serve it from the
+        # cache when no filter is requested; a filtered call must recompute.
+        if [[ "${cache_key}" != 'os.swap' ]] ||
+            ! bashio::var.has_value "${filter}"; then
+            bashio::cache.get "${cache_key}"
+            return "${__BASHIO_EXIT_OK}"
+        fi
+    fi
+
+    if bashio::cache.exists 'os.swap'; then
+        info=$(bashio::cache.get 'os.swap')
+    else
+        info=$(bashio::api.supervisor GET /os/config/swap false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get swap settings from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
+        bashio::cache.set 'os.swap' "${info}"
+    fi
+
+    response="${info}"
+    if bashio::var.has_value "${filter}"; then
+        response=$(bashio::jq "${info}" "${filter}")
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to execute the jq filter"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
+    fi
+
+    # Never overwrite the base blob with a filtered result: the
+    # base blob is already cached above, so only cache under a distinct
+    # caller-provided key.
+    if [[ "${cache_key}" != 'os.swap' ]]; then
+        bashio::cache.set "${cache_key}" "${response}"
+    fi
+    printf "%s" "${response}"
+
+    return "${__BASHIO_EXIT_OK}"
+}
+
+# ------------------------------------------------------------------------------
+# Sets the swap settings (HassOS 15.0 or newer).
+#
+# Arguments:
+#   $1 Options object (JSON), with swap_size and/or swappiness
+# ------------------------------------------------------------------------------
+function bashio::os.swap.options() {
+    local options=${1}
+
+    # The options object is an opaque caller-provided payload, so trace only
+    # the function name, never the payload itself.
+    bashio::log.trace "${FUNCNAME[0]}"
+
+    bashio::api.supervisor POST /os/config/swap "${options}" ||
+        return "${__BASHIO_EXIT_NOK}"
+    bashio::cache.flush_all
+}
+
+# ------------------------------------------------------------------------------
+# Returns a JSON object with the data disk targets available for migration.
+#
+# Arguments:
+#   $1 Cache key to store results in (optional)
+#   $2 jq Filter to apply on the result (optional)
+# ------------------------------------------------------------------------------
+function bashio::os.datadisk.list() {
+    local cache_key=${1:-'os.datadisk.list'}
+    local filter=${2:-}
+    local info
+    local response
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    if bashio::cache.exists "${cache_key}"; then
+        # The base key holds the unfiltered blob, so only serve it from the
+        # cache when no filter is requested; a filtered call must recompute.
+        if [[ "${cache_key}" != 'os.datadisk.list' ]] ||
+            ! bashio::var.has_value "${filter}"; then
+            bashio::cache.get "${cache_key}"
+            return "${__BASHIO_EXIT_OK}"
+        fi
+    fi
+
+    if bashio::cache.exists 'os.datadisk.list'; then
+        info=$(bashio::cache.get 'os.datadisk.list')
+    else
+        info=$(bashio::api.supervisor GET /os/datadisk/list false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get data disk list from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
+        bashio::cache.set 'os.datadisk.list' "${info}"
+    fi
+
+    response="${info}"
+    if bashio::var.has_value "${filter}"; then
+        response=$(bashio::jq "${info}" "${filter}")
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to execute the jq filter"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
+    fi
+
+    # Never overwrite the base blob with a filtered result: the
+    # base blob is already cached above, so only cache under a distinct
+    # caller-provided key.
+    if [[ "${cache_key}" != 'os.datadisk.list' ]]; then
+        bashio::cache.set "${cache_key}" "${response}"
+    fi
+    printf "%s" "${response}"
+
+    return "${__BASHIO_EXIT_OK}"
+}
+
+# ------------------------------------------------------------------------------
+# Moves the data partition to another disk and reboots.
+#
+# Arguments:
+#   $1 Target device id
+# ------------------------------------------------------------------------------
+function bashio::os.datadisk.move() {
+    local device=${1}
+    local payload
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    payload=$(bashio::var.json device "${device}")
+    bashio::api.supervisor POST /os/datadisk/move "${payload}" ||
+        return "${__BASHIO_EXIT_NOK}"
+    bashio::cache.flush_all
+}
+
+# ------------------------------------------------------------------------------
+# Wipes the data disk and reboots into a factory-reset state.
+# ------------------------------------------------------------------------------
+function bashio::os.datadisk.wipe() {
+    bashio::log.trace "${FUNCNAME[0]}"
+    bashio::api.supervisor POST /os/datadisk/wipe || return "${__BASHIO_EXIT_NOK}"
+    bashio::cache.flush_all
+}
+
+# ------------------------------------------------------------------------------
+# Changes the active boot slot and reboots into it.
+#
+# Arguments:
+#   $1 Boot slot ('A' or 'B')
+# ------------------------------------------------------------------------------
+function bashio::os.boot_slot() {
+    local slot=${1}
+    local payload
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    payload=$(bashio::var.json boot_slot "${slot}")
+    bashio::api.supervisor POST /os/boot-slot "${payload}" ||
+        return "${__BASHIO_EXIT_NOK}"
+    bashio::cache.flush_all
+}

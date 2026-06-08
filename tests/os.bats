@@ -194,3 +194,148 @@ setup() {
     run bashio::os.version
     [ "${status}" -ne 0 ]
 }
+
+# ------------------------------------------------------------------------------
+# bashio::os.swap (getter) and bashio::os.swap.options (setter)
+# ------------------------------------------------------------------------------
+
+@test "os.swap calls GET /os/config/swap" {
+    bashio::api.supervisor() {
+        echo "$*" >"${BATS_TEST_TMPDIR}/call"
+        printf '%s' '{"swap_size":"1G","swappiness":60}'
+    }
+    run bashio::os.swap
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "GET /os/config/swap false" ]
+    [ "${output}" = '{"swap_size":"1G","swappiness":60}' ]
+}
+
+@test "os.swap applies an optional jq filter" {
+    bashio::api.supervisor() { printf '%s' '{"swap_size":"1G","swappiness":60}'; }
+    run bashio::os.swap 'os.swap.swappiness' '.swappiness'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "60" ]
+}
+
+@test "os.swap propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::os.swap || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+@test "os.swap with the base key and a filter does not corrupt the base blob" {
+    bashio::api.supervisor() { printf '%s' '{"swap_size":"1G","swappiness":60}'; }
+    run bashio::os.swap 'os.swap' '.swappiness'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "60" ]
+    run bashio::cache.get 'os.swap'
+    [ "${status}" -eq 0 ]
+    [ "$(printf '%s' "${output}" | jq -r '.swap_size')" = "1G" ]
+}
+
+@test "os.swap.options posts the given JSON to the swap endpoint" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::os.swap.options '{"swappiness":80}'
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /os/config/swap {"swappiness":80}' ]
+}
+
+@test "os.swap.options propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::os.swap.options '{"swappiness":80}' || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+@test "os.swap.options does not log the options payload" {
+    logged=""
+    bashio::log.trace() { logged+=" $*"; }
+    bashio::api.supervisor() { return 0; }
+    bashio::os.swap.options '{"swap_size":"SENTINEL_VALUE"}'
+    [[ "${logged}" != *"SENTINEL_VALUE"* ]]
+}
+
+# ------------------------------------------------------------------------------
+# bashio::os.datadisk.list / move / wipe
+# ------------------------------------------------------------------------------
+
+@test "os.datadisk.list calls GET /os/datadisk/list" {
+    bashio::api.supervisor() {
+        echo "$*" >"${BATS_TEST_TMPDIR}/call"
+        printf '%s' '{"devices":["sda"],"disks":[{"id":"sda"}]}'
+    }
+    run bashio::os.datadisk.list
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "GET /os/datadisk/list false" ]
+    [ "${output}" = '{"devices":["sda"],"disks":[{"id":"sda"}]}' ]
+}
+
+@test "os.datadisk.list propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::os.datadisk.list || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+@test "os.datadisk.move posts the target device" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::os.datadisk.move "sda"
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /os/datadisk/move {"device":"sda"}' ]
+}
+
+@test "os.datadisk.move escapes the device and cannot inject extra keys" {
+    bashio::api.supervisor() { printf '%s' "$3" >"${BATS_TEST_TMPDIR}/body"; }
+    run bashio::os.datadisk.move 'x","y":"z'
+    [ "${status}" -eq 0 ]
+    run jq -e 'has("y")' <"${BATS_TEST_TMPDIR}/body"
+    [ "${status}" -ne 0 ]
+}
+
+@test "os.datadisk.move propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::os.datadisk.move "sda" || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+@test "os.datadisk.wipe posts to the wipe endpoint" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::os.datadisk.wipe
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "POST /os/datadisk/wipe" ]
+}
+
+@test "os.datadisk.wipe propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::os.datadisk.wipe || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+# ------------------------------------------------------------------------------
+# bashio::os.boot_slot
+# ------------------------------------------------------------------------------
+
+@test "os.boot_slot posts the requested slot" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::os.boot_slot "B"
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /os/boot-slot {"boot_slot":"B"}' ]
+}
+
+@test "os.boot_slot escapes the slot and cannot inject extra keys" {
+    bashio::api.supervisor() { printf '%s' "$3" >"${BATS_TEST_TMPDIR}/body"; }
+    run bashio::os.boot_slot 'A","y":"z'
+    [ "${status}" -eq 0 ]
+    run jq -e 'has("y")' <"${BATS_TEST_TMPDIR}/body"
+    [ "${status}" -ne 0 ]
+}
+
+@test "os.boot_slot propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::os.boot_slot "B" || rc=$?
+    [ "${rc}" -ne 0 ]
+}
