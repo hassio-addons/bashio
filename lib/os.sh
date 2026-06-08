@@ -306,3 +306,152 @@ function bashio::os.boot_slot() {
         return "${__BASHIO_EXIT_NOK}"
     bashio::cache.flush_all
 }
+
+# ------------------------------------------------------------------------------
+# Returns a JSON object with the LED settings of a Home Assistant Green board.
+#
+# Arguments:
+#   $1 Cache key to store results in (optional)
+#   $2 jq Filter to apply on the result (optional)
+# ------------------------------------------------------------------------------
+function bashio::os.boards.green() {
+    local cache_key=${1:-'os.boards.green'}
+    local filter=${2:-}
+    local info
+    local response
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    if bashio::cache.exists "${cache_key}"; then
+        # The base key holds the unfiltered blob, so only serve it from the
+        # cache when no filter is requested; a filtered call must recompute.
+        if [[ "${cache_key}" != 'os.boards.green' ]] ||
+            ! bashio::var.has_value "${filter}"; then
+            bashio::cache.get "${cache_key}"
+            return "${__BASHIO_EXIT_OK}"
+        fi
+    fi
+
+    if bashio::cache.exists 'os.boards.green'; then
+        info=$(bashio::cache.get 'os.boards.green')
+    else
+        info=$(bashio::api.supervisor GET /os/boards/green false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get green board info from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
+        bashio::cache.set 'os.boards.green' "${info}"
+    fi
+
+    response="${info}"
+    if bashio::var.has_value "${filter}"; then
+        response=$(bashio::jq "${info}" "${filter}")
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to execute the jq filter"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
+    fi
+
+    # Never overwrite the base blob with a filtered result: the
+    # base blob is already cached above, so only cache under a distinct
+    # caller-provided key.
+    if [[ "${cache_key}" != 'os.boards.green' ]]; then
+        bashio::cache.set "${cache_key}" "${response}"
+    fi
+    printf "%s" "${response}"
+
+    return "${__BASHIO_EXIT_OK}"
+}
+
+# ------------------------------------------------------------------------------
+# Sets the LED settings of a Home Assistant Green board.
+#
+# Arguments:
+#   $1 Options object (JSON), with activity_led, power_led and/or
+#      system_health_led
+# ------------------------------------------------------------------------------
+function bashio::os.boards.green.options() {
+    local options=${1}
+
+    # The options object is an opaque caller-provided payload, so trace only
+    # the function name, never the payload itself.
+    bashio::log.trace "${FUNCNAME[0]}"
+
+    bashio::api.supervisor POST /os/boards/green "${options}" ||
+        return "${__BASHIO_EXIT_NOK}"
+    bashio::cache.flush_all
+}
+
+# ------------------------------------------------------------------------------
+# Returns a JSON object with the LED settings of a Home Assistant Yellow board.
+#
+# Arguments:
+#   $1 Cache key to store results in (optional)
+#   $2 jq Filter to apply on the result (optional)
+# ------------------------------------------------------------------------------
+function bashio::os.boards.yellow() {
+    local cache_key=${1:-'os.boards.yellow'}
+    local filter=${2:-}
+    local info
+    local response
+
+    bashio::log.trace "${FUNCNAME[0]}" "$@"
+
+    if bashio::cache.exists "${cache_key}"; then
+        # The base key holds the unfiltered blob, so only serve it from the
+        # cache when no filter is requested; a filtered call must recompute.
+        if [[ "${cache_key}" != 'os.boards.yellow' ]] ||
+            ! bashio::var.has_value "${filter}"; then
+            bashio::cache.get "${cache_key}"
+            return "${__BASHIO_EXIT_OK}"
+        fi
+    fi
+
+    if bashio::cache.exists 'os.boards.yellow'; then
+        info=$(bashio::cache.get 'os.boards.yellow')
+    else
+        info=$(bashio::api.supervisor GET /os/boards/yellow false)
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to get yellow board info from Supervisor API"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
+        bashio::cache.set 'os.boards.yellow' "${info}"
+    fi
+
+    response="${info}"
+    if bashio::var.has_value "${filter}"; then
+        response=$(bashio::jq "${info}" "${filter}")
+        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+            bashio::log.error "Failed to execute the jq filter"
+            return "${__BASHIO_EXIT_NOK}"
+        fi
+    fi
+
+    # Never overwrite the base blob with a filtered result: the
+    # base blob is already cached above, so only cache under a distinct
+    # caller-provided key.
+    if [[ "${cache_key}" != 'os.boards.yellow' ]]; then
+        bashio::cache.set "${cache_key}" "${response}"
+    fi
+    printf "%s" "${response}"
+
+    return "${__BASHIO_EXIT_OK}"
+}
+
+# ------------------------------------------------------------------------------
+# Sets the LED settings of a Home Assistant Yellow board.
+#
+# Arguments:
+#   $1 Options object (JSON), with disk_led, heartbeat_led and/or power_led
+# ------------------------------------------------------------------------------
+function bashio::os.boards.yellow.options() {
+    local options=${1}
+
+    # The options object is an opaque caller-provided payload, so trace only
+    # the function name, never the payload itself.
+    bashio::log.trace "${FUNCNAME[0]}"
+
+    bashio::api.supervisor POST /os/boards/yellow "${options}" ||
+        return "${__BASHIO_EXIT_NOK}"
+    bashio::cache.flush_all
+}

@@ -339,3 +339,107 @@ setup() {
     bashio::os.boot_slot "B" || rc=$?
     [ "${rc}" -ne 0 ]
 }
+
+# ------------------------------------------------------------------------------
+# bashio::os.boards.green (getter + options setter)
+# ------------------------------------------------------------------------------
+
+@test "os.boards.green calls GET /os/boards/green" {
+    bashio::api.supervisor() {
+        echo "$*" >"${BATS_TEST_TMPDIR}/call"
+        printf '%s' '{"activity_led":true,"power_led":true,"system_health_led":false}'
+    }
+    run bashio::os.boards.green
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "GET /os/boards/green false" ]
+    [ "${output}" = '{"activity_led":true,"power_led":true,"system_health_led":false}' ]
+}
+
+@test "os.boards.green applies an optional jq filter" {
+    bashio::api.supervisor() { printf '%s' '{"activity_led":true,"power_led":false}'; }
+    run bashio::os.boards.green 'os.boards.green.power' '.power_led'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "false" ]
+}
+
+@test "os.boards.green propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::os.boards.green || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+@test "os.boards.green with the base key and a filter does not corrupt the base blob" {
+    bashio::api.supervisor() { printf '%s' '{"activity_led":true,"power_led":false}'; }
+    run bashio::os.boards.green 'os.boards.green' '.power_led'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "false" ]
+    run bashio::cache.get 'os.boards.green'
+    [ "${status}" -eq 0 ]
+    [ "$(printf '%s' "${output}" | jq -r '.activity_led')" = "true" ]
+}
+
+@test "os.boards.green.options posts the given JSON to the green endpoint" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::os.boards.green.options '{"power_led":false}'
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /os/boards/green {"power_led":false}' ]
+}
+
+@test "os.boards.green.options propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::os.boards.green.options '{"power_led":false}' || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+@test "os.boards.green.options does not log the options payload" {
+    logged=""
+    bashio::log.trace() { logged+=" $*"; }
+    bashio::api.supervisor() { return 0; }
+    bashio::os.boards.green.options '{"power_led":"SENTINEL_VALUE"}'
+    [[ "${logged}" != *"SENTINEL_VALUE"* ]]
+}
+
+# ------------------------------------------------------------------------------
+# bashio::os.boards.yellow (getter + options setter)
+# ------------------------------------------------------------------------------
+
+@test "os.boards.yellow calls GET /os/boards/yellow" {
+    bashio::api.supervisor() {
+        echo "$*" >"${BATS_TEST_TMPDIR}/call"
+        printf '%s' '{"disk_led":true,"heartbeat_led":true,"power_led":true}'
+    }
+    run bashio::os.boards.yellow
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = "GET /os/boards/yellow false" ]
+    [ "${output}" = '{"disk_led":true,"heartbeat_led":true,"power_led":true}' ]
+}
+
+@test "os.boards.yellow applies an optional jq filter" {
+    bashio::api.supervisor() { printf '%s' '{"disk_led":true,"power_led":false}'; }
+    run bashio::os.boards.yellow 'os.boards.yellow.disk' '.disk_led'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "true" ]
+}
+
+@test "os.boards.yellow propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::os.boards.yellow || rc=$?
+    [ "${rc}" -ne 0 ]
+}
+
+@test "os.boards.yellow.options posts the given JSON to the yellow endpoint" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::os.boards.yellow.options '{"disk_led":false}'
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /os/boards/yellow {"disk_led":false}' ]
+}
+
+@test "os.boards.yellow.options propagates an API failure" {
+    bashio::api.supervisor() { return 1; }
+    rc=0
+    bashio::os.boards.yellow.options '{"disk_led":false}' || rc=$?
+    [ "${rc}" -ne 0 ]
+}
