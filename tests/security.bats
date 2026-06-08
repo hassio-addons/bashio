@@ -119,6 +119,13 @@ setup() {
     [ "${status}" -ne 0 ]
 }
 
+@test "security.pwned normalizes literal true to a boolean true payload" {
+    bashio::api.supervisor() { printf '%s' "$3" >"${BATS_TEST_TMPDIR}/body"; }
+    run bashio::security.pwned 'true'
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/body")" = '{"pwned":true}' ]
+}
+
 @test "security.pwned propagates an API failure when reading" {
     bashio::api.supervisor() { return 1; }
     run bashio::security.pwned
@@ -157,6 +164,13 @@ setup() {
 @test "security.force_security with a value posts it to the options endpoint" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
     run bashio::security.force_security false
+    [ "${status}" -eq 0 ]
+    [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /security/options {"force_security":false}' ]
+}
+
+@test "security.force_security normalizes the value and cannot inject extra options" {
+    bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
+    run bashio::security.force_security 'true,"pwned":true'
     [ "${status}" -eq 0 ]
     [ "$(cat "${BATS_TEST_TMPDIR}/call")" = 'POST /security/options {"force_security":false}' ]
 }

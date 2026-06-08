@@ -117,3 +117,12 @@ UPDATES_JSON='{"available_updates":[{"update_type":"core","version_latest":"2"}]
     bashio::updates.reload || rc=$?
     [ "${rc}" -ne 0 ]
 }
+
+@test "updates.reload flushes the cache after a successful reload" {
+    bashio::cache.set 'updates.available' 'stale'
+    bashio::api.supervisor() { return 0; }
+    run bashio::updates.reload
+    [ "${status}" -eq 0 ]
+    run bashio::cache.exists 'updates.available'
+    [ "${status}" -ne 0 ]
+}

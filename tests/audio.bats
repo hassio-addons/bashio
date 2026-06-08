@@ -258,13 +258,39 @@ setup() {
     [ "${output}" = '{"version":"1.0","host":"172.30.32.1"}' ]
 }
 
+@test "audio caches fetched info and avoids a second API call" {
+    echo 0 >"${BATS_TEST_TMPDIR}/api_calls"
+    bashio::api.supervisor() {
+        calls="$(cat "${BATS_TEST_TMPDIR}/api_calls")"
+        echo $((calls + 1)) >"${BATS_TEST_TMPDIR}/api_calls"
+        printf '%s' '{"version":"1.0","host":"172.30.32.1"}'
+    }
+
+    run bashio::audio
+    [ "${status}" -eq 0 ]
+    [ "${output}" = '{"version":"1.0","host":"172.30.32.1"}' ]
+
+    run bashio::audio
+    [ "${status}" -eq 0 ]
+    [ "${output}" = '{"version":"1.0","host":"172.30.32.1"}' ]
+
+    [ "$(cat "${BATS_TEST_TMPDIR}/api_calls")" -eq 1 ]
+}
+
 @test "audio applies a jq filter when provided" {
     bashio::api.supervisor() {
+        echo "$*" >>"${BATS_TEST_TMPDIR}/call"
         printf '%s' '{"version":"1.0","host":"172.30.32.1"}'
     }
     run bashio::audio 'audio.custom' '.host'
     [ "${status}" -eq 0 ]
     [ "${output}" = "172.30.32.1" ]
+
+    bashio::api.supervisor() { return 1; }
+    run bashio::audio 'audio.custom' '.host'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "172.30.32.1" ]
+    [ "$(wc -l <"${BATS_TEST_TMPDIR}/call")" -eq 1 ]
 }
 
 @test "audio serves a cached value without calling the API" {
@@ -367,12 +393,43 @@ setup() {
 }
 
 @test "audio.stats applies a jq filter when provided" {
+    calls_file="${BATS_TEST_TMPDIR}/audio_stats_calls"
+    printf '%s' 0 >"${calls_file}"
     bashio::api.supervisor() {
+        calls="$(cat "${calls_file}")"
+        printf '%s' "$((calls + 1))" >"${calls_file}"
         printf '%s' '{"cpu_percent":1.5,"memory_usage":1024}'
     }
     run bashio::audio.stats 'audio.custom' '.cpu_percent'
     [ "${status}" -eq 0 ]
     [ "${output}" = "1.5" ]
+    [ "$(cat "${calls_file}")" -eq 1 ]
+
+    run bashio::audio.stats 'audio.custom' '.cpu_percent'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "1.5" ]
+    [ "$(cat "${calls_file}")" -eq 1 ]
+}
+
+@test "audio.stats uses cache on repeated calls with the same cache key" {
+    calls_file="${BATS_TEST_TMPDIR}/stats_calls"
+    printf '0' >"${calls_file}"
+
+    bashio::api.supervisor() {
+        calls="$(cat "${calls_file}")"
+        calls="$((calls + 1))"
+        printf '%s' "${calls}" >"${calls_file}"
+        printf '%s' '{"cpu_percent":1.5,"memory_usage":1024}'
+    }
+
+    run bashio::audio.stats 'audio.stats.cache' '.cpu_percent'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "1.5" ]
+
+    run bashio::audio.stats 'audio.stats.cache' '.cpu_percent'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "1.5" ]
+    [ "$(cat "${calls_file}")" = "1" ]
 }
 
 @test "audio.stats propagates an API failure" {

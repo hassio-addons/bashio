@@ -51,7 +51,9 @@ setup() {
     local call_file="${BATS_TEST_TMPDIR}/calls"
     printf '0' >"${call_file}"
     bashio::api.supervisor() {
-        printf '%d' $(($(cat "${call_file}") + 1)) >"${call_file}"
+        local count
+        count="$(cat "${call_file}")"
+        printf '%d' "$((count + 1))" >"${call_file}"
         printf '%s' "${HARDWARE_JSON}"
     }
     bashio::hardware >/dev/null
@@ -102,7 +104,11 @@ AUDIO_JSON='{"audio":{"input":{"a":"Mic"},"output":{"b":"Speaker"}}}'
     local call_file="${BATS_TEST_TMPDIR}/calls"
     printf '0' >"${call_file}"
     bashio::api.supervisor() {
-        printf '%d' $(($(cat "${call_file}") + 1)) >"${call_file}"
+        local count
+        local next_count
+        count=$(cat "${call_file}")
+        next_count=$((count + 1))
+        printf '%d' "${next_count}" >"${call_file}"
         printf '%s' "${AUDIO_JSON}"
     }
     bashio::hardware.audio >/dev/null
@@ -249,7 +255,10 @@ AUDIO_JSON='{"audio":{"input":{"a":"Mic"},"output":{"b":"Speaker"}}}'
     local call_file="${BATS_TEST_TMPDIR}/calls2"
     printf '0' >"${call_file}"
     bashio::api.supervisor() {
-        printf '%d' $(($(cat "${call_file}") + 1)) >"${call_file}"
+        local count next
+        count=$(cat "${call_file}")
+        next=$((count + 1))
+        printf '%d' "${next}" >"${call_file}"
         printf '%s' "${HARDWARE_JSON}"
     }
     # Call both getters without `run` so the cache state is shared.
