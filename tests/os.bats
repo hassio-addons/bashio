@@ -430,6 +430,16 @@ setup() {
     [ "${rc}" -ne 0 ]
 }
 
+@test "os.boards.yellow with the base key and a filter does not corrupt the base blob" {
+    bashio::api.supervisor() { printf '%s' '{"disk_led":true,"power_led":false}'; }
+    run bashio::os.boards.yellow 'os.boards.yellow' '.power_led'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "false" ]
+    run bashio::cache.get 'os.boards.yellow'
+    [ "${status}" -eq 0 ]
+    [ "$(printf '%s' "${output}" | jq -r '.disk_led')" = "true" ]
+}
+
 @test "os.boards.yellow.options posts the given JSON to the yellow endpoint" {
     bashio::api.supervisor() { echo "$*" >"${BATS_TEST_TMPDIR}/call"; }
     run bashio::os.boards.yellow.options '{"disk_led":false}'
@@ -442,4 +452,12 @@ setup() {
     rc=0
     bashio::os.boards.yellow.options '{"disk_led":false}' || rc=$?
     [ "${rc}" -ne 0 ]
+}
+
+@test "os.boards.yellow.options does not log the options payload" {
+    logged=""
+    bashio::log.trace() { logged+=" $*"; }
+    bashio::api.supervisor() { return 0; }
+    bashio::os.boards.yellow.options '{"disk_led":"SENTINEL_VALUE"}'
+    [[ "${logged}" != *"SENTINEL_VALUE"* ]]
 }
