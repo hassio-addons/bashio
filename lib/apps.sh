@@ -192,8 +192,7 @@ function bashio::apps() {
 
     if bashio::var.false "${slug}" || \
         ( ! bashio::var.equals "${slug}" "self" && \
-        bashio::cache.exists "addons.${slug}.info" )
-    then
+            ! bashio::cache.exists "addons.${slug}.info" ); then
         if bashio::cache.exists "store.addons.info"; then
             info=$(bashio::cache.get "store.addons.info")
         else
