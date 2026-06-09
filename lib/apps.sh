@@ -190,15 +190,19 @@ function bashio::apps() {
         return "${__BASHIO_EXIT_OK}"
     fi
 
-    if bashio::cache.exists "store.addons.info"; then
-        info=$(bashio::cache.get "store.addons.info")
-    else
-        info=$(bashio::api.supervisor GET "/store/addons" false)
-        if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
-            bashio::log.error "Failed to get addons info from Supervisor API"
-            return "${__BASHIO_EXIT_NOK}"
+    if bashio::var.false "${slug}" || \
+      ! bashio::var.equals "${slug}" "self"
+    then
+        if bashio::cache.exists "store.addons.info"; then
+            info=$(bashio::cache.get "store.addons.info")
+        else
+            info=$(bashio::api.supervisor GET "/store/addons" false)
+            if [ "$?" -ne "${__BASHIO_EXIT_OK}" ]; then
+                bashio::log.error "Failed to get addons info from Supervisor API"
+                return "${__BASHIO_EXIT_NOK}"
+            fi
+            bashio::cache.set "store.addons.info" "${info}"
         fi
-        bashio::cache.set "store.addons.info" "${info}"
     fi
 
     if ! bashio::var.false "${slug}"; then
