@@ -267,8 +267,9 @@ store_listing() {
     [ "${lines[1]}" = "GET /store/addons/beta false" ]
 }
 
-@test "addons for the self slug uses the installed info endpoint" {
-    # self is treated as installed without consulting the listing for state.
+@test "addons for the self slug uses the installed info endpoint without consulting the store listing" {
+    # self is known to be installed, so the restricted /store/addons listing
+    # must not be consulted at all; the only call is the installed-info endpoint.
     bashio::api.supervisor() {
         echo "$*" >>"${BATS_TEST_TMPDIR}/calls"
         if [[ "$2" == "/store/addons" ]]; then
@@ -281,7 +282,20 @@ store_listing() {
     [ "${status}" -eq 0 ]
     [ "${output}" = "selfslug" ]
     run cat "${BATS_TEST_TMPDIR}/calls"
-    [ "${lines[1]}" = "GET /addons/self/info false" ]
+    [ "${#lines[@]}" -eq 1 ]
+    [ "${lines[0]}" = "GET /addons/self/info false" ]
+}
+
+@test "addons for a cached slug does not consult the store listing" {
+    # When the per-addon info is already cached, the install state is known, so
+    # the restricted /store/addons listing must not be consulted.
+    bashio::cache.set "addons.alpha.info" '{"slug":"alpha"}'
+    bashio::api.supervisor() { echo "$*" >>"${BATS_TEST_TMPDIR}/calls"; }
+    run bashio::apps "alpha"
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "alpha" ]
+    # No API call is made at all (neither the store listing nor the info endpoint).
+    [ ! -f "${BATS_TEST_TMPDIR}/calls" ]
 }
 
 @test "addons applies a custom jq filter and caches under a custom key" {
