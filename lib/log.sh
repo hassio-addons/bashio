@@ -8,7 +8,15 @@
 # ==============================================================================
 
 # Unless $LOG_FD is already set to a valid fd.
-if ! [[ "${LOG_FD:-}" =~ ^[0-9]+$ ]] || ! { : >&"${LOG_FD:-}"; } 2>/dev/null; then
+#
+# The probe silences stderr with `exec` in a subshell: a `2>/dev/null` on the
+# probe itself would make bash park the saved stderr on the lowest free
+# fd >= 10 for the duration of the redirection, which can be $LOG_FD itself,
+# making a closed fd appear valid.
+if ! [[ "${LOG_FD:-}" =~ ^[0-9]+$ ]] || ! (
+    exec 2>/dev/null
+    : >&"${LOG_FD:-}"
+); then
     # Preserve the original STDOUT on a free fd (stored in $LOG_FD) so that we can
     # log to it without interfering with the STDOUT of subshells or child processes
     # whose output we want to capture for other purposes.
@@ -29,7 +37,10 @@ export LOG_FD
 # want the log functions to log to the new STDOUT.
 # ------------------------------------------------------------------------------
 function bashio::log.reinitialize_output() {
-    if [[ "${LOG_FD:-}" =~ ^[0-9]+$ ]] && { : >&"${LOG_FD}"; } 2>/dev/null; then
+    if [[ "${LOG_FD:-}" =~ ^[0-9]+$ ]] && (
+        exec 2>/dev/null
+        : >&"${LOG_FD}"
+    ); then
         eval "exec ${LOG_FD}>&1"
     fi
 }

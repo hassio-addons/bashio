@@ -141,3 +141,34 @@ setup() {
     run bashio::log "still logging"
     [ "${output}" = "still logging" ]
 }
+
+@test "library init reopens an inherited LOG_FD whose fd is closed" {
+    # An exported LOG_FD can reach environments that inherit the variable but
+    # not the descriptor (e.g. a shell spawned through ttyd/tmux), so it names
+    # a closed fd. The init probe must not apply `2>/dev/null` to the probe
+    # command itself: setting that up parks bash's saved stderr on the lowest
+    # free fd >= 10 — the very fd `exec {LOG_FD}>&1` hands out — so a closed
+    # fd 10 appeared valid and the first log write died with
+    # "Bad file descriptor".
+    run env LOG_FD=10 bash -c '
+        exec 10>&-
+        source "$1/lib/bashio.sh"
+        bashio::log.info "recovered"
+    ' bash "${BASHIO_TEST_ROOT}"
+    [ "${status}" -eq 0 ]
+    [[ "${output}" == *"recovered"* ]]
+}
+
+@test "library init keeps an inherited LOG_FD whose fd is open" {
+    # A parent that hands down a live LOG_FD expects the child's logging to
+    # land on that fd, not on a fresh dup of the child's stdout.
+    run env LOG_FD=9 bash -c '
+        exec 9>"$2"
+        source "$1/lib/bashio.sh"
+        bashio::log.info "inherited"
+    ' bash "${BASHIO_TEST_ROOT}" "${BATS_TEST_TMPDIR}/inherited.log"
+    [ "${status}" -eq 0 ]
+    [ -z "${output}" ]
+    run cat "${BATS_TEST_TMPDIR}/inherited.log"
+    [[ "${output}" == *"inherited"* ]]
+}
