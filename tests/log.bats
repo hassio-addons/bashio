@@ -162,8 +162,8 @@ setup() {
 @test "library init keeps an inherited LOG_FD whose fd is open" {
     # A parent that hands down a live LOG_FD expects the child's logging to
     # land on that fd, not on a fresh dup of the child's stdout.
-    run env LOG_FD=9 bash -c '
-        exec 9>"$2"
+    run env LOG_FD=10 bash -c '
+        exec 10>"$2"
         source "$1/lib/bashio.sh"
         bashio::log.info "inherited"
     ' bash "${BASHIO_TEST_ROOT}" "${BATS_TEST_TMPDIR}/inherited.log"
