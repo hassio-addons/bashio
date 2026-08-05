@@ -8,11 +8,7 @@
 # ==============================================================================
 
 # Unless $LOG_FD is already set to a valid fd.
-#
-# The probe silences stderr with `exec` in a subshell: a `2>/dev/null` on the
-# probe itself would make bash park the saved stderr on the lowest free
-# fd >= 10 for the duration of the redirection, which can be $LOG_FD itself,
-# making a closed fd appear valid.
+# Use a subshell so suppressing errors cannot temporarily occupy $LOG_FD.
 if ! [[ "${LOG_FD:-}" =~ ^[0-9]+$ ]] || ! (
     exec 2>/dev/null
     : >&"${LOG_FD:-}"
