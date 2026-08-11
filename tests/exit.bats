@@ -39,7 +39,7 @@ setup() {
 @test "exit.nok logs multiple messages at fatal level before exiting" {
     run bashio::exit.nok "something" "broke"
     [ "${status}" -eq "${__BASHIO_EXIT_NOK}" ]
-    [[ "${output}" == *"FATAL: something broke"* ]]
+    [[ "${output}" == *"FATAL: ?????something broke????"* ]]
 }
 
 @test "die_if_false exits when the value is false" {
@@ -89,15 +89,15 @@ setup() {
 @test "the die_if_* helpers forward their multiple messages to the fatal log" {
     run bashio::exit.die_if_false "false" "boom from" "die_if_false"
     [ "${status}" -eq "${__BASHIO_EXIT_NOK}" ]
-    [[ "${output}" == *"FATAL: boom from die_if_false"* ]]
+    [[ "${output}" == *"FATAL: ?????boom from die_if_false????"* ]]
 
     run bashio::exit.die_if_true "true" "boom from" "die_if_true"
     [ "${status}" -eq "${__BASHIO_EXIT_NOK}" ]
-    [[ "${output}" == *"FATAL: boom from die_if_true"* ]]
+    [[ "${output}" == *"FATAL: ?????boom from die_if_true????"* ]]
 
     run bashio::exit.die_if_empty "" "boom from" "die_if_empty"
     [ "${status}" -eq "${__BASHIO_EXIT_NOK}" ]
-    [[ "${output}" == *"FATAL: boom from die_if_empty"* ]]
+    [[ "${output}" == *"FATAL: ?????boom from die_if_empty????"* ]]
 }
 
 @test "the deprecated die_if_true alias warns and still delegates" {
