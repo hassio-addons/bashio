@@ -11,10 +11,10 @@
 # Exit the script as failed with an optional error message.
 #
 # Arguments:
-#   $1 Error message (optional)
+#   $* Error message (optional)
 # ------------------------------------------------------------------------------
 function bashio::exit.nok() {
-    local message=${1:-}
+    local message=$*
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
@@ -30,11 +30,11 @@ function bashio::exit.nok() {
 #
 # Arguments:
 #   $1 Value to check if false
-#   $2 Error message (optional)
+#   $* Error message (optional)
 # ------------------------------------------------------------------------------
 function bashio::exit.die_if_false() {
     local value=${1:-}
-    local message=${2:-}
+    local message=${*:2}
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
@@ -48,11 +48,11 @@ function bashio::exit.die_if_false() {
 #
 # Arguments:
 #   $1 Value to check if true
-#   $2 Error message (optional)
+#   $* Error message (optional)
 # ------------------------------------------------------------------------------
 function bashio::exit.die_if_true() {
     local value=${1:-}
-    local message=${2:-}
+    local message=${*:2}
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
@@ -75,11 +75,11 @@ function hass.die_if_true() { # codespell:ignore
 #
 # Arguments:
 #   $1 Value to check if empty
-#   $2 Error message (optional)
+#   $* Error message (optional)
 # ------------------------------------------------------------------------------
 function bashio::exit.die_if_empty() {
     local value=${1:-}
-    local message=${2:-}
+    local message=${*:2}
 
     bashio::log.trace "${FUNCNAME[0]}" "$@"
 
