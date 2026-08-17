@@ -103,7 +103,7 @@ jobs:
         with:
           python-version: ${{ env.DEFAULT_PYTHON }}
       - name: 🏗 Install zizmor
-        run: pip install zizmor
+        run: pip install -r requirements.txt
       - name: 🚀 Run zizmor
         run: zizmor .github/workflows/
         env:
@@ -127,10 +127,9 @@ jobs:
         uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
         with:
           ruby-version: "3.4"
-      - name: 🏗 Install coverage tooling
-        run: gem install --no-document bashcov simplecov-cobertura
+          bundler-cache: true
       - name: 🚀 Run tests with coverage
-        run: bashcov -- bats tests/
+        run: bundle exec bashcov -- bats tests/
       - name: 📤 Upload coverage to Codecov
         uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6.0.1
         with:

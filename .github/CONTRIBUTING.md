@@ -64,7 +64,14 @@ loads the library so its functions are available to the tests. When you fix a
 bug or add a function, please add a test that covers it.
 
 In CI the suite runs under [bashcov][bashcov] and coverage is uploaded to both
-[Codecov][codecov] and GitHub's native code coverage.
+[Codecov][codecov] and GitHub's native code coverage. The coverage tooling is
+pinned in the [`Gemfile`](../Gemfile) and [`Gemfile.lock`](../Gemfile.lock), so
+with Ruby available you can reproduce the CI run locally:
+
+```bash
+bundle install
+bundle exec bashcov -- bats tests/
+```
 
 ## Pull request process
 
