@@ -36,6 +36,12 @@ setup() {
     [[ "${output}" == *"something broke"* ]]
 }
 
+@test "exit.nok logs multiple messages at fatal level before exiting" {
+    run bashio::exit.nok "something" "broke"
+    [ "${status}" -eq "${__BASHIO_EXIT_NOK}" ]
+    [[ "${output}" == *"$(printf '%b' "FATAL: ${__BASHIO_COLORS_RED}something broke${__BASHIO_COLORS_RESET}")"* ]]
+}
+
 @test "die_if_false exits when the value is false" {
     run bashio::exit.die_if_false "false"
     [ "${status}" -eq "${__BASHIO_EXIT_NOK}" ]
@@ -78,6 +84,20 @@ setup() {
     run bashio::exit.die_if_empty "" "boom from die_if_empty"
     [ "${status}" -eq "${__BASHIO_EXIT_NOK}" ]
     [[ "${output}" == *"boom from die_if_empty"* ]]
+}
+
+@test "the die_if_* helpers forward their multiple messages to the fatal log" {
+    run bashio::exit.die_if_false "false" "boom from" "die_if_false"
+    [ "${status}" -eq "${__BASHIO_EXIT_NOK}" ]
+    [[ "${output}" == *"$(printf '%b' "FATAL: ${__BASHIO_COLORS_RED}boom from die_if_false${__BASHIO_COLORS_RESET}")"* ]]
+
+    run bashio::exit.die_if_true "true" "boom from" "die_if_true"
+    [ "${status}" -eq "${__BASHIO_EXIT_NOK}" ]
+    [[ "${output}" == *"$(printf '%b' "FATAL: ${__BASHIO_COLORS_RED}boom from die_if_true${__BASHIO_COLORS_RESET}")"* ]]
+
+    run bashio::exit.die_if_empty "" "boom from" "die_if_empty"
+    [ "${status}" -eq "${__BASHIO_EXIT_NOK}" ]
+    [[ "${output}" == *"$(printf '%b' "FATAL: ${__BASHIO_COLORS_RED}boom from die_if_empty${__BASHIO_COLORS_RESET}")"* ]]
 }
 
 @test "the deprecated die_if_true alias warns and still delegates" {
