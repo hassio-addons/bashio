@@ -141,3 +141,25 @@ setup() {
     run bashio::log "still logging"
     [ "${output}" = "still logging" ]
 }
+
+@test "library init reopens an inherited LOG_FD whose fd is closed" {
+    run env LOG_FD=10 bash -c '
+        exec 10>&-
+        source "$1/lib/bashio.sh"
+        bashio::log.info "recovered"
+    ' bash "${BASHIO_TEST_ROOT}"
+    [ "${status}" -eq 0 ]
+    [[ "${output}" == *"recovered"* ]]
+}
+
+@test "library init keeps an inherited LOG_FD whose fd is open" {
+    run env LOG_FD=10 bash -c '
+        exec 10>"$2"
+        source "$1/lib/bashio.sh"
+        bashio::log.info "inherited"
+    ' bash "${BASHIO_TEST_ROOT}" "${BATS_TEST_TMPDIR}/inherited.log"
+    [ "${status}" -eq 0 ]
+    [ -z "${output}" ]
+    run cat "${BATS_TEST_TMPDIR}/inherited.log"
+    [[ "${output}" == *"inherited"* ]]
+}
