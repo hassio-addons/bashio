@@ -1,0 +1,3 @@
+# Python tooling used by the CI workflows, pinned so a new release cannot
+# break the pipeline unannounced. Renovate keeps these up to date.
+zizmor==1.29.0

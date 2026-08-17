@@ -3,6 +3,10 @@ coverage/
 *.cov
 cov.xml
 
+# Ruby / Bundler
+.bundle/
+vendor/bundle/
+
 # Editor & OS cruft
 .DS_Store
 Thumbs.db
