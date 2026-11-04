@@ -23,6 +23,8 @@ function bashio::api.supervisor() {
     local raw=${3:-}
     local filter=${4:-}
     local auth_header='Authorization: Bearer'
+    local -a transport_args
+    local url
     local response
     local status
     local data='{}'
@@ -33,8 +35,24 @@ function bashio::api.supervisor() {
     # deliberately kept out of the trace log.
     bashio::log.trace "${FUNCNAME[0]}" "${method}" "${resource}"
 
-    if [[ -n "${__BASHIO_SUPERVISOR_TOKEN:-}" ]]; then
-        auth_header="Authorization: Bearer ${__BASHIO_SUPERVISOR_TOKEN}"
+    if [[ -n "${__BASHIO_SUPERVISOR_SOCKET:-}" ]]; then
+        # The Supervisor gives every app its own Unix socket and identifies the
+        # app by it, so no token is sent. An app that declares the `supervisor`
+        # socket gets no token at all.
+        auth_header=''
+        transport_args=(--unix-socket "${__BASHIO_SUPERVISOR_SOCKET}")
+        url="http://localhost${resource}"
+    else
+        # Pass the authorization header via stdin (curl -H @-) instead of a
+        # command-line argument, so the Supervisor token is not exposed in the
+        # process list (/proc/<pid>/cmdline). Reading the header from stdin
+        # keeps the value literal, so tokens with special characters are
+        # handled safely.
+        if [[ -n "${__BASHIO_SUPERVISOR_TOKEN:-}" ]]; then
+            auth_header="Authorization: Bearer ${__BASHIO_SUPERVISOR_TOKEN}"
+        fi
+        transport_args=(-H @-)
+        url="${__BASHIO_SUPERVISOR_API}${resource}"
     fi
 
     # Use a plain emptiness test (not bashio::var.has_value) so the request
@@ -70,16 +88,14 @@ function bashio::api.supervisor() {
     fi
 
     if ! response=$(
-        # Pass the authorization header via stdin (curl -H @-) instead of a
-        # command-line argument, so the Supervisor token is not exposed in the
-        # process list (/proc/<pid>/cmdline). Reading the header from stdin keeps
-        # the value literal, so tokens with special characters are handled safely.
+        # stdin carries the authorization header for the TCP transport only
+        # (see above); over the Unix socket curl does not read it.
         curl --silent --show-error \
             --write-out '\n%{http_code}' --request "${method}" \
-            -H @- \
+            "${transport_args[@]}" \
             -H "Content-Type: application/json" \
             "${data_args[@]}" \
-            "${__BASHIO_SUPERVISOR_API}${resource}" <<<"${auth_header}"
+            "${url}" <<<"${auth_header}"
     ); then
         [[ -n "${data_file}" ]] && rm -f "${data_file}"
         bashio::log.debug "${response}"
@@ -91,7 +107,10 @@ function bashio::api.supervisor() {
     status=${response##*$'\n'}
     response=${response%"$status"}
 
-    bashio::log.debug "Requested API resource: ${__BASHIO_SUPERVISOR_API}${resource}"
+    bashio::log.debug "Requested API resource: ${url}"
+    if [[ -n "${__BASHIO_SUPERVISOR_SOCKET:-}" ]]; then
+        bashio::log.debug "Requested via Unix socket: ${__BASHIO_SUPERVISOR_SOCKET}"
+    fi
     bashio::log.debug "Request method: ${method}"
     bashio::log.debug "API HTTP Response code: ${status}"
     bashio::log.debug "API Response: ${response}"
