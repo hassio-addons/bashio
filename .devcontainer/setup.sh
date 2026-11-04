@@ -59,11 +59,17 @@ curl --fail --silent --show-error --location \
 sudo "${tmp}/bats-core-${BATS_VERSION}/install.sh" /usr/local
 rm --recursive --force "${tmp}"
 
+# No sudo: sudo resets PATH to its secure_path, which does not include the nvm
+# directory the Node.js feature installs npm into. That directory is writable
+# by the container user, so a global install works without it.
 echo "Installing Prettier ${PRETTIER_VERSION}..."
-sudo npm install --global "prettier@${PRETTIER_VERSION}"
+npm install --global "prettier@${PRETTIER_VERSION}"
 
+# Install into the Python feature's environment rather than with --user:
+# ~/.local/bin does not exist when the container's environment is captured,
+# so it is not on PATH and the postCreateCommand (prek install) would fail.
 echo "Installing Python based tooling (codespell, yamllint, prek)..."
-pip install --user --no-warn-script-location \
+pip install \
     "codespell==${CODESPELL_VERSION}" \
     "yamllint==${YAMLLINT_VERSION}" \
     prek
