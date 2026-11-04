@@ -19,6 +19,9 @@ repos:
     hooks:
       - id: shellcheck
         args: [--external-sources, --shell=bash]
+        # Match CI, which does not lint the Bats test files: their stubbed
+        # functions are only invoked indirectly and trip SC2329 everywhere.
+        exclude: \.bats$
   - repo: https://github.com/scop/pre-commit-shfmt
     rev: v3.13.1-1
     hooks:
