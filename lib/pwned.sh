@@ -96,6 +96,7 @@ function bashio::pwned() {
             --show-error \
             --write-out '\n%{http_code}' \
             --request GET \
+            --user-agent "${__BASHIO_USER_AGENT}" \
             "${__BASHIO_HIBP_ENDPOINT}/${password:0:5}"
     ); then
         bashio::log.debug "${response}"

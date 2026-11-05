@@ -69,6 +69,13 @@ function bashio::api.supervisor() {
         data_args=(--data-binary "${data}")
     fi
 
+    # Identify the caller to the Supervisor. X-Hass-Source is only sent when an
+    # app sets one: the User-Agent already identifies bashio.
+    local -a identity_args=(--user-agent "${__BASHIO_USER_AGENT}")
+    if [[ -n "${__BASHIO_HASS_SOURCE:-}" ]]; then
+        identity_args+=(-H "X-Hass-Source: ${__BASHIO_HASS_SOURCE}")
+    fi
+
     if ! response=$(
         # Pass the authorization header via stdin (curl -H @-) instead of a
         # command-line argument, so the Supervisor token is not exposed in the
@@ -78,6 +85,7 @@ function bashio::api.supervisor() {
             --write-out '\n%{http_code}' --request "${method}" \
             -H @- \
             -H "Content-Type: application/json" \
+            "${identity_args[@]}" \
             "${data_args[@]}" \
             "${__BASHIO_SUPERVISOR_API}${resource}" <<<"${auth_header}"
     ); then

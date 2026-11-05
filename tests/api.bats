@@ -192,3 +192,47 @@ setup() {
     bashio::api.supervisor POST /test '{"password":"SECRET_IN_BODY"}' >/dev/null
     [[ "${log_out}" != *"SECRET_IN_BODY"* ]]
 }
+
+@test "api.supervisor identifies bashio by User-Agent without X-Hass-Source" {
+    # Bats sources the library inside a function, so its `declare`d globals do
+    # not survive into the test; set it as bashio.sh does by default.
+    __BASHIO_HASS_SOURCE=''
+    curl() {
+        printf '%s\n' "$@" >"${BATS_TEST_TMPDIR}/argv"
+        printf '%s\n%s' '{"result":"ok"}' '200'
+    }
+    bashio::api.supervisor GET /test true >/dev/null
+    run cat "${BATS_TEST_TMPDIR}/argv"
+    [[ "${output}" == *$'\n--user-agent\nbashio/'"${__BASHIO_VERSION}"$'\n'* ]]
+    [[ "${output}" != *"X-Hass-Source"* ]]
+}
+
+@test "api.supervisor sends X-Hass-Source when an app sets one" {
+    __BASHIO_HASS_SOURCE="my-app"
+    curl() {
+        printf '%s\n' "$@" >"${BATS_TEST_TMPDIR}/argv"
+        printf '%s\n%s' '{"result":"ok"}' '200'
+    }
+    bashio::api.supervisor GET /test true >/dev/null
+    run cat "${BATS_TEST_TMPDIR}/argv"
+    [[ "${output}" == *$'\n-H\nX-Hass-Source: my-app\n'* ]]
+    [[ "${output}" == *$'\n--user-agent\nbashio/'"${__BASHIO_VERSION}"$'\n'* ]]
+}
+
+@test "bashio reads X-Hass-Source from the environment but never overrides the User-Agent" {
+    # shellcheck disable=SC2016 # expanded by the inner shell, not this one
+    run env BASHIO_HASS_SOURCE=my-app BASHIO_USER_AGENT=my-app/1.0 \
+        bash -c 'source "$1/lib/bashio.sh"; printf "%s|%s" "${__BASHIO_USER_AGENT}" "${__BASHIO_HASS_SOURCE}"' \
+        _ "${BASHIO_TEST_ROOT}"
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "bashio/${__BASHIO_VERSION}|my-app" ]
+}
+
+@test "bashio leaves X-Hass-Source unset by default" {
+    # shellcheck disable=SC2016 # expanded by the inner shell, not this one
+    run env -u BASHIO_HASS_SOURCE \
+        bash -c 'source "$1/lib/bashio.sh"; printf "%s" "${__BASHIO_HASS_SOURCE}"' \
+        _ "${BASHIO_TEST_ROOT}"
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "" ]
+}
