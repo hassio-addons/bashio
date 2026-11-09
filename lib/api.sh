@@ -37,8 +37,8 @@ function bashio::api.supervisor() {
 
     if [[ -n "${__BASHIO_SUPERVISOR_SOCKET:-}" ]]; then
         # The Supervisor gives every app its own Unix socket and identifies the
-        # app by it, so no token is sent. An app that declares the `supervisor`
-        # socket gets no token at all.
+        # app by it, so no token is sent. An app that sets
+        # `supervisor_api_tcp: false` gets no token at all.
         auth_header=''
         transport_args=(--unix-socket "${__BASHIO_SUPERVISOR_SOCKET}")
         url="http://localhost${resource}"
