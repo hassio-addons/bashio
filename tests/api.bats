@@ -11,6 +11,9 @@
 source "${BATS_TEST_DIRNAME}/test_helper.bash"
 
 setup() {
+    # Default to the TCP transport regardless of the environment running the
+    # tests; the Unix socket cases set this explicitly.
+    __BASHIO_SUPERVISOR_SOCKET=''
     MOCK_BODY='{}'
     MOCK_STATUS='200'
     curl() {
@@ -191,4 +194,98 @@ setup() {
     bashio::log.trace() { log_out+=" $*"; }
     bashio::api.supervisor POST /test '{"password":"SECRET_IN_BODY"}' >/dev/null
     [[ "${log_out}" != *"SECRET_IN_BODY"* ]]
+}
+
+@test "api.supervisor uses TCP with the token header when no socket is set" {
+    __BASHIO_SUPERVISOR_API="http://supervisor"
+    __BASHIO_SUPERVISOR_TOKEN="SUPER_SECRET_TOKEN"
+    curl() {
+        printf '%s\n' "$@" >"${BATS_TEST_TMPDIR}/argv"
+        cat >"${BATS_TEST_TMPDIR}/stdin"
+        printf '%s\n%s' '{"result":"ok","data":{"hello":"world"}}' '200'
+    }
+    run bashio::api.supervisor GET /test false '.hello'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "world" ]
+    run cat "${BATS_TEST_TMPDIR}/argv"
+    [[ "${output}" != *"--unix-socket"* ]]
+    [[ "${output}" == *$'\n-H\n@-\n'* ]]
+    [[ "${output}" == *$'\nhttp://supervisor/test'* ]]
+    run cat "${BATS_TEST_TMPDIR}/stdin"
+    [ "${output}" = "Authorization: Bearer SUPER_SECRET_TOKEN" ]
+}
+
+@test "api.supervisor uses the Unix socket without a token when a socket is set" {
+    __BASHIO_SUPERVISOR_SOCKET="/run/supervisor/api/supervisor.sock"
+    __BASHIO_SUPERVISOR_API="http://supervisor"
+    __BASHIO_SUPERVISOR_TOKEN="SUPER_SECRET_TOKEN"
+    curl() {
+        printf '%s\n' "$@" >"${BATS_TEST_TMPDIR}/argv"
+        cat >"${BATS_TEST_TMPDIR}/stdin"
+        printf '%s\n%s' '{"result":"ok","data":{"hello":"world"}}' '200'
+    }
+    run bashio::api.supervisor GET /test false '.hello'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "world" ]
+    run cat "${BATS_TEST_TMPDIR}/argv"
+    [[ "${output}" == *$'\n--unix-socket\n/run/supervisor/api/supervisor.sock\n'* ]]
+    [[ "${output}" == *$'\nhttp://localhost/test'* ]]
+    [[ "${output}" != *"http://supervisor"* ]]
+    [[ "${output}" != *"@-"* ]]
+    # The token is neither passed as an argument nor fed to curl's stdin.
+    [[ "${output}" != *"SUPER_SECRET_TOKEN"* ]]
+    run cat "${BATS_TEST_TMPDIR}/stdin"
+    [[ "${output}" != *"SUPER_SECRET_TOKEN"* ]]
+    [[ "${output}" != *"Authorization"* ]]
+}
+
+@test "api.supervisor works over the Unix socket when no token is issued" {
+    # An app that declares the supervisor socket gets no SUPERVISOR_TOKEN.
+    __BASHIO_SUPERVISOR_SOCKET="/run/supervisor/api/supervisor.sock"
+    __BASHIO_SUPERVISOR_TOKEN=''
+    MOCK_BODY='{"result":"ok","data":{"hello":"world"}}'
+    run bashio::api.supervisor GET /test false '.hello'
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "world" ]
+}
+
+@test "api.supervisor sends the POST body over the Unix socket" {
+    __BASHIO_SUPERVISOR_SOCKET="/run/supervisor/api/supervisor.sock"
+    curl() {
+        printf '%s\n' "$@" >"${BATS_TEST_TMPDIR}/argv"
+        local prev='' arg
+        for arg in "$@"; do
+            if [[ "${prev}" == "--data-binary" && "${arg}" == @* ]]; then
+                cat "${arg:1}" >"${BATS_TEST_TMPDIR}/body"
+            fi
+            prev="${arg}"
+        done
+        printf '%s\n%s' '{"result":"ok"}' '200'
+    }
+    run bashio::api.supervisor POST /test '{"password":"SUPER_SECRET_BODY"}'
+    [ "${status}" -eq 0 ]
+    run cat "${BATS_TEST_TMPDIR}/argv"
+    [[ "${output}" == *$'\n--unix-socket\n/run/supervisor/api/supervisor.sock\n'* ]]
+    [[ "${output}" == *$'\n--request\nPOST\n'* ]]
+    [[ "${output}" != *"SUPER_SECRET_BODY"* ]]
+    run cat "${BATS_TEST_TMPDIR}/body"
+    [ "${output}" = '{"password":"SUPER_SECRET_BODY"}' ]
+}
+
+@test "bashio reads the Supervisor socket from SUPERVISOR_SOCKET" {
+    # shellcheck disable=SC2016 # expanded by the inner shell, not this one
+    run env SUPERVISOR_SOCKET=/run/supervisor/api/supervisor.sock \
+        bash -c 'source "$1/lib/bashio.sh"; printf "%s" "${__BASHIO_SUPERVISOR_SOCKET}"' \
+        _ "${BASHIO_TEST_ROOT}"
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "/run/supervisor/api/supervisor.sock" ]
+}
+
+@test "bashio leaves the Supervisor socket empty when SUPERVISOR_SOCKET is unset" {
+    # shellcheck disable=SC2016 # expanded by the inner shell, not this one
+    run env -u SUPERVISOR_SOCKET \
+        bash -c 'source "$1/lib/bashio.sh"; printf "%s" "${__BASHIO_SUPERVISOR_SOCKET}"' \
+        _ "${BASHIO_TEST_ROOT}"
+    [ "${status}" -eq 0 ]
+    [ "${output}" = "" ]
 }
