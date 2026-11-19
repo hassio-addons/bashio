@@ -64,6 +64,17 @@ setup() {
     [[ "${output}" != *"${TEST_SUFFIX}"* ]]
 }
 
+@test "pwned identifies bashio by User-Agent" {
+    local captured="${BATS_TEST_TMPDIR}/curl_args"
+    curl() {
+        printf '%s\n' "$@" >"${captured}"
+        printf '%s\n%s' "${MOCK_BODY}" "${MOCK_STATUS}"
+    }
+    bashio::pwned "test" >/dev/null
+    run cat "${captured}"
+    [[ "${output}" == *$'\n--user-agent\nbashio/'"${__BASHIO_VERSION}"$'\n'* ]]
+}
+
 @test "pwned returns the occurrence count when the password is found" {
     MOCK_BODY="${TEST_SUFFIX}:42"
     run bashio::pwned "test"
