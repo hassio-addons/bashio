@@ -154,7 +154,7 @@ bashio::cache.flush_all() {
         return "${__BASHIO_EXIT_OK}"
     fi
 
-    if ! rm -f -r "${__BASHIO_CACHE_DIR}"; then
+    if ! rm -f -r ${__BASHIO_CACHE_DIR}/*; then
         bashio::exit.nok "Could not flush cache"
         return "${__BASHIO_EXIT_NOK}"
     fi
