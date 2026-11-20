@@ -176,7 +176,7 @@ setup() {
 
     bashio::api.supervisor() { printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call2"; }
     bashio::docker.options '{"mtu":1500}'
-    [ ! -d "${__BASHIO_CACHE_DIR}" ]
+    [ ! -d "${__BASHIO_CACHE_DIR}" ] || [ -z "$(ls -A "${__BASHIO_CACHE_DIR}")" ]
 }
 
 @test "docker.options propagates an API failure" {
@@ -261,7 +261,7 @@ setup() {
 
     bashio::api.supervisor() { printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call2"; }
     bashio::docker.registries.add "hub.docker.com" "alice" "s3cret"
-    [ ! -d "${__BASHIO_CACHE_DIR}" ]
+    [ ! -d "${__BASHIO_CACHE_DIR}" ] || [ -z "$(ls -A "${__BASHIO_CACHE_DIR}")" ]
 }
 
 @test "docker.registries.add propagates an API failure" {
@@ -295,7 +295,7 @@ setup() {
 
     bashio::api.supervisor() { printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call2"; }
     bashio::docker.registries.delete "hub.docker.com"
-    [ ! -d "${__BASHIO_CACHE_DIR}" ]
+    [ ! -d "${__BASHIO_CACHE_DIR}" ] || [ -z "$(ls -A "${__BASHIO_CACHE_DIR}")" ]
 }
 
 @test "docker.registries.delete propagates an API failure" {

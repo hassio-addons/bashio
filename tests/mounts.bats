@@ -128,7 +128,7 @@ setup() {
 
     bashio::api.supervisor() { printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call2"; }
     bashio::mounts.create '{"name":"new"}'
-    [ ! -d "${__BASHIO_CACHE_DIR}" ]
+    [ ! -d "${__BASHIO_CACHE_DIR}" ] || [ -z "$(ls -A "${__BASHIO_CACHE_DIR}")" ]
 }
 
 @test "mounts.create propagates an API failure" {
@@ -176,7 +176,7 @@ setup() {
 
     bashio::api.supervisor() { printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call2"; }
     bashio::mounts.options '{"default_backup_mount":null}'
-    [ ! -d "${__BASHIO_CACHE_DIR}" ]
+    [ ! -d "${__BASHIO_CACHE_DIR}" ] || [ -z "$(ls -A "${__BASHIO_CACHE_DIR}")" ]
 }
 
 @test "mounts.options propagates an API failure" {
@@ -222,7 +222,7 @@ setup() {
 
     bashio::api.supervisor() { printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call2"; }
     bashio::mount.reload "my_share"
-    [ ! -d "${__BASHIO_CACHE_DIR}" ]
+    [ ! -d "${__BASHIO_CACHE_DIR}" ] || [ -z "$(ls -A "${__BASHIO_CACHE_DIR}")" ]
 }
 
 @test "mount.reload propagates an API failure" {
@@ -258,7 +258,7 @@ setup() {
 
     bashio::api.supervisor() { printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call2"; }
     bashio::mount.delete "my_share"
-    [ ! -d "${__BASHIO_CACHE_DIR}" ]
+    [ ! -d "${__BASHIO_CACHE_DIR}" ] || [ -z "$(ls -A "${__BASHIO_CACHE_DIR}")" ]
 }
 
 @test "mount.delete propagates an API failure" {

@@ -7,10 +7,6 @@
 # at a per-test temporary directory so tests stay isolated. Stubs record their
 # arguments via "$*" and the assertions check the EXACT call string (method,
 # resource, filter/JSON), so they pin down the contract rather than fragments.
-#
-# A few setters end with `bashio::cache.flush_all`, which removes the cache
-# directory. Where a setter is exercised the cache dir is recreated implicitly
-# by the next `bashio::cache.set`, so tests do not rely on it surviving.
 # ==============================================================================
 
 source "${BATS_TEST_DIRNAME}/test_helper.bash"

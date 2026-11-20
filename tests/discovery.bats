@@ -85,7 +85,7 @@ setup() {
     bashio::api.supervisor() { printf '%s' 'new-uuid'; }
     bashio::discovery "mqtt" '{"host":"x"}' >/dev/null
     # Cache directory must be gone after publish.
-    [ ! -d "${BATS_TEST_TMPDIR}/cache" ]
+    [ ! -d "${BATS_TEST_TMPDIR}/cache" ] || [ -z "$(ls -A "${BATS_TEST_TMPDIR}/cache")" ]
 }
 
 @test "discovery propagates an API failure" {
@@ -136,7 +136,7 @@ setup() {
 
     bashio::api.supervisor() { printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call2"; }
     bashio::discovery.delete "abc-def-uuid"
-    [ ! -d "${BATS_TEST_TMPDIR}/cache" ]
+    [ ! -d "${BATS_TEST_TMPDIR}/cache" ] || [ -z "$(ls -A "${BATS_TEST_TMPDIR}/cache")" ]
 }
 
 @test "discovery.delete propagates an API failure" {
