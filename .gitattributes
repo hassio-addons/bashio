@@ -5,6 +5,10 @@
 *.sh text eol=lf
 lib/bashio text eol=lf
 
+# Stamp the release version into the library when GitHub builds the release
+# tarball (git archive), see __BASHIO_VERSION in lib/const.sh.
+lib/const.sh export-subst
+
 # Treat the shebang-less entrypoint as a shell script for GitHub Linguist.
 lib/bashio linguist-language=Shell
 

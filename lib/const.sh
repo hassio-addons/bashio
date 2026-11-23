@@ -8,6 +8,24 @@
 # to be included in app scripts to reduce code duplication across apps.
 # ==============================================================================
 
+# Version
+# `git archive` fills in the placeholder below with the release tag (see
+# export-subst in .gitattributes), so the release tarballs that images install
+# carry their own version. It stays unexpanded in a git checkout, which is
+# reported as "dev". Keep this the only format placeholder in this file:
+# export-subst would also rewrite any other one.
+# shellcheck disable=SC2016 # expanded by git archive, not by the shell
+readonly __BASHIO_VERSION_DESCRIBE='$Format:%(describe:tags=true,match=v[0-9]*)$'
+if [[ "${__BASHIO_VERSION_DESCRIBE}" =~ ^v([0-9].*)$ ]]; then
+    readonly __BASHIO_VERSION="${BASH_REMATCH[1]}"
+else
+    readonly __BASHIO_VERSION="dev"
+fi
+
+# User-Agent for every HTTP request bashio makes, so they can be told apart
+# from other curl calls, e.g. in the Supervisor's error reports.
+readonly __BASHIO_USER_AGENT="bashio/${__BASHIO_VERSION}"
+
 # Defaults
 readonly __BASHIO_DEFAULT_CACHE_DIR="/tmp/.bashio"
 readonly __BASHIO_DEFAULT_HIBP_ENDPOINT="https://api.pwnedpasswords.com/range"
