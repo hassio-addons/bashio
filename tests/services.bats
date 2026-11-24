@@ -186,8 +186,9 @@ setup() {
 
     bashio::api.supervisor() { printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call2"; }
     bashio::services.publish "mqtt" '{"host":"new"}'
-    # Cache directory must be gone after publish.
-    [ ! -d "${__BASHIO_CACHE_DIR}" ] || [ -z "$(ls -A "${__BASHIO_CACHE_DIR}")" ]
+    # Cache must be empty after publish, but the directory is kept.
+    [ -d "${__BASHIO_CACHE_DIR}" ]
+    [ -z "$(ls -A "${__BASHIO_CACHE_DIR}")" ]
 }
 
 @test "services.publish propagates an API failure" {
@@ -227,8 +228,9 @@ setup() {
 
     bashio::api.supervisor() { printf '%s' "$*" >"${BATS_TEST_TMPDIR}/call2"; }
     bashio::services.delete "mqtt"
-    # Cache directory must be gone after delete.
-    [ ! -d "${__BASHIO_CACHE_DIR}" ] || [ -z "$(ls -A "${__BASHIO_CACHE_DIR}")" ]
+    # Cache must be empty after delete, but the directory is kept.
+    [ -d "${__BASHIO_CACHE_DIR}" ]
+    [ -z "$(ls -A "${__BASHIO_CACHE_DIR}")" ]
 }
 
 @test "services.delete propagates an API failure" {
