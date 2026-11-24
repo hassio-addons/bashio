@@ -129,3 +129,39 @@ setup() {
     [ "${status}" -eq 0 ]
     [ "${output}" = "value" ]
 }
+
+@test "cache.flush_all succeeds when the cache directory does not exist" {
+    run bashio::cache.flush_all
+    [ "${status}" -eq 0 ]
+}
+
+@test "cache.flush_all empties the cache but keeps the directory" {
+    # The directory is intentionally left in place: removing it races with a
+    # concurrent cache.set in another process. Hidden entries must go too.
+    bashio::cache.set "key" "value"
+    bashio::cache.set ".hidden" "value"
+
+    bashio::cache.flush_all
+
+    [ -d "${__BASHIO_CACHE_DIR}" ]
+    [ -z "$(ls -A "${__BASHIO_CACHE_DIR}")" ]
+}
+
+@test "cache.flush_all succeeds on an already empty cache directory" {
+    mkdir -p "${__BASHIO_CACHE_DIR}"
+    run bashio::cache.flush_all
+    [ "${status}" -eq 0 ]
+    [ -d "${__BASHIO_CACHE_DIR}" ]
+}
+
+@test "cache.flush_all works when globs match '.' and '..'" {
+    # Bash older than 5.2 (or 5.2+ with globskipdots disabled) expands '.*' to
+    # '.' and '..', which rm refuses to remove. The flush must not trip on it.
+    shopt -u globskipdots 2>/dev/null || true
+    bashio::cache.set "key" "value"
+    bashio::cache.set ".hidden" "value"
+
+    run bashio::cache.flush_all
+    [ "${status}" -eq 0 ]
+    [ -z "$(ls -A "${__BASHIO_CACHE_DIR}")" ]
+}
